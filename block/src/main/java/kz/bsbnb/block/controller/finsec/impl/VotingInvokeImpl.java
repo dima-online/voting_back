@@ -1,7 +1,7 @@
 package kz.bsbnb.block.controller.finsec.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kz.bsbnb.block.controller.finsec.IFinSecInvoke;
+import kz.bsbnb.block.controller.finsec.IVotingInvoke;
 import kz.bsbnb.block.model.HLCommand;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * Updated by Olzhas.Pazyldayev on 23.08.2016
  */
 @RestController
-public class FinSecInvokeImpl implements IFinSecInvoke {
+public class VotingInvokeImpl implements IVotingInvoke {
     @Autowired
     private BlockChainProperties blockchainProperties;
 
@@ -42,31 +42,9 @@ public class FinSecInvokeImpl implements IFinSecInvoke {
 
     @Override
     @RequestMapping("/finsec/buyFinSec")
-    public Object buyFinSec(@RequestParam(value = "userId") final Long userId,
-                            @RequestParam(value = "amount") final Long amount) {
-        HLCommand command = new HLCommandBuilder()
-                .method(Constants.HL_COMMAND_INVOKE)
-                .type(1)
-                .chainCodeName("fsec")
-                .args("user,NBRK,1")
-                .secureContext("jim")
-                .id(3)
-                .createCommand();
-
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            return restTemplate.postForObject(blockchainProperties.getUrl(), JsonUtil.toJson(command), String.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-    }
-
-    @Override
-    @RequestMapping("/finsec/sellFinSec")
-    public Object sellFinSec(@RequestParam(value = "userId") final Long userId,
-                             @RequestParam(value = "amount") final Long amount) {
-
+    public Object vote(@RequestParam(value = "userId") final Long userId,
+                        @RequestParam(value = "voteId") final Long voteId,
+                       @RequestParam(value = "votes") final Double votes) {
         HLCommand command = new HLCommandBuilder()
                 .method(Constants.HL_COMMAND_INVOKE)
                 .type(1)

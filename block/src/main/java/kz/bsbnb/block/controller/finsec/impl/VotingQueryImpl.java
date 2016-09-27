@@ -1,8 +1,9 @@
 package kz.bsbnb.block.controller.finsec.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kz.bsbnb.block.controller.finsec.IFinSecQuery;
+import kz.bsbnb.block.controller.finsec.IVotingQuery;
 import kz.bsbnb.block.model.HLCommand;
+import kz.bsbnb.block.model.Vote;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
 import kz.bsbnb.block.util.HLCommandBuilder;
@@ -18,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
  * Created by kanattulbassiyev on 8/15/16.
  */
 @RestController
-public class FinSecQueryImpl implements IFinSecQuery {
+public class VotingQueryImpl implements IVotingQuery {
     @Autowired
     private BlockChainProperties blockchainProperties;
 
@@ -41,7 +42,7 @@ public class FinSecQueryImpl implements IFinSecQuery {
 
     @Override
     @RequestMapping("/getWallet")
-    public Object getWallet(@RequestParam(value = "userId", defaultValue = "0") final long userId) {
+    public Object getVote(@RequestParam(value = "voteId", defaultValue = "0") final long voteId) {
         HLCommand command = new HLCommandBuilder()
                 .method(Constants.HL_COMMAND_QUERY)
                 .type(1)
@@ -57,10 +58,5 @@ public class FinSecQueryImpl implements IFinSecQuery {
             e.printStackTrace();
             return e.getMessage();
         }
-    }
-
-    @Override
-    public Object getTransaction(User user, long transactionId) {
-        return null;
     }
 }

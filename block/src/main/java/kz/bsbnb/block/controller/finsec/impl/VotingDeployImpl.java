@@ -1,8 +1,10 @@
 package kz.bsbnb.block.controller.finsec.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kz.bsbnb.block.controller.finsec.IFinSecDeploy;
+import kz.bsbnb.block.controller.finsec.IVotingDeploy;
 import kz.bsbnb.block.model.HLCommand;
+import kz.bsbnb.block.model.QuestionPoint;
+import kz.bsbnb.block.model.UserPoint;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
 import kz.bsbnb.block.util.HLCommandBuilder;
@@ -13,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 /**
  * Created by kanattulbassiyev on 8/15/16.
  * Updated by Olzhas.Pazyldayev on 23.08.2016
  */
 @RestController
-public class FinSecDeployImpl implements IFinSecDeploy {
+public class VotingDeployImpl implements IVotingDeploy {
     @Autowired
     private BlockChainProperties blockchainProperties;
 
@@ -39,14 +43,16 @@ public class FinSecDeployImpl implements IFinSecDeploy {
                 "}";*/
 
     @Override
-    @RequestMapping("/finsec/deploy")
-    public Object deployChainCode(@RequestParam(value = "name") final String name) {
+    @RequestMapping("/voting/deploy")
+    public Object deployChainCode(@RequestParam(value = "name") final String name,
+                                  @RequestParam(value = "questionPointList") final List<QuestionPoint> questionPointList,
+                                  @RequestParam(value = "userPointList") final List<UserPoint> userPointList) {
 
 
         HLCommand command = new HLCommandBuilder()
                 .method(Constants.HL_COMMAND_DEPLOY)
                 .chainCodeName(name)
-                .args("NBRK,100,user,0")
+                .args("")
                 .id(1)
                 .createCommand();
 
