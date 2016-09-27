@@ -1,0 +1,20 @@
+{
+  "groups": [{
+    "name": "blockchain",
+    "type": "kz.bsbnb.block.util.BlockChainProperties",
+    "sourceType": "kz.bsbnb.block.util.BlockChainProperties"
+  }],
+  "properties": [
+    {
+      "name": "blockchain.server",
+      "type": "java.lang.String",
+      "sourceType": "kz.bsbnb.block.util.BlockChainProperties"
+    },
+    {
+      "name": "blockchain.url",
+      "type": "java.lang.String",
+      "sourceType": "kz.bsbnb.block.util.BlockChainProperties"
+    }
+  ],
+  "hints": []
+}

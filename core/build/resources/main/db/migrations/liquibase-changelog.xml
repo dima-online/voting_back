@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd
+                    http://www.liquibase.org/xml/ns/dbchangelog-ext
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--<preConditions>-->
+        <!--<runningAs username="postgres"/>-->
+    <!--</preConditions>-->
+
+    <changeSet author="Olzhas.Pazyldayev" id="init" runOnChange="false" failOnError="true">
+        <comment>Initial database schemas creation</comment>
+        <sqlFile path="v-0.0/create-schemas.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+    <!-- Should be only links to per-version cumulative changelog files. -->
+    <include file="v-1.0/changelog-v.1.0-cumulative.xml" relativeToChangelogFile="true"/>
+    <include file="v-2.0/changelog-v.2.0-cumulative.xml" relativeToChangelogFile="true"/>
+    <include file="v-3.0/changelog-v.3.0-cumulative.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
+
+<!--
+==generate file changelog file script==
+liquibase - -driver=org.postgresql.Driver - -classpath=lib/postgresql-9.4.1209.jar
+- -changeLogFile=changeLogCore.xml - -url="jdbc:postgresql://localhost:5432/blockchain"
+- -defaultSchemaName=core - -username=postgres - -password=postgres generateChangeLog
+
+
+-->

@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Timur.Abdykarimov" id="2016-08-16--01-create-role" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS core.user_role CASCADE;
+        </sql>
+        <createTable tableName="user_role" schemaName="core">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(255)"/>
+        </createTable>
+        <addPrimaryKey columnNames="id" constraintName="role_pkey" tableName="user_role" schemaName="core"/>
+    </changeSet>
+</databaseChangeLog>

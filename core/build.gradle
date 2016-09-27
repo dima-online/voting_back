@@ -1,0 +1,37 @@
+
+group 'kz.bsbnb'
+version '0.0.1-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'org.liquibase.gradle'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+jar {
+    baseName = 'core'
+}
+springBoot {
+    mainClass = 'kz.bsbnb.cli.StartCLI'
+}
+defaultTasks 'installApp'
+
+dependencies {
+    compile name: 'ojdbc7'
+    compile('org.liquibase:liquibase-core:3.5.1')
+    //runtime('com.h2database:h2')
+    //runtime('com.oracle:ojdbc7:12.1.0.2')
+    runtime('org.postgresql:postgresql')
+    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1')
+    compile('org.springframework.shell:spring-shell:1.2.0.RELEASE')
+
+    compile project(':common')
+    compile project(':utils')
+    compile project(':block')
+}
+

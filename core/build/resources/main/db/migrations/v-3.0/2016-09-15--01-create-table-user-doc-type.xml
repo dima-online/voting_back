@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2016-09-15--01-create-table-user-doc-type" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS core.user_doc_type CASCADE;
+        </sql>
+        <createTable tableName="user_doc_type" schemaName="core">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(200)"/>
+            <column name="description" type="VARCHAR(500)"/>
+        </createTable>
+        <addPrimaryKey tableName="user_doc_type" columnNames="id" constraintName="user_doc_type_pkey"
+                       schemaName="core"/>
+        <addUniqueConstraint tableName="user_doc_type" columnNames="code" constraintName="user_doc_type_code_uk"
+                             schemaName="core"/>
+    </changeSet>
+</databaseChangeLog>

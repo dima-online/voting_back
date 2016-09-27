@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2016-08-16--02-create-user-role-table" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS core.user_roles CASCADE;
+        </sql>
+        <createTable tableName="user_roles" schemaName="core">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="user_id, role_id" constraintName="user_role_pkey" tableName="user_roles" schemaName="core"/>
+        <sql splitStatements="true">
+            ALTER TABLE core.user_roles ADD CONSTRAINT "user_id_role_fk" FOREIGN KEY (user_id) REFERENCES core.user (id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+            ALTER TABLE core.user_roles ADD CONSTRAINT "role_id_user_fk" FOREIGN KEY (role_id) REFERENCES core.user_role (id) ON UPDATE NO ACTION ON DELETE NO ACTION
+        </sql>
+        <!--<addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_role"-->
+                                 <!--constraintName="user_id_role_fk" deferrable="false" initiallyDeferred="false"-->
+                                 <!--onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"-->
+                                 <!--referencedTableName="user"/>-->
+        <!--<addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_role"-->
+                                 <!--constraintName="role_id_user_fk" deferrable="false" initiallyDeferred="false"-->
+                                 <!--onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id"-->
+                                 <!--referencedTableName="role"/>-->
+    </changeSet>
+</databaseChangeLog>

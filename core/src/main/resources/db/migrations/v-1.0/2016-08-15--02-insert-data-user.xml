@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2016-08-15--02-insert-data-user" objectQuotingStrategy="LEGACY">
+        <insert tableName="user" schemaName="core">
+            <column name="id" valueNumeric="1"/>
+            <column name="iin" value="880101123456"/>
+            <column name="username" value="bsb.user"/>
+            <column name="password" value="0"/>
+            <column name="status" type="ACTIVE"/>
+        </insert>
+        <insert tableName="user" schemaName="core">
+            <column name="id" valueNumeric="2"/>
+            <column name="iin" value="890101123456"/>
+            <column name="username" value="bsb.user1"/>
+            <column name="password" value="1"/>
+            <column name="status" type="ACTIVE"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

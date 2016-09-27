@@ -1,0 +1,9 @@
+group 'kz.bsbnb'
+version '0.0.1-SNAPSHOT'
+
+apply plugin: 'java'
+
+dependencies {
+}
+
+bootRepackage.enabled = false

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <include file="2016-09-15--01-create-table-user-doc-type.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-15--02-create-table-user-address.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-15--03-create-table-user-info.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-15--04-alter-table-user.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-15--05-insert-data-user-doc-type.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-16--06-create-table-transaction-type.xml" relativeToChangelogFile="true"/>
+
+    <include file="2016-09-21--08-create-table-blockchain-wallet.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-21--09-create-table-ekzt-wallet.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-21--10-create-table-transaction.xml" relativeToChangelogFile="true"/>
+    <include file="2016-09-21--11-create-table-transaction-step.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>
