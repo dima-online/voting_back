@@ -1,13 +1,11 @@
-package kz.bsbnb.block.controller.finsec.impl;
+package kz.bsbnb.block.controller.voting.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kz.bsbnb.block.controller.finsec.IVotingQuery;
+import kz.bsbnb.block.controller.voting.IVotingQuery;
 import kz.bsbnb.block.model.HLCommand;
-import kz.bsbnb.block.model.Vote;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
 import kz.bsbnb.block.util.HLCommandBuilder;
-import kz.bsbnb.common.model.impl.user.User;
 import kz.bsbnb.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

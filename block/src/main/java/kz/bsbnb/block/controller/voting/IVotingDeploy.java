@@ -1,4 +1,4 @@
-package kz.bsbnb.block.controller.finsec;
+package kz.bsbnb.block.controller.voting;
 
 import kz.bsbnb.block.model.QuestionPoint;
 import kz.bsbnb.block.model.UserPoint;

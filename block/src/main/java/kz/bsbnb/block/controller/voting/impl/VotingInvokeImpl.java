@@ -1,7 +1,7 @@
-package kz.bsbnb.block.controller.finsec.impl;
+package kz.bsbnb.block.controller.voting.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import kz.bsbnb.block.controller.finsec.IVotingInvoke;
+import kz.bsbnb.block.controller.voting.IVotingInvoke;
 import kz.bsbnb.block.model.HLCommand;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;

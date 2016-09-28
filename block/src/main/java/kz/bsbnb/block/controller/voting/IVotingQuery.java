@@ -1,8 +1,5 @@
-package kz.bsbnb.block.controller.finsec;
+package kz.bsbnb.block.controller.voting;
 
-
-import kz.bsbnb.block.model.Vote;
-import kz.bsbnb.common.model.impl.user.User;
 
 /**
  * Created by kanattulbassiyev on 8/15/16.

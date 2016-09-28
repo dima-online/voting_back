@@ -1,4 +1,4 @@
-package kz.bsbnb.block.controller.finsec;
+package kz.bsbnb.block.controller.voting;
 
 /**
  * Created by kanattulbassiyev on 8/15/16.
