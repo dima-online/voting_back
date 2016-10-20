@@ -1,6 +1,6 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.model.impl.user.User;
+import kz.bsbnb.common.model.User;
 import kz.bsbnb.util.SimpleResponse;
 
 import java.util.List;
@@ -16,4 +16,9 @@ public interface IUserController {
     SimpleResponse getUserByIdSimple(Long id);
 
     User regUser(User user);
+
+    SimpleResponse checkUser(User user);
+
+    //Смена пароля
+    SimpleResponse updateUser(User user);
 }

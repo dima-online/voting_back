@@ -1,6 +1,6 @@
 package kz.bsbnb.controller.impl;
 
-import kz.bsbnb.common.model.impl.user.User;
+import kz.bsbnb.common.model.User;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.processor.UserProcessor;
 import kz.bsbnb.repository.IUserRepository;
@@ -59,6 +59,38 @@ public class UserControllerImpl implements IUserController {
     public User regUser(@RequestBody @Valid User user) {
         userProcessor.mergeUser(user);
         return userRepository.save(user);
+    }
+
+    @Override
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public SimpleResponse checkUser(@RequestBody @Valid User user) {
+        User localUser = userRepository.findByUsername(user.getUsername());
+        if (localUser == null) {
+            return new SimpleResponse("no user with such userName").ERROR_NOT_FOUND();
+        }
+        if (localUser.getPassword().equals(user.getPassword())) {
+            return new SimpleResponse(user).SUCCESS();
+        } else {
+            return new SimpleResponse(user).ERROR();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public SimpleResponse updateUser(@RequestBody @Valid User user) {
+        User localUser = userRepository.findOne(user.getId());
+        if (localUser == null) {
+            return new SimpleResponse("no user with such id").ERROR_NOT_FOUND();
+        } else {
+            localUser.setPassword(pwd(user.getPassword()));
+            localUser = userRepository.save(localUser);
+            return new SimpleResponse(localUser).SUCCESS();
+        }
+    }
+
+    //функция для криптовки паролей
+    public static String pwd(String password) {
+        return password;
     }
 
 }

@@ -1,6 +1,6 @@
 package kz.bsbnb.repository;
 
-import kz.bsbnb.common.model.impl.user.User;
+import kz.bsbnb.common.model.User;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**

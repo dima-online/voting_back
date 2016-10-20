@@ -1,6 +1,6 @@
 package kz.bsbnb.security;
 
-import kz.bsbnb.common.model.impl.user.User;
+import kz.bsbnb.common.model.User;
 import kz.bsbnb.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

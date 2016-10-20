@@ -1,6 +1,6 @@
 package kz.bsbnb.util;
 
-import kz.bsbnb.common.model.impl.user.User;
+import kz.bsbnb.common.model.User;
 import kz.bsbnb.repository.IUserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
