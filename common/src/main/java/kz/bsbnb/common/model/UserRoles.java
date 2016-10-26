@@ -5,13 +5,13 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  *
@@ -23,19 +23,21 @@ public class UserRoles implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.user_roles_id_seq", sequenceName = "core.user_roles_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.user_roles_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 20)
     @Column(name = "role_code")
     @Enumerated(EnumType.STRING)
     private Role role;
+    @JsonIgnore
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Organisation orgId;
+    @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User userId;

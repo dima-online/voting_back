@@ -21,4 +21,6 @@ public interface IUserController {
 
     //Смена пароля
     SimpleResponse updateUser(User user);
+
+    SimpleResponse deleteUser(User user);
 }

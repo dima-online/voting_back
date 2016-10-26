@@ -6,7 +6,6 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kz.bsbnb.common.consts.Status;
 import kz.bsbnb.common.util.Constants;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,8 +31,9 @@ public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.user_id_seq", sequenceName = "core.user_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.user_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Size(max = 255)
@@ -48,12 +47,11 @@ public class User implements Serializable, UserDetails {
     private String password;
     @Size(max = 255)
     @Column(name = "status")
+    private String status;
     @JsonIgnore
-    @Enumerated(EnumType.STRING)
-
-    private Status status;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<UserRoles> userRolesSet;
+    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private UserInfo userInfoId;
@@ -97,9 +95,9 @@ public class User implements Serializable, UserDetails {
         this.password = password;
     }
 
-    public Status getStatus() {return status;}
+    public String getStatus() {return status;}
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

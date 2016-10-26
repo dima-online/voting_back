@@ -24,5 +24,27 @@
             <column name="password" value="1"/>
             <column name="status" value="ACTIVE"/>
         </insert>
+        <sql splitStatements="true">
+            DELETE FROM core.organisation CASCADE;
+            INSERT INTO core.organisation(
+            organisation_name, organisation_num, external_id, status)
+            VALUES ('BSB Org', '1', '123', 'CAN_VOTE');
+
+            INSERT INTO core.voting(
+            voting_type, subject, date_create, date_begin, date_end,
+            date_close, status, last_changed, who_changed, organisation_id)
+            VALUES ('SIMPLE', 'Test subject', '2016-10-20'::date, null, null,
+            null, 'CREATED', null, 1, 1);
+
+            INSERT INTO core.voter(
+            user_id, voting_id, date_adding, share_count, signature,
+            public_key)
+            VALUES (2, 1, '2016-10-20'::date, 100, null,
+            null);
+
+            INSERT INTO core.question(
+            question, num, decision, voting_id, question_type)
+            VALUES ('First question', 1, null, 1, 'ORDINARY');
+        </sql>
     </changeSet>
 </databaseChangeLog>

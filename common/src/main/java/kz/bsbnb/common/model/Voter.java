@@ -5,25 +5,16 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Set;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -35,8 +26,9 @@ public class Voter implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.voter_id_seq", sequenceName = "core.voter_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.voter_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Column(name = "date_adding")
@@ -52,6 +44,9 @@ public class Voter implements Serializable {
     @Size(max = 2000)
     @Column(name = "public_key")
     private String publicKey;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "voterId", fetch = FetchType.EAGER)
+    private Set<Decision> decisionSet;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User userId;
@@ -110,6 +105,11 @@ public class Voter implements Serializable {
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
+
+    @XmlTransient
+    public Set<Decision> getDecisionSet() { return decisionSet;}
+
+    public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
 
     public User getUserId() {
         return userId;

@@ -10,22 +10,9 @@ import kz.bsbnb.common.util.Constants;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -38,8 +25,9 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.message_id_seq", sequenceName = "core.message_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.message_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Size(max = 2000)

@@ -1,14 +1,11 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.UserBean;
-import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.Organisation;
 import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.model.UserInfo;
 import kz.bsbnb.common.model.UserRoles;
 import kz.bsbnb.controller.IOrganisationController;
-import kz.bsbnb.processor.OrganisationProcessor;
-import kz.bsbnb.processor.UserProcessor;
 import kz.bsbnb.repository.IOrganisationRepository;
 import kz.bsbnb.repository.IUserInfoRepository;
 import kz.bsbnb.repository.IUserRepository;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,8 +32,8 @@ import java.util.stream.StreamSupport;
 public class OrganisationControllerImpl implements IOrganisationController {
     @Autowired
     private IOrganisationRepository organisationRepository;
-    @Autowired
-    private OrganisationProcessor organisationProcessor;
+//    @Autowired
+//    private OrganisationProcessor organisationProcessor;
     @Autowired
     private IUserRepository userRepository;
     @Autowired
@@ -46,7 +42,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
     private IUserRoleRepository userRoleRepository;
 
     @Override
-    @RequestMapping("/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<Organisation> getOrganisations(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "20") int count) {
         // todo: pagination
@@ -56,7 +52,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
     }
 
     @Override
-    @RequestMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Organisation getOrganisationById(@PathVariable Long id) {
         return organisationRepository.findOne(id);
     }
@@ -69,7 +65,24 @@ public class OrganisationControllerImpl implements IOrganisationController {
     }
 
     @Override
-    @RequestMapping(value = "/{id}/addUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/users/{orgId}", method = RequestMethod.GET)
+    public List<UserBean> getAllUser(@PathVariable Long orgId) {
+        Organisation organisation = getOrganisationById(orgId);
+        List<UserBean> result = new ArrayList<>();
+        for (UserRoles userRoles:organisation.getUserRolesSet()) {
+            UserBean userBean = new UserBean();
+            userBean.setRole(userRoles.getRole());
+            userBean.setId(userRoles.getUserId().getId());
+            userBean.setOrganisation(organisation);
+            userBean.setUser(userRoles.getUserId());
+            userBean.setUserInfo(userRoles.getUserId().getUserInfoId());
+            result.add(userBean);
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/{orgId}/addUser", method = RequestMethod.POST)
     public SimpleResponse addUserToOrganisation(@PathVariable Long orgId, @RequestBody @Valid UserBean userBean) {
         Organisation organisation = getOrganisationById(orgId);
         User user = null;
@@ -125,4 +138,15 @@ public class OrganisationControllerImpl implements IOrganisationController {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public SimpleResponse delOrganisation(@RequestBody @Valid Organisation organisation) {
+        Organisation forDelete = getOrganisationById(organisation.getId());
+        if (forDelete == null) {
+            return new SimpleResponse("organisation not found").ERROR_NOT_FOUND();
+        } else {
+            organisationRepository.delete(forDelete);
+            return new SimpleResponse("organisation deleted").SUCCESS();
+        }
+    }
 }
