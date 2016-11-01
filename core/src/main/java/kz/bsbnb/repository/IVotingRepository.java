@@ -2,7 +2,6 @@ package kz.bsbnb.repository;
 
 import kz.bsbnb.common.model.Organisation;
 import kz.bsbnb.common.model.User;
-import kz.bsbnb.common.model.UserInfo;
 import kz.bsbnb.common.model.Voting;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -24,11 +24,15 @@ defaultTasks 'installApp'
 dependencies {
     compile name: 'ojdbc7'
     compile('org.liquibase:liquibase-core:3.5.1')
+
     //runtime('com.h2database:h2')
     //runtime('com.oracle:ojdbc7:12.1.0.2')
     runtime('org.postgresql:postgresql')
     compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.6.1')
     compile('org.springframework.shell:spring-shell:1.2.0.RELEASE')
+    compile('io.springfox:springfox-swagger-ui:2.2.2')
+    compile('io.springfox:springfox-swagger2:2.2.2')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf:1.1.3.RELEASE')
 
     compile project(':common')
     compile project(':utils')

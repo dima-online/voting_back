@@ -3,7 +3,9 @@ version '0.0.1-SNAPSHOT'
 
 apply plugin: 'java'
 
+
 dependencies {
+    compile("com.sun.mail:javax.mail:1.5.6")
 }
 
 bootRepackage.enabled = false

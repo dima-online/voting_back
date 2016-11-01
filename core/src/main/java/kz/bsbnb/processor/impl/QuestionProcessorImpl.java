@@ -1,7 +1,6 @@
 package kz.bsbnb.processor.impl;
 
 import kz.bsbnb.processor.QuestionProcessor;
-import kz.bsbnb.processor.UserRolesProcessor;
 import org.springframework.stereotype.Service;
 
 /**

@@ -29,7 +29,7 @@ public class UserControllerImpl implements IUserController {
 
 
     @Override
-    @RequestMapping("/list")
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<User> getUsers(@RequestParam(defaultValue = "0") int page,
                                @RequestParam(defaultValue = "20") int count) {
         // todo: pagination
@@ -39,13 +39,13 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
-    @RequestMapping("/{id}")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUserById(@PathVariable Long id) {
         return userRepository.findOne(id);
     }
 
     @Override
-    @RequestMapping("/data/{id}")
+    @RequestMapping(value = "/data/{id}", method = RequestMethod.GET)
     public SimpleResponse getUserByIdSimple(@PathVariable Long id) {
         User user = userRepository.findOne(id);
         if (user == null) {
@@ -64,14 +64,15 @@ public class UserControllerImpl implements IUserController {
     @Override
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public SimpleResponse checkUser(@RequestBody @Valid User user) {
-        User localUser = userRepository.findByUsername(user.getUsername());
+        User localUser = userRepository.findByIin(user.getIin());
+        System.out.println("user" + user.toString());
         if (localUser == null) {
             return new SimpleResponse("no user with such userName").ERROR_NOT_FOUND();
         }
         if (localUser.getPassword().equals(user.getPassword())) {
-            return new SimpleResponse(user).SUCCESS();
+            return new SimpleResponse(localUser).SUCCESS();
         } else {
-            return new SimpleResponse(user).ERROR();
+            return new SimpleResponse("Неверный пароль").ERROR();
         }
     }
 
@@ -85,6 +86,18 @@ public class UserControllerImpl implements IUserController {
             localUser.setPassword(pwd(user.getPassword()));
             localUser = userRepository.save(localUser);
             return new SimpleResponse(localUser).SUCCESS();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public SimpleResponse deleteUser(@RequestBody @Valid User user) {
+        User localUser = userRepository.findOne(user.getId());
+        if (localUser == null) {
+            return new SimpleResponse("no user with such id").ERROR_NOT_FOUND();
+        } else {
+            userRepository.delete(localUser);
+            return new SimpleResponse("user deleted").SUCCESS();
         }
     }
 

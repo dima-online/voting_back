@@ -5,22 +5,15 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.util.Set;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -32,8 +25,9 @@ public class Answer implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.answer_id_seq", sequenceName = "core.answer_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.answer_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
@@ -47,6 +41,9 @@ public class Answer implements Serializable {
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Question questionId;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "answerId", fetch = FetchType.EAGER)
+    private Set<Decision> decisionSet;
 
     public Answer() {
     }
@@ -91,6 +88,11 @@ public class Answer implements Serializable {
     public void setQuestionId(Question questionId) {
         this.questionId = questionId;
     }
+
+    @XmlTransient
+    public Set<Decision> getDecisionSet() { return decisionSet;}
+
+    public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
 
     @Override
     public int hashCode() {

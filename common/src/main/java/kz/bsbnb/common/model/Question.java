@@ -5,29 +5,17 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Set;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
- *
  * @author ruslan
  */
 @Entity
@@ -36,8 +24,9 @@ public class Question implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @SequenceGenerator(name = "core.question_id_seq", sequenceName = "core.question_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.question_id_seq")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "id")
     private Long id;
     @Basic(optional = false)
@@ -55,8 +44,13 @@ public class Question implements Serializable {
     @Size(max = 2000)
     @Column(name = "decision")
     private String decision;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId", fetch = FetchType.EAGER)
+    private Set<Decision> decisionSet;
+    @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voting votingId;
@@ -114,6 +108,11 @@ public class Question implements Serializable {
         this.answerSet = answerSet;
     }
 
+    @XmlTransient
+    public Set<Decision> getDecisionSet() { return decisionSet;}
+
+    public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
+
     public Voting getVotingId() {
         return votingId;
     }
@@ -122,9 +121,13 @@ public class Question implements Serializable {
         this.votingId = votingId;
     }
 
-    public String getQuestionType() {return questionType;}
+    public String getQuestionType() {
+        return questionType;
+    }
 
-    public void setQuestionType(String questionType) {this.questionType = questionType;}
+    public void setQuestionType(String questionType) {
+        this.questionType = questionType;
+    }
 
     @Override
     public int hashCode() {
@@ -150,5 +153,5 @@ public class Question implements Serializable {
     public String toString() {
         return "kz.bsbnb.common.model.Question[ id=" + id + " ]";
     }
-    
+
 }
