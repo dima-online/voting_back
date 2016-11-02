@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"encoding/json"
 )
 
 type SimpleChaincode struct {
@@ -30,6 +31,21 @@ type SimpleChaincode struct {
 	separated with argument ;
 	args[n] / args[m] - user, points
 */
+
+type Variant struct {
+	point  float64
+	Name   string
+
+}
+type AbstQ struct {
+	variants []Variant
+}
+
+func (box *AbstQ) AddItem(item Variant) []Variant {
+	box.variants = append(box.variants, item)
+	return box.variants
+}
+
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	fmt.Println("Arguments:")
 	fmt.Println(args)
@@ -87,7 +103,7 @@ func errorJson(function string, errorMsg error) []byte {
 	return []byte(error);
 }
 // voteId, questions simple , questions cumulative , userid points
-//String[] args = {"1", "question_simple", "." , "question_cunulative", ".", "1", "102"};
+//String[] args = {"1", "question1", "." , "{\"question2\":[{\"variant1\":12},{\"variant2\":22}]}", ".", "1", "102"};
 
 func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var answer, qcol, question string
@@ -107,9 +123,14 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 
 	voteId = int32(v)
 
+	var flag int
+	flag = 0
 
-	flag := 0
+	var ff string
 
+	for i := 0; i < len(args); i++{
+		ff = ff + " " + args[i]
+	}
 
 	for i := 1; i < len(args); i++ {
 		if args[i] == "." {
@@ -136,7 +157,59 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 				}
 			} else if flag == 1{
 				question = args[i]
-				qcol = strconv.Itoa(int(voteId)) + "_" + question
+
+				//------------------------------------------------------------------------
+				// Unmarshal abstained question
+				var questAbst, jsonSave string
+				var f interface{}
+				err := json.Unmarshal([]byte(question), &f)
+
+				if err == nil {
+
+				}
+
+				m := f.(map[string]interface{})
+				var variant Variant
+				variants := []Variant{}
+				abstQ := AbstQ{variants}
+
+
+				for k, v := range m {
+					switch vv := v.(type) {
+					case []interface{}:
+						fmt.Println(k, "is an array:")
+						questAbst = k
+						for i, u := range vv {
+							fmt.Println(i, u)
+
+							for c,t := range u.(map[string]interface{}) {
+								fmt.Println(c)
+								fmt.Println(t)
+								variant.Name = c
+								variant.point = t.(float64)
+								abstQ.AddItem(variant)
+							}
+						}
+					default:
+						fmt.Println(k, "is of a type I don't know how to handle")
+					}
+				}
+
+
+
+				jsonSave = "{\"" + questAbst + "\":["
+				for o := range abstQ.variants{
+					if o != 0 {
+						jsonSave = jsonSave + ","
+					}
+					jsonSave = jsonSave + "{\""+abstQ.variants[o].Name + "\":" + strconv.Itoa(int(abstQ.variants[o].point)) + "}"
+
+				}
+				jsonSave  = jsonSave + "]}"
+
+				//------------------------------------------------------------------------
+				qcol = strconv.Itoa(int(voteId)) + "_" + questAbst
+
 				ok, err := stub.InsertRow("questions", shim.Row{
 					Columns: []*shim.Column{
 						&shim.Column{Value: &shim.Column_String_{String_: qcol}},
@@ -144,7 +217,7 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 						&shim.Column{Value: &shim.Column_Int32{Int32: 0}},
 						&shim.Column{Value: &shim.Column_Int32{Int32: 0}},
 						&shim.Column{Value: &shim.Column_String_{String_: "abstained"}},
-						&shim.Column{Value: &shim.Column_String_{String_: question}}},
+						&shim.Column{Value: &shim.Column_String_{String_: jsonSave}}},
 
 				})
 
@@ -163,6 +236,7 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 				userId = int32(u)
 
 				p, err := strconv.Atoi(args[i+1])
+				i++
 
 				if err != nil {
 					throwError = errors.New("Expecting integer value for points to register")
@@ -192,11 +266,12 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 }
 
 //vote
-
+//String[] args ={"1", "1", "question2", "abstained", "{\"question2\":[{\"variant1\":100},{\"variant2\":100}]}"};
+//function = "vote";
 func (t *SimpleChaincode) vote(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var voteId int32
 	var userId int32
-	var question, qcol, anscol string
+	var question, qcol, anscol, jsonSave string
 	var qType string
 	var answer string
 	var throwError error
@@ -262,12 +337,113 @@ func (t *SimpleChaincode) vote(stub shim.ChaincodeStubInterface, args []string) 
 	astype = row.Columns[4].GetString_()
 	asans = row.Columns[5].GetString_()
 
-	if answer == "YES" {
-		yes = yes + 1
-	} else if answer == "NO" {
-		no = no + 1
-	} else if answer == "NOVOTE"{
-		novote = novote + 1
+
+	if qType == "simple" {
+		if answer == "YES" {
+			yes = yes + 1
+		} else if answer == "NO" {
+			no = no + 1
+		} else if answer == "NOVOTE" {
+			novote = novote + 1
+		}
+	} else {
+		var questAbst string
+		var f interface{}
+		err := json.Unmarshal([]byte(answer), &f)
+
+		if err == nil {
+
+		}
+
+		m := f.(map[string]interface{})
+		var variant Variant
+		variants := []Variant{}
+		abstQ := AbstQ{variants}
+
+
+		for k, v := range m {
+			switch vv := v.(type) {
+			case []interface{}:
+				fmt.Println(k, "is an array:")
+				questAbst = k
+				for i, u := range vv {
+					fmt.Println(i, u)
+
+					for c,t := range u.(map[string]interface{}) {
+						fmt.Println(c)
+						fmt.Println(t)
+						variant.Name = c
+						variant.point = t.(float64)
+						abstQ.AddItem(variant)
+					}
+				}
+			default:
+				fmt.Println(k, "is of a type I don't know how to handle")
+			}
+		}
+
+
+		var f2 interface{}
+		err = json.Unmarshal([]byte(asans), &f2)
+
+		if err == nil {
+
+		}
+
+		m2 := f2.(map[string]interface{})
+		var variantInner Variant
+		variantsInner := []Variant{}
+		abstQInner := AbstQ{variantsInner}
+
+
+		for k, v := range m2 {
+			switch vv := v.(type) {
+			case []interface{}:
+				fmt.Println(k, "is an array:")
+				questAbst = k
+				for i, u := range vv {
+					fmt.Println(i, u)
+
+					for c,t := range u.(map[string]interface{}) {
+						fmt.Println(c)
+						fmt.Println(t)
+
+						for o := range abstQ.variants{
+							if abstQ.variants[o].Name == c{
+								variantInner.point = t.(float64) + abstQ.variants[o].point
+								variantInner.Name = c
+								break
+							}
+						}
+
+
+						abstQInner.AddItem(variantInner)
+					}
+				}
+			default:
+				fmt.Println(k, "is of a type I don't know how to handle")
+			}
+		}
+
+		//for o := range abstQ.variants{
+		//	for inner := range abstQInner.variants{
+		//		if abstQ.variants[o].Name == abstQInner.variants[inner].Name{
+		//			abstQInner.variants[inner].point  = abstQInner.variants[inner].point + abstQ.variants[o].point
+		//		}
+		//	}
+		//}
+
+
+		jsonSave = "{\"" + questAbst + "\":["
+		for o := range abstQInner.variants{
+			if o != 0 {
+				jsonSave = jsonSave + ","
+			}
+			jsonSave = jsonSave + "{\""+abstQInner.variants[o].Name + "\":" + strconv.Itoa(int(abstQInner.variants[o].point)) + "}"
+
+		}
+		jsonSave  = jsonSave + "]}"
+
 	}
 
 	// update question
@@ -281,7 +457,7 @@ func (t *SimpleChaincode) vote(stub shim.ChaincodeStubInterface, args []string) 
 				&shim.Column{Value: &shim.Column_Int32{Int32: no}},
 				&shim.Column{Value: &shim.Column_Int32{Int32: novote}},
 				&shim.Column{Value: &shim.Column_String_{String_: astype}},
-				&shim.Column{Value: &shim.Column_String_{String_: asans}},
+				&shim.Column{Value: &shim.Column_String_{String_: jsonSave}},
 			},
 		})
 	if err != nil {
@@ -311,7 +487,8 @@ func (t *SimpleChaincode) vote(stub shim.ChaincodeStubInterface, args []string) 
 }
 
 //transfer vote points
-
+//function = "transfer";
+//String[] args2 = {"1", "1","2","20"}; voteid userfromid usertoid points
 func (t *SimpleChaincode) transfer(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var voteId int32
 	var userFromId int32
@@ -448,7 +625,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 }
 
 
-
+//function = "user";
+//String[] args2 = {"1","1"}; voteid , userid
 func (t *SimpleChaincode) user_info(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	fmt.Println("Answer info...")
 	var err error
@@ -500,7 +678,8 @@ func (t *SimpleChaincode) user_info(stub shim.ChaincodeStubInterface, args []str
 	return []byte(jsonResp), nil
 }
 
-
+//function = "answer";
+// String[] args2 = {"1","1", "question1"}; voteid , userid
 func (t *SimpleChaincode) answer_info(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	fmt.Println("Answer info...")
 	var err error
@@ -572,6 +751,9 @@ Query question_info
 
 args : voteId - id голосования
        question - вопрос
+
+        function = "question";
+        String[] args = {"1", "question2"};
 */
 func (t *SimpleChaincode) question_info(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	fmt.Println("Question info...")
