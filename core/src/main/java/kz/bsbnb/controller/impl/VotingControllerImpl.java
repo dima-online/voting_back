@@ -1,15 +1,10 @@
 package kz.bsbnb.controller.impl;
 
+import kz.bsbnb.common.bean.QuestionBean;
 import kz.bsbnb.common.consts.QuestionType;
-import kz.bsbnb.common.model.Answer;
-import kz.bsbnb.common.model.Question;
-import kz.bsbnb.common.model.User;
-import kz.bsbnb.common.model.Voting;
+import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IVotingController;
-import kz.bsbnb.repository.IAnswerRepository;
-import kz.bsbnb.repository.IQuestionRepository;
-import kz.bsbnb.repository.IUserRepository;
-import kz.bsbnb.repository.IVotingRepository;
+import kz.bsbnb.repository.*;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +35,10 @@ public class VotingControllerImpl implements IVotingController {
     @Autowired
     IAnswerRepository answerRepository;
 
+    @Autowired
+    IVoterRepository voterRepository;
+
+
     @Override
     @RequestMapping(value = "/list/{userId}", method = RequestMethod.GET)
     public List<Voting> getVotings(@PathVariable Long userId,
@@ -52,36 +51,109 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/allq/{Id}", method = RequestMethod.GET)
-    public List<Question> getVotingQuestions(@PathVariable Long Id,
-                                             @RequestParam(defaultValue = "0") int page,
-                                             @RequestParam(defaultValue = "20") int count) {
-        Voting voting = votingRepository.findOne(Id);
-        List<Question> question = questionRepository.findByVotingId(voting);
-        return question;
-    }
-
-    @Override
-    @RequestMapping(value = "/q/{Id}/{qid}", method = RequestMethod.GET)
-    public Question getVotingQuestion(@PathVariable Long Id,@PathVariable Long qid) {
-        Voting voting = votingRepository.findOne(Id);
-//        List<Question> question = questionRepository.findByVotingId(voting);
-        Question result = questionRepository.findOne(qid);
-//        for (Question q:question) {
-//            if (q.getId().equals(qid)) {
-//                result=q;
-//            }
-//        }
+    @RequestMapping(value = "/work/{userId}", method = RequestMethod.GET)
+    public List<Voting> getWorkVotings(@PathVariable Long userId,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "20") int count) {
+        User user = userRepository.findOne(userId);
+        List<Voting> voting = StreamSupport.stream(votingRepository.findByUser(user, new PageRequest(page, count)).spliterator(), false)
+                .collect(Collectors.toList());
+        List<Voting> result = new ArrayList<>();
+        for (Voting next : voting) {
+            if (next.getDateEnd() == null) {
+                result.add(next);
+            }
+        }
         return result;
     }
 
     @Override
-    @RequestMapping(value = "/addq/{Id}", method = RequestMethod.POST)
-    public SimpleResponse addVotingQuestions(@PathVariable Long Id,@RequestBody @Valid Question question) {
-        Voting voting = votingRepository.findOne(Id);
+    @RequestMapping(value = "/old/{userId}", method = RequestMethod.GET)
+    public List<Voting> getOldVotings(@PathVariable Long userId,
+                                      @RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "20") int count) {
+        User user = userRepository.findOne(userId);
+        List<Voting> voting = StreamSupport.stream(votingRepository.findByUser(user, new PageRequest(page, count)).spliterator(), false)
+                .collect(Collectors.toList());
+        List<Voting> result = new ArrayList<>();
+        for (Voting next : voting) {
+            if (next.getDateEnd() != null) {
+                result.add(next);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/allq/{votingId}", method = RequestMethod.GET)
+    public List<QuestionBean> getVotingQuestions(@PathVariable Long votingId,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "20") int count) {
+        Voting voting = votingRepository.findOne(votingId);
+        List<Question> question = questionRepository.findByVotingId(voting);
+        List<QuestionBean> result = new ArrayList<>();
+        for (Question q : question) {
+            QuestionBean bean = castFromQuestion(q);
+            result.add(bean);
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/q/{votingId}/{qid}", method = RequestMethod.GET)
+    public QuestionBean getVotingQuestion(@PathVariable Long votingId, @PathVariable Long qid) {
+        Voting voting = votingRepository.findOne(votingId);
+        List<Question> question = questionRepository.findByVotingId(voting);
+        QuestionBean result = new QuestionBean();
+        for (Question q : question) {
+            if (q.getId().equals(qid)) {
+                result = castFromQuestion(q);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/questions/{votingId}/{userId}", method = RequestMethod.GET)
+    public List<QuestionBean> getVotingQuestions(@PathVariable Long votingId, @PathVariable Long userId) {
+        Voting voting = votingRepository.findOne(votingId);
+        User user = userRepository.findOne(userId);
+        List<QuestionBean> result = new ArrayList<>();
+
+        if (voting != null && user != null && canVote(voting, user)) {
+            List<Question> question = questionRepository.findByVotingId(voting);
+            for (Question q : question) {
+                QuestionBean bean = castFromQuestion(q);
+                result.add(bean);
+            }
+
+        }
+        return result;
+    }
+
+    private QuestionBean castFromQuestion(Question q) {
+        QuestionBean result = new QuestionBean();
+        result.setId(q.getId());
+        result.setDecision(q.getDecision());
+        result.setNum(q.getNum());
+        result.setQuestion(q.getQuestion());
+        result.setQuestionType(q.getQuestionType());
+        result.setVotingId(q.getVotingId().getId());
+        result.setAnswerSet(q.getAnswerSet());
+        result.setDecisionSet(q.getDecisionSet());
+        for (Answer answer : q.getAnswerSet()) {
+
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/addq/{votingId}", method = RequestMethod.POST)
+    public SimpleResponse addVotingQuestions(@PathVariable Long votingId, @RequestBody @Valid Question question) {
+        Voting voting = votingRepository.findOne(votingId);
         //TODO Добавить проверку статуса голосования
         if (voting == null) {
-            return new SimpleResponse("voting with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("voting with id (" + votingId + ") not found").ERROR_NOT_FOUND();
         } else {
             Question result = new Question();
             result.setQuestion(question.getQuestion());
@@ -98,12 +170,12 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/editq/{Id}", method = RequestMethod.POST)
-    public SimpleResponse editVotingQuestions(@PathVariable Long Id, @RequestBody @Valid Question question) {
-        Voting voting = votingRepository.findOne(Id);
+    @RequestMapping(value = "/editq/{votingId}", method = RequestMethod.POST)
+    public SimpleResponse editVotingQuestions(@PathVariable Long votingId, @RequestBody @Valid Question question) {
+        Voting voting = votingRepository.findOne(votingId);
         //TODO Добавить проверку статуса голосования
         if (voting == null) {
-            return new SimpleResponse("voting with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("voting with id (" + votingId + ") not found").ERROR_NOT_FOUND();
         } else {
             Question ques = questionRepository.findOne(question.getId());
             ques.setQuestion(question.getQuestion());
@@ -116,12 +188,12 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/delq/{Id}", method = RequestMethod.DELETE)
-    public SimpleResponse deleteVotingQuestions(@PathVariable Long Id, @RequestBody @Valid Question question) {
-        Voting voting = votingRepository.findOne(Id);
+    @RequestMapping(value = "/delq/{votingId}", method = RequestMethod.DELETE)
+    public SimpleResponse deleteVotingQuestions(@PathVariable Long votingId, @RequestBody @Valid Question question) {
+        Voting voting = votingRepository.findOne(votingId);
         //TODO Добавить проверку статуса голосования
         if (voting == null) {
-            return new SimpleResponse("voting with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("voting with id (" + votingId + ") not found").ERROR_NOT_FOUND();
         } else {
             Question ques = questionRepository.findOne(question.getId());
             deleteVotingAnswers(question);
@@ -137,12 +209,12 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/addq/answer/{Id}", method = RequestMethod.POST)
-    public SimpleResponse addVotingAnswer(@PathVariable Long Id,@RequestBody @Valid Answer answer) {
-        Question question = questionRepository.findOne(Id);
+    @RequestMapping(value = "/addq/answer/{questionId}", method = RequestMethod.POST)
+    public SimpleResponse addVotingAnswer(@PathVariable Long questionId, @RequestBody @Valid Answer answer) {
+        Question question = questionRepository.findOne(questionId);
         //TODO Добавить проверку статуса голосования
         if (question == null) {
-            return new SimpleResponse("question with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("question with id (" + questionId + ") not found").ERROR_NOT_FOUND();
         } else {
             Answer result = new Answer();
             result.setAnswer(answer.getAnswer());
@@ -154,12 +226,12 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/editq/answer/{Id}", method = RequestMethod.POST)
-    public SimpleResponse editVotingAnswer(@PathVariable Long Id, @RequestBody @Valid Answer answer) {
-        Question question = questionRepository.findOne(Id);
+    @RequestMapping(value = "/editq/answer/{questionId}", method = RequestMethod.POST)
+    public SimpleResponse editVotingAnswer(@PathVariable Long questionId, @RequestBody @Valid Answer answer) {
+        Question question = questionRepository.findOne(questionId);
         //TODO Добавить проверку статуса голосования
         if (question == null) {
-            return new SimpleResponse("question with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("question with id (" + questionId + ") not found").ERROR_NOT_FOUND();
         } else {
             Answer result = answerRepository.findOne(answer.getId());
             result.setAnswer(answer.getAnswer());
@@ -170,12 +242,12 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/delq/answer/{Id}", method = RequestMethod.POST)
-    public SimpleResponse deleteVotingAnswer(@PathVariable Long Id, @RequestBody @Valid Answer answer) {
-        Question question = questionRepository.findOne(Id);
+    @RequestMapping(value = "/delq/answer/{questionId}", method = RequestMethod.DELETE)
+    public SimpleResponse deleteVotingAnswer(@PathVariable Long questionId, @RequestBody @Valid Answer answer) {
+        Question question = questionRepository.findOne(questionId);
         //TODO Добавить проверку статуса голосования
         if (question == null) {
-            return new SimpleResponse("question with id ("+Id+") not found").ERROR_NOT_FOUND();
+            return new SimpleResponse("question with id (" + questionId + ") not found").ERROR_NOT_FOUND();
         } else {
             Answer result = answerRepository.findOne(answer.getId());
             answerRepository.delete(result);
@@ -184,8 +256,19 @@ public class VotingControllerImpl implements IVotingController {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/voter/{votingId}/{userId}", method = RequestMethod.GET)
+    public Voter getVoter(@PathVariable Long votingId, @PathVariable Long userId) {
+        Voting voting = votingRepository.findOne(votingId);
+        User user = userRepository.findOne(userId);
+        Voter result = voterRepository.findByVotingIdAndUserId(voting, user);
+
+        return result;
+    }
+
+
     private void addListAnswer(Question question, List<Answer> answers) {
-        for (Answer next: answers) {
+        for (Answer next : answers) {
             Answer result = new Answer();
             result.setAnswer(next.getAnswer());
             result.setQuestionId(question);
@@ -209,5 +292,16 @@ public class VotingControllerImpl implements IVotingController {
         answerAbstained.setAnswer("Воздержался");//Abstained
         answers.add(answerAbstained);
         addListAnswer(question, answers);
+    }
+
+    private boolean canVote(Voting voting, User user) {
+        boolean result = false;
+        for (Voter voter : voting.getVoterSet()) {
+            if (voter.getUserId().equals(user)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 }

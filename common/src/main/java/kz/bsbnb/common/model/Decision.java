@@ -2,11 +2,11 @@ package kz.bsbnb.common.model;
 
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -32,7 +32,7 @@ public class Decision implements Serializable {
     @Column(name = "score")
     private Integer score;
     @JoinColumn(name = "answer_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Answer answerId;
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
@@ -40,6 +40,8 @@ public class Decision implements Serializable {
     @JoinColumn(name = "voter_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voter voterId;
+    @Column(name = "comments")
+    private String comments;
 
     public Decision() {
     }
@@ -100,6 +102,10 @@ public class Decision implements Serializable {
     public void setVoterId(Voter voterId) {
         this.voterId = voterId;
     }
+
+    public String getComments() {return comments;}
+
+    public void setComments(String comments) {this.comments = comments;}
 
     @Override
     public int hashCode() {

@@ -1,7 +1,9 @@
 package kz.bsbnb.controller;
 
+import kz.bsbnb.common.bean.QuestionBean;
 import kz.bsbnb.common.model.Answer;
 import kz.bsbnb.common.model.Question;
+import kz.bsbnb.common.model.Voter;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.util.SimpleResponse;
 
@@ -14,19 +16,27 @@ public interface IVotingController {
 
     List<Voting> getVotings(Long userId, int page, int count);
 
-    List<Question> getVotingQuestions(Long Id, int page, int count);
+    List<Voting> getWorkVotings(Long userId, int page, int count);
 
-    Question getVotingQuestion(Long Id, Long qid);
+    List<Voting> getOldVotings(Long userId, int page, int count);
 
-    SimpleResponse addVotingQuestions(Long Id, Question question);
+    List<QuestionBean> getVotingQuestions(Long votingId, int page, int count);
 
-    SimpleResponse editVotingQuestions( Long Id, Question question);
+    QuestionBean getVotingQuestion(Long votingId, Long qid);
 
-    SimpleResponse deleteVotingQuestions(Long Id, Question question);
+    SimpleResponse addVotingQuestions(Long votingId, Question question);
 
-    SimpleResponse addVotingAnswer(Long Id, Answer answer);
+    SimpleResponse editVotingQuestions(Long votingId, Question question);
 
-    SimpleResponse editVotingAnswer( Long Id, Answer answer);
+    SimpleResponse deleteVotingQuestions(Long votingId, Question question);
 
-    SimpleResponse deleteVotingAnswer(Long Id, Answer answer);
+    SimpleResponse addVotingAnswer(Long votingId, Answer answer);
+
+    SimpleResponse editVotingAnswer(Long votingId, Answer answer);
+
+    SimpleResponse deleteVotingAnswer(Long votingId, Answer answer);
+
+    Voter getVoter(Long votingId, Long userId);
+
+    List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
 }

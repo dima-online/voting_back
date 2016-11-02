@@ -17,7 +17,7 @@ jar {
     baseName = 'core'
 }
 springBoot {
-    mainClass = 'kz.bsbnb.cli.StartCLI'
+    mainClass = 'kz.bsbnb.BlockChainApplication'
 }
 defaultTasks 'installApp'
 

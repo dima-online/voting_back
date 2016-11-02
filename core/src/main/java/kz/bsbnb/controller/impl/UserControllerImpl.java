@@ -1,6 +1,12 @@
 package kz.bsbnb.controller.impl;
 
+import kz.bsbnb.common.bean.OrgBean;
+import kz.bsbnb.common.bean.UserBean;
+import kz.bsbnb.common.consts.Role;
+import kz.bsbnb.common.model.Organisation;
 import kz.bsbnb.common.model.User;
+import kz.bsbnb.common.model.UserRoles;
+import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.processor.UserProcessor;
 import kz.bsbnb.repository.IUserRepository;
@@ -10,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -30,12 +37,16 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<User> getUsers(@RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "20") int count) {
+    public List<UserBean> getUsers(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "20") int count) {
         // todo: pagination
         List<User> users = StreamSupport.stream(userRepository.findAll(new PageRequest(page, count)).spliterator(), false)
                 .collect(Collectors.toList());
-        return users;
+        List<UserBean> result = new ArrayList<>();
+        for (User user: users) {
+            result.add(castUser(user));
+        }
+        return result;
     }
 
     @Override
@@ -51,7 +62,8 @@ public class UserControllerImpl implements IUserController {
         if (user == null) {
             return new SimpleResponse("no user with such id").ERROR_NOT_FOUND();
         }
-        return new SimpleResponse(user).SUCCESS();
+        UserBean userBean = castUser(user);
+        return new SimpleResponse(userBean).SUCCESS();
     }
 
     @Override
@@ -70,7 +82,8 @@ public class UserControllerImpl implements IUserController {
             return new SimpleResponse("no user with such userName").ERROR_NOT_FOUND();
         }
         if (localUser.getPassword().equals(user.getPassword())) {
-            return new SimpleResponse(localUser).SUCCESS();
+            UserBean userBean = castUser(localUser);
+            return new SimpleResponse(userBean).SUCCESS();
         } else {
             return new SimpleResponse("Неверный пароль").ERROR();
         }
@@ -101,9 +114,90 @@ public class UserControllerImpl implements IUserController {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/orgs/{userId}", method = RequestMethod.GET)
+    public List<Organisation> getAllOrgs(@PathVariable Long userId) {
+        User localUser = userRepository.findOne(userId);
+        List<Organisation> result = new ArrayList<>();
+        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+            result.add(userRoles.getOrgId());
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/orgs/workvoting/{userId}", method = RequestMethod.GET)
+    public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
+        User localUser = userRepository.findOne(userId);
+        List<OrgBean> result = new ArrayList<>();
+        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+            OrgBean organisation = new OrgBean();
+            organisation.setId(userRoles.getOrgId().getId());
+            organisation.setExternalId(userRoles.getOrgId().getExternalId());
+            organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+            organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
+            organisation.setStatus(userRoles.getOrgId().getStatus());
+            List<Voting> vSet = new ArrayList<>();
+            for (Voting voting:userRoles.getOrgId().getVotingSet()) {
+                if (voting.getDateClose()==null) {
+                    vSet.add(voting);
+                }
+            }
+            organisation .setVotingSet(vSet);
+            result.add(organisation);
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/orgs/oldvoting/{userId}", method = RequestMethod.GET)
+    public List<OrgBean> getAllOrgsWithOldVoting(@PathVariable Long userId) {
+        User localUser = userRepository.findOne(userId);
+        List<OrgBean> result = new ArrayList<>();
+        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+            OrgBean organisation = new OrgBean();
+            organisation.setId(userRoles.getOrgId().getId());
+            organisation.setExternalId(userRoles.getOrgId().getExternalId());
+            organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+            organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
+            organisation.setStatus(userRoles.getOrgId().getStatus());
+            List<Voting> vSet = new ArrayList<>();
+            for (Voting voting:userRoles.getOrgId().getVotingSet()) {
+                if (voting.getDateClose()!=null) {
+                    vSet.add(voting);
+                }
+            }
+            organisation .setVotingSet(vSet);
+            result.add(organisation);
+        }
+        return result;
+    }
+
     //функция для криптовки паролей
     public static String pwd(String password) {
         return password;
     }
 
+    //функция создания UserBean из User
+    private UserBean castUser(User user) {
+
+        UserBean userBean = new UserBean();
+        userBean.setId(user.getId());
+        userBean.setLogin(user.getUsername());
+        userBean.setIin(user.getIin());
+        if (user.getUserInfoId()!=null) {
+            userBean.setUserInfo(user.getUserInfoId());
+        }
+        if (!user.getUserRolesSet().isEmpty()) {
+            Role role = Role.ROLE_USER;
+            for (UserRoles userRole:user.getUserRolesSet()) {
+                Role temp = userRole.getRole();
+                if (role.compareTo(temp)>0) {
+                    role = temp;
+                }
+            }
+            userBean.setRole(role);
+        }
+        return userBean;
+    }
 }

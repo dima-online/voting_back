@@ -74,7 +74,8 @@ public class OrganisationControllerImpl implements IOrganisationController {
             userBean.setRole(userRoles.getRole());
             userBean.setId(userRoles.getUserId().getId());
             userBean.setOrganisation(organisation);
-            userBean.setUser(userRoles.getUserId());
+            userBean.setLogin(userRoles.getUserId().getUsername());
+            userBean.setIin(userRoles.getUserId().getIin());
             userBean.setUserInfo(userRoles.getUserId().getUserInfoId());
             result.add(userBean);
         }
@@ -90,11 +91,13 @@ public class OrganisationControllerImpl implements IOrganisationController {
         if (userBean.getId() != null) {
             user = userRepository.findOne(userBean.getId());
         } else {
-            user = userRepository.findByUsername(userBean.getUser().getUsername());
+            user = userRepository.findByUsername(userBean.getLogin());
         }
         String pswd = StringUtil.RND(6);
         if (user == null) {
-            user = userBean.getUser();
+            user = new User();
+            user.setUsername(userBean.getLogin());
+            user.setIin(userBean.getIin());
             user.setPassword(pswd);
             needSendEmail = true;
             user = userRepository.save(user);
@@ -131,10 +134,10 @@ public class OrganisationControllerImpl implements IOrganisationController {
             userRoles.add(userRole);
         }
         if (userRoles.isEmpty()) {
-            return new SimpleResponse(user).ERROR();
+            return new SimpleResponse("Не могу дать права пользователю").ERROR();
         } else {
 
-            return new SimpleResponse(user).SUCCESS();
+            return new SimpleResponse("Пользователь создан").SUCCESS();
         }
     }
 

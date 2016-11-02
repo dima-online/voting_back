@@ -2,7 +2,6 @@ package kz.bsbnb.common.bean;
 
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.Organisation;
-import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.model.UserInfo;
 
 /**
@@ -12,12 +11,17 @@ public class UserBean {
 
     private Long id;
     private Role role;
-    private User user;
+    private String login;
+    private String iin;
     private UserInfo userInfo;
     private Organisation organisation;
 
     public UserBean() {
     }
+
+    public String getIin() {return iin;}
+
+    public void setIin(String iin) {this.iin = iin;}
 
     public Long getId() {
         return id;
@@ -35,12 +39,12 @@ public class UserBean {
         this.role = role;
     }
 
-    public User getUser() {
-        return user;
+    public String getLogin() {
+        return login;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public UserInfo getUserInfo() {

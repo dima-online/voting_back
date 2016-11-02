@@ -31,4 +31,5 @@ public class BlockChainApplication {
                 .build()
                 .pathMapping("/");
     }
+
 }
