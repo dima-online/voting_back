@@ -7,5 +7,6 @@
     <include file="2016-10-19--01-insert-data-users.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--02-add_comment_field.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--03-edit_decision_field.xml" relativeToChangelogFile="true"/>
+    <include file="2016-10-19--04-edit_user_and_voter_fields.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

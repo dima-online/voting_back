@@ -1,0 +1,32 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Ruslan Beyganov" id="2016-10-19--04-edit_user_and_voter_fields" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+
+            /******************** Update Table: user_roles ************************/
+
+            ALTER TABLE core.user_roles ADD share_count INTEGER NULL;
+
+            ALTER TABLE core.user_roles ADD cannot_vote INTEGER NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.user_roles.share_count IS 'Последние количество акции';
+
+            COMMENT ON COLUMN core.user_roles.cannot_vote IS 'Признак возможности голосовать 0 - Может голосовать 1- неможет голосовать 2 - условный голос 3 - запрет на голосование';
+
+
+            /******************** Update Table: voter ************************/
+
+            ALTER TABLE core.voter ADD date_voting TIMESTAMP NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.voter.date_voting IS 'Дата фиксации голосования';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

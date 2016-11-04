@@ -1,18 +1,22 @@
 package kz.bsbnb.controller.impl;
 
+import kz.bsbnb.common.bean.ConfirmBean;
+import kz.bsbnb.common.bean.DecisionBean;
 import kz.bsbnb.common.bean.QuestionBean;
+import kz.bsbnb.common.bean.VoterBean;
 import kz.bsbnb.common.consts.QuestionType;
 import kz.bsbnb.common.model.*;
+import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.repository.*;
+import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -37,6 +41,15 @@ public class VotingControllerImpl implements IVotingController {
 
     @Autowired
     IVoterRepository voterRepository;
+
+    @Autowired
+    IDecisionRepository decisionRepository;
+
+    @Autowired
+    IUserController userController;
+
+    @Autowired
+    ConfirmationService confirmationService;
 
 
     @Override
@@ -160,12 +173,33 @@ public class VotingControllerImpl implements IVotingController {
             result.setQuestionType(question.getQuestionType());
             result.setVotingId(voting);
             result.setNum(question.getNum());
-            questionRepository.save(result);
+            result = questionRepository.save(result);
             if (question.getQuestionType().equals(QuestionType.ORDINARY.name())) {
-                addOrdinaryAnswer(question);
+                addOrdinaryAnswer(result);
             }
             //TODO Добавить обращение у HL
             return new SimpleResponse(result).SUCCESS();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/complate/{votingId}/{userId}", method = RequestMethod.POST)
+    public SimpleResponse complateVoting(@PathVariable Long votingId, @PathVariable Long userId, @RequestBody @Valid ConfirmBean bean) {
+        if (confirmationService.check(bean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            User user = userRepository.findOne(userId);
+            Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+            if (voter != null) {
+                voter.setDateVoting(bean.getDateConfirm());
+                voter.setPublicKey(bean.getPublicKey());
+                voter.setSignature(bean.getSignature());
+                voter = voterRepository.save(voter);
+                return new SimpleResponse(voter).SUCCESS();
+            } else {
+                return new SimpleResponse("Не верные данные голосующего").ERROR();
+            }
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR();
         }
     }
 
@@ -258,11 +292,31 @@ public class VotingControllerImpl implements IVotingController {
 
     @Override
     @RequestMapping(value = "/voter/{votingId}/{userId}", method = RequestMethod.GET)
-    public Voter getVoter(@PathVariable Long votingId, @PathVariable Long userId) {
+    public VoterBean getVoter(@PathVariable Long votingId, @PathVariable Long userId) {
         Voting voting = votingRepository.findOne(votingId);
         User user = userRepository.findOne(userId);
-        Voter result = voterRepository.findByVotingIdAndUserId(voting, user);
+        Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+        VoterBean result = new VoterBean();
+        result.setId(voter.getId());
+        result.setShareCount(voter.getShareCount());
+        Set<DecisionBean> beanSet = new HashSet();
+        for (Decision decision : voter.getDecisionSet()) {
+            DecisionBean bean = getBeanFromDecision(decision);
+            beanSet.add(bean);
+        }
+        result.setDecisions(beanSet);
+        result.setVoting(voter.getVotingId());
+        result.setUserId(userController.castUser(voter.getUserId()));
+        result.setSharePercent((float) 100 * voter.getShareCount() / getVotingAllScore(voting.getId()));
+        return result;
+    }
 
+    private int getVotingAllScore(Long votingId) {
+        int result = 0;
+        Voting voting = votingRepository.findOne(votingId);
+        for (Voter voter : voting.getVoterSet()) {
+            result = result + voter.getShareCount();
+        }
         return result;
     }
 
@@ -304,4 +358,48 @@ public class VotingControllerImpl implements IVotingController {
         }
         return result;
     }
+
+    @Override
+    public Decision getDecisionFromBean(DecisionBean bean) {
+        Decision result = new Decision();
+        Question question = questionRepository.findOne(bean.getQuestionId());
+        Answer answer = answerRepository.findOne(bean.getAnswerId());
+        User user = userRepository.findOne(bean.getUserId());
+        Voter voter = voterRepository.findByVotingIdAndUserId(question.getVotingId(), user);
+        Date d = bean.getDateCreate();
+        if (d == null) {
+            d = new Date();
+        }
+        if (bean.getId() == null) {
+            result.setQuestionId(question);
+            result.setAnswerId(answer);
+            result.setComments(bean.getComments());
+
+            result.setDateCreate(d);
+            result.setScore(bean.getScore());
+            result.setVoterId(voter);
+        } else {
+            result = decisionRepository.findOne(bean.getId());
+            result.setQuestionId(question);
+            result.setAnswerId(answer);
+            result.setComments(bean.getComments());
+            result.setDateCreate(d);
+            result.setScore(bean.getScore());
+            result.setVoterId(voter);
+        }
+        return result;
+    }
+
+    private DecisionBean getBeanFromDecision(Decision decision) {
+        DecisionBean result = new DecisionBean();
+        result.setId(decision.getId());
+        result.setScore(decision.getScore());
+        result.setAnswerId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
+        result.setComments(decision.getComments());
+        result.setDateCreate(decision.getDateCreate());
+        result.setQuestionId(decision.getQuestionId().getId());
+        result.setUserId(decision.getVoterId().getUserId().getId());
+        return result;
+    }
+
 }

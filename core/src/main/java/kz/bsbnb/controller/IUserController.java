@@ -32,4 +32,6 @@ public interface IUserController {
     List<OrgBean> getAllOrgsWithWorkVoting(Long userId);
 
     List<OrgBean> getAllOrgsWithOldVoting(Long userId);
+
+    UserBean castUser(User user);
 }

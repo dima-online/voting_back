@@ -14,9 +14,14 @@ public class OrgBean {
     private String externalId;
     private String status;
     private List<Voting> votingSet;
+    private int shareCount;
 
     public OrgBean() {
     }
+
+    public int getShareCount() {return shareCount;}
+
+    public void setShareCount(int shareCount) {this.shareCount = shareCount;}
 
     public Long getId() {
         return id;

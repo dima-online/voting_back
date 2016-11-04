@@ -15,9 +15,13 @@ public class UserBean {
     private String iin;
     private UserInfo userInfo;
     private Organisation organisation;
+    private int shareCount;
 
     public UserBean() {
     }
+    public int getShareCount() {return shareCount;}
+
+    public void setShareCount(int shareCount) {this.shareCount = shareCount;}
 
     public String getIin() {return iin;}
 

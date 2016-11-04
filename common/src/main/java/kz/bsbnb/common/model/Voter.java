@@ -8,13 +8,13 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -53,6 +53,9 @@ public class Voter implements Serializable {
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voting votingId;
+    @Column(name = "date_voting")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateVoting;
 
     public Voter() {
     }
@@ -126,6 +129,10 @@ public class Voter implements Serializable {
     public void setVotingId(Voting votingId) {
         this.votingId = votingId;
     }
+
+    public Date getDateVoting() {return dateVoting;}
+
+    public void setDateVoting(Date dateVoting) {this.dateVoting = dateVoting;}
 
     @Override
     public int hashCode() {

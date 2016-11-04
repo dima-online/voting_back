@@ -1,9 +1,12 @@
 package kz.bsbnb.controller;
 
+import kz.bsbnb.common.bean.ConfirmBean;
+import kz.bsbnb.common.bean.DecisionBean;
 import kz.bsbnb.common.bean.QuestionBean;
+import kz.bsbnb.common.bean.VoterBean;
 import kz.bsbnb.common.model.Answer;
+import kz.bsbnb.common.model.Decision;
 import kz.bsbnb.common.model.Question;
-import kz.bsbnb.common.model.Voter;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.util.SimpleResponse;
 
@@ -36,7 +39,11 @@ public interface IVotingController {
 
     SimpleResponse deleteVotingAnswer(Long votingId, Answer answer);
 
-    Voter getVoter(Long votingId, Long userId);
+    VoterBean getVoter(Long votingId, Long userId);
 
     List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
+
+    Decision getDecisionFromBean(DecisionBean bean);
+
+    SimpleResponse complateVoting(Long votingId, Long userId, ConfirmBean bean);
 }

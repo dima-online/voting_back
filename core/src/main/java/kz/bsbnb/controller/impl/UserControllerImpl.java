@@ -43,7 +43,7 @@ public class UserControllerImpl implements IUserController {
         List<User> users = StreamSupport.stream(userRepository.findAll(new PageRequest(page, count)).spliterator(), false)
                 .collect(Collectors.toList());
         List<UserBean> result = new ArrayList<>();
-        for (User user: users) {
+        for (User user : users) {
             result.add(castUser(user));
         }
         return result;
@@ -119,7 +119,7 @@ public class UserControllerImpl implements IUserController {
     public List<Organisation> getAllOrgs(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<Organisation> result = new ArrayList<>();
-        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+        for (UserRoles userRoles : localUser.getUserRolesSet()) {
             result.add(userRoles.getOrgId());
         }
         return result;
@@ -130,21 +130,26 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+        for (UserRoles userRoles : localUser.getUserRolesSet()) {
             OrgBean organisation = new OrgBean();
             organisation.setId(userRoles.getOrgId().getId());
             organisation.setExternalId(userRoles.getOrgId().getExternalId());
             organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
             organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
             organisation.setStatus(userRoles.getOrgId().getStatus());
+            organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
             List<Voting> vSet = new ArrayList<>();
-            for (Voting voting:userRoles.getOrgId().getVotingSet()) {
-                if (voting.getDateClose()==null) {
+            boolean canAdd = false;
+            for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                if (voting.getDateClose() == null) {
                     vSet.add(voting);
+                    canAdd = true;
                 }
             }
-            organisation .setVotingSet(vSet);
-            result.add(organisation);
+            organisation.setVotingSet(vSet);
+            if (canAdd) {
+                result.add(organisation);
+            }
         }
         return result;
     }
@@ -154,21 +159,26 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithOldVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        for (UserRoles userRoles:localUser.getUserRolesSet()) {
+        for (UserRoles userRoles : localUser.getUserRolesSet()) {
             OrgBean organisation = new OrgBean();
             organisation.setId(userRoles.getOrgId().getId());
             organisation.setExternalId(userRoles.getOrgId().getExternalId());
             organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
             organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
             organisation.setStatus(userRoles.getOrgId().getStatus());
+            organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
             List<Voting> vSet = new ArrayList<>();
-            for (Voting voting:userRoles.getOrgId().getVotingSet()) {
-                if (voting.getDateClose()!=null) {
+            boolean canAdd = false;
+            for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                if (voting.getDateClose() != null) {
                     vSet.add(voting);
+                    canAdd = true;
                 }
             }
-            organisation .setVotingSet(vSet);
-            result.add(organisation);
+            organisation.setVotingSet(vSet);
+            if (canAdd) {
+                result.add(organisation);
+            }
         }
         return result;
     }
@@ -179,20 +189,20 @@ public class UserControllerImpl implements IUserController {
     }
 
     //функция создания UserBean из User
-    private UserBean castUser(User user) {
+    public UserBean castUser(User user) {
 
         UserBean userBean = new UserBean();
         userBean.setId(user.getId());
         userBean.setLogin(user.getUsername());
         userBean.setIin(user.getIin());
-        if (user.getUserInfoId()!=null) {
+        if (user.getUserInfoId() != null) {
             userBean.setUserInfo(user.getUserInfoId());
         }
         if (!user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;
-            for (UserRoles userRole:user.getUserRolesSet()) {
+            for (UserRoles userRole : user.getUserRolesSet()) {
                 Role temp = userRole.getRole();
-                if (role.compareTo(temp)>0) {
+                if (role.compareTo(temp) > 0) {
                     role = temp;
                 }
             }

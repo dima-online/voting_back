@@ -77,6 +77,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
             userBean.setLogin(userRoles.getUserId().getUsername());
             userBean.setIin(userRoles.getUserId().getIin());
             userBean.setUserInfo(userRoles.getUserId().getUserInfoId());
+            userBean.setShareCount(userRoles.getShareCount());
             result.add(userBean);
         }
         return result;
