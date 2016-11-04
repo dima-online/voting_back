@@ -6,5 +6,7 @@ package kz.bsbnb.block.controller.voting;
  */
 public interface IVotingQuery {
     // todo: make object stub
-    Object getVote(final long voteId);
+    Object getUserInfo(Long voteId, Long userId);
+    Object getAnswerInfo(Long voteId, Long userId, String question);
+    Object getQuestionInfo(Long voteId, String question);
 }

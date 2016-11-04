@@ -1,5 +1,7 @@
 package kz.bsbnb.block.model;
 
+import kz.bsbnb.block.model.HLParameter;
+
 /**
  * Created by Olzhas.Pazyldayev on 23.08.2016.
  */
@@ -7,12 +9,12 @@ public class HLCommand {
     private String jsonrpc;
     private String method;
     private HLParameter params;
-    private Integer id;
+    private Long id;
 
     public HLCommand() {
     }
 
-    public HLCommand(String jsonrpc, String method, HLParameter params, Integer id) {
+    public HLCommand(String jsonrpc, String method, HLParameter params, Long id) {
         this.jsonrpc = jsonrpc;
         this.method = method;
         this.params = params;
@@ -43,11 +45,11 @@ public class HLCommand {
         this.params = params;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

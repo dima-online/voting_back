@@ -5,5 +5,9 @@ package kz.bsbnb.block.controller.voting;
  */
 public interface IVotingInvoke {
     // todo: returns objects, must return architectural concept
-    Object vote(final Long userId, final Long voteId, Double votes);
+    Object register(Long voteId, String questions, String questionsAccum, String usersPoints);
+
+    Object vote(Long voteId, Long userId, String question, String questionType, String answer);
+
+    Object transfer(Long voteId, Long userIdFrom, Long userIdTo, Integer points);
 }

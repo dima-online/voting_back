@@ -5,6 +5,7 @@ import kz.bsbnb.block.controller.voting.IVotingDeploy;
 import kz.bsbnb.block.model.HLCommand;
 import kz.bsbnb.block.model.QuestionPoint;
 import kz.bsbnb.block.model.UserPoint;
+import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
 import kz.bsbnb.block.util.HLCommandBuilder;
@@ -25,7 +26,8 @@ import java.util.List;
 public class VotingDeployImpl implements IVotingDeploy {
     @Autowired
     private BlockChainProperties blockchainProperties;
-
+    @Autowired
+    private HyperLedgerProcessor hyperLedgerProcessor;
     /*String exStr = "{\n" +
                 "  \"jsonrpc\": \"2.0\",\n" +
                 "  \"method\": \"deploy\",\n" +
@@ -44,24 +46,25 @@ public class VotingDeployImpl implements IVotingDeploy {
 
     @Override
     @RequestMapping("/voting/deploy")
-    public Object deployChainCode(@RequestParam(value = "name") final String name,
-                                  @RequestParam(value = "questionPointList") final List<QuestionPoint> questionPointList,
-                                  @RequestParam(value = "userPointList") final List<UserPoint> userPointList) {
+    public Object deployChainCode(@RequestParam(value = "path", required = true) final String path,
+                                  @RequestParam(value = "chainCodeName", required = false) String chainCodeName,
+                                  @RequestParam(value = "id", required = false, defaultValue = "1") Long id,
+                                  @RequestParam(value = "function", required = false, defaultValue = "init") String function) {
 
 
         HLCommand command = new HLCommandBuilder()
                 .method(Constants.HL_COMMAND_DEPLOY)
-                .chainCodeName(name)
-                .args("")
-                .id(1)
+                .chainCodePath(path)
+                .function(function)
+                .id(id)
+                .args(" ")
                 .createCommand();
-
-        RestTemplate restTemplate = new RestTemplate();
         try {
-            return restTemplate.postForObject(blockchainProperties.getUrl(), JsonUtil.toJson(command), String.class);
+            return hyperLedgerProcessor.sendCommand(command);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return e.getMessage();
         }
     }
+
 }

@@ -11,6 +11,15 @@ import org.springframework.stereotype.Component;
 public class BlockChainProperties {
     private String url;
     private String server;
+    private String chainCodeName;
+
+    public String getChainCodeName() {
+        return chainCodeName;
+    }
+
+    public void setChainCodeName(String chainCodeName) {
+        this.chainCodeName = chainCodeName;
+    }
 
     public String getUrl() {
         return url;
