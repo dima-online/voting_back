@@ -26,7 +26,7 @@ public class BlockChainApplication {
     public Docket swaggerSettings() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("kz.bsbnb.controller"))
+                .apis(RequestHandlerSelectors.basePackage("kz.bsbnb"))
                 .paths(PathSelectors.any())
                 .build()
                 .pathMapping("/");

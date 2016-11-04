@@ -41,6 +41,10 @@ public class UserRoles implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User userId;
+    @Column(name = "share_count")
+    private Integer shareCount;
+    @Column(name = "cannot_vote")
+    private Integer cannotVote;
 
     public UserRoles() {
     }
@@ -85,6 +89,14 @@ public class UserRoles implements Serializable {
     public void setUserId(User userId) {
         this.userId = userId;
     }
+
+    public Integer getShareCount() {return shareCount;}
+
+    public void setShareCount(Integer shareCount) {this.shareCount = shareCount;}
+
+    public Integer getCannotVote() {return cannotVote;}
+
+    public void setCannotVote(Integer cannotVote) {this.cannotVote = cannotVote;}
 
     @Override
     public int hashCode() {
