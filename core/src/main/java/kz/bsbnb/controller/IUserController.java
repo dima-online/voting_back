@@ -1,11 +1,10 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.OrgBean;
-import kz.bsbnb.common.bean.UserBean;
-import kz.bsbnb.common.model.Organisation;
-import kz.bsbnb.common.model.User;
+import kz.bsbnb.common.bean.*;
+import kz.bsbnb.common.model.*;
 import kz.bsbnb.util.SimpleResponse;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,4 +33,23 @@ public interface IUserController {
     List<OrgBean> getAllOrgsWithOldVoting(Long userId);
 
     UserBean castUser(User user);
+
+    SimpleResponse complateVoting(Long votingId, Long userId, ConfirmBean bean);
+
+    List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
+
+    QuestionBean castFromQuestion(Question q);
+
+    boolean canVote(Voting voting, User user);
+
+    VoterBean castToBean(Voting voting, Voter voter);
+
+    DecisionBean getBeanFromDecision(Decision decision);
+
+    void getVotingQuestions(String fileCode,
+                            HttpServletResponse response);
+
+    List<Files> getVotingQuestionFiles(Long votingId, Long questionId);
+
+    VotingBean castToBean(Voting voting, User user);
 }

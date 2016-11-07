@@ -1,7 +1,5 @@
 package kz.bsbnb.common.bean;
 
-import kz.bsbnb.common.model.Voting;
-
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ public class OrgBean {
     private String organisationNum;
     private String externalId;
     private String status;
-    private List<Voting> votingSet;
+    private List<VotingBean> votingSet;
     private int shareCount;
 
     public OrgBean() {
@@ -63,11 +61,11 @@ public class OrgBean {
         this.status = status;
     }
 
-    public List<Voting> getVotingSet() {
+    public List<VotingBean> getVotingSet() {
         return votingSet;
     }
 
-    public void setVotingSet(List<Voting> votingSet) {
+    public void setVotingSet(List<VotingBean> votingSet) {
         this.votingSet = votingSet;
     }
 }

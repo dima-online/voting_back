@@ -37,7 +37,7 @@ public class Voter implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "share_count")
-    private int shareCount;
+    private Integer shareCount;
     @Size(max = 200)
     @Column(name = "signature")
     private String signature;
@@ -64,7 +64,7 @@ public class Voter implements Serializable {
         this.id = id;
     }
 
-    public Voter(Long id, int shareCount) {
+    public Voter(Long id, Integer shareCount) {
         this.id = id;
         this.shareCount = shareCount;
     }
@@ -85,11 +85,12 @@ public class Voter implements Serializable {
         this.dateAdding = dateAdding;
     }
 
-    public int getShareCount() {
+    public Integer getShareCount() {
+        if (shareCount==null) {shareCount = 0;}
         return shareCount;
     }
 
-    public void setShareCount(int shareCount) {
+    public void setShareCount(Integer shareCount) {
         this.shareCount = shareCount;
     }
 

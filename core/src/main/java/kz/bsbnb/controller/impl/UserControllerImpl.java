@@ -1,23 +1,27 @@
 package kz.bsbnb.controller.impl;
 
-import kz.bsbnb.common.bean.OrgBean;
-import kz.bsbnb.common.bean.UserBean;
+import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.Role;
-import kz.bsbnb.common.model.Organisation;
-import kz.bsbnb.common.model.User;
-import kz.bsbnb.common.model.UserRoles;
-import kz.bsbnb.common.model.Voting;
+import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.processor.UserProcessor;
-import kz.bsbnb.repository.IUserRepository;
+import kz.bsbnb.repository.*;
+import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -33,6 +37,16 @@ public class UserControllerImpl implements IUserController {
     private IUserRepository userRepository;
     @Autowired
     private UserProcessor userProcessor;
+    @Autowired
+    private IVotingRepository votingRepository;
+    @Autowired
+    private ConfirmationService confirmationService;
+    @Autowired
+    private IVoterRepository voterRepository;
+    @Autowired
+    private IFilesRepository filesRepository;
+    @Autowired
+    private IQuestionRepository questionRepository;
 
 
     @Override
@@ -130,25 +144,28 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            OrgBean organisation = new OrgBean();
-            organisation.setId(userRoles.getOrgId().getId());
-            organisation.setExternalId(userRoles.getOrgId().getExternalId());
-            organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-            organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
-            organisation.setStatus(userRoles.getOrgId().getStatus());
-            organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-            List<Voting> vSet = new ArrayList<>();
-            boolean canAdd = false;
-            for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                if (voting.getDateClose() == null) {
-                    vSet.add(voting);
-                    canAdd = true;
+        if (localUser != null) {
+            for (UserRoles userRoles : localUser.getUserRolesSet()) {
+                OrgBean organisation = new OrgBean();
+                organisation.setId(userRoles.getOrgId().getId());
+                organisation.setExternalId(userRoles.getOrgId().getExternalId());
+                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
+                organisation.setStatus(userRoles.getOrgId().getStatus());
+                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
+                List<VotingBean> vSet = new ArrayList<>();
+                boolean canAdd = false;
+                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                    if (voting.getDateClose() == null) {
+                        VotingBean votingBean = castToBean(voting, localUser);
+                        vSet.add(votingBean);
+                        canAdd = true;
+                    }
                 }
-            }
-            organisation.setVotingSet(vSet);
-            if (canAdd) {
-                result.add(organisation);
+                organisation.setVotingSet(vSet);
+                if (canAdd) {
+                    result.add(organisation);
+                }
             }
         }
         return result;
@@ -167,11 +184,12 @@ public class UserControllerImpl implements IUserController {
             organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
             organisation.setStatus(userRoles.getOrgId().getStatus());
             organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-            List<Voting> vSet = new ArrayList<>();
+            List<VotingBean> vSet = new ArrayList<>();
             boolean canAdd = false;
             for (Voting voting : userRoles.getOrgId().getVotingSet()) {
                 if (voting.getDateClose() != null) {
-                    vSet.add(voting);
+                    VotingBean votingBean = castToBean(voting, localUser);
+                    vSet.add(votingBean);
                     canAdd = true;
                 }
             }
@@ -179,6 +197,45 @@ public class UserControllerImpl implements IUserController {
             if (canAdd) {
                 result.add(organisation);
             }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/complate/{votingId}/{userId}", method = RequestMethod.POST)
+    public SimpleResponse complateVoting(@PathVariable Long votingId, @PathVariable Long userId, @RequestBody @Valid ConfirmBean bean) {
+        if (confirmationService.check(bean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            User user = userRepository.findOne(userId);
+            Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+            if (voter != null) {
+                voter.setDateVoting(bean.getDateConfirm());
+                voter.setPublicKey(bean.getPublicKey());
+                voter.setSignature(bean.getSignature());
+                voter = voterRepository.save(voter);
+                return new SimpleResponse(voter).SUCCESS();
+            } else {
+                return new SimpleResponse("Не верные данные голосующего").ERROR_CUSTOM();
+            }
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/questions/{votingId}/{userId}", method = RequestMethod.GET)
+    public List<QuestionBean> getVotingQuestions(@PathVariable Long votingId, @PathVariable Long userId) {
+        Voting voting = votingRepository.findOne(votingId);
+        User user = userRepository.findOne(userId);
+        List<QuestionBean> result = new ArrayList<>();
+
+        if (voting != null && user != null && canVote(voting, user)) {
+            List<Question> question = questionRepository.findByVotingId(voting);
+            for (Question q : question) {
+                QuestionBean bean = castFromQuestion(q);
+                result.add(bean);
+            }
+
         }
         return result;
     }
@@ -209,5 +266,147 @@ public class UserControllerImpl implements IUserController {
             userBean.setRole(role);
         }
         return userBean;
+    }
+
+    @Override
+    public QuestionBean castFromQuestion(Question q) {
+        QuestionBean result = new QuestionBean();
+        result.setId(q.getId());
+        result.setDecision(q.getDecision());
+        result.setNum(q.getNum());
+        result.setQuestion(q.getQuestion());
+        result.setQuestionType(q.getQuestionType());
+        result.setVotingId(q.getVotingId().getId());
+        result.setAnswerSet(q.getAnswerSet());
+        Set<DecisionBean> beanSet = new HashSet();
+        for (Decision decision : q.getDecisionSet()) {
+            DecisionBean bean = getBeanFromDecision(decision);
+            beanSet.add(bean);
+        }
+        result.setDecisionSet(beanSet);
+        for (Answer answer : q.getAnswerSet()) {
+
+        }
+        return result;
+    }
+
+    @Override
+    public boolean canVote(Voting voting, User user) {
+        boolean result = false;
+        for (Voter voter : voting.getVoterSet()) {
+            if (voter.getUserId().equals(user)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public VoterBean castToBean(Voting voting, Voter voter) {
+        VoterBean result = new VoterBean();
+        result.setId(voter.getId());
+        result.setShareCount(voter.getShareCount());
+        Set<DecisionBean> beanSet = new HashSet();
+        for (Decision decision : voter.getDecisionSet()) {
+            if (voter.getVotingId().equals(voting)) {
+                DecisionBean bean = getBeanFromDecision(decision);
+                beanSet.add(bean);
+            }
+        }
+        result.setDecisions(beanSet);
+//        result.setVoting(castToBean(voter.getVotingId(),voter.getUserId()));
+        result.setUserId(castUser(voter.getUserId()));
+        result.setSharePercent((float) 100 * voter.getShareCount() / getVotingAllScore(voting.getId()));
+        return result;
+    }
+
+    @Override
+    public VotingBean castToBean(Voting voting, User user) {
+        VotingBean result = new VotingBean();
+        result.setCanVote(canVote(voting, user));
+        result.setDateBegin(voting.getDateBegin());
+        result.setDateClose(voting.getDateClose());
+        result.setDateCreate(voting.getDateCreate());
+        result.setDateEnd(voting.getDateEnd());
+        result.setId(voting.getId());
+        result.setLastChanged(voting.getLastChanged());
+
+        if (user.getId().equals(0L)) {
+            Set<QuestionBean> questionBeanSet = new HashSet<>();
+            for (Question question : voting.getQuestionSet()) {
+                questionBeanSet.add(castFromQuestion(question));
+            }
+            result.setQuestionSet(questionBeanSet);
+        }
+        result.setStatus(voting.getStatus());
+        result.setSubject(voting.getSubject());
+        result.setVotingType(voting.getVotingType());
+        //TODO добавить проверку прав
+        if (user.getId().equals(0L)) {
+            Set<VoterBean> voterBeanSet = new HashSet<>();
+            for (Voter voter : voting.getVoterSet()) {
+                if (voter.getUserId().equals(user)) {
+                    voterBeanSet.add(castToBean(voting, voter));
+                }
+            }
+            result.setVoterSet(voterBeanSet);
+        }
+        return result;
+    }
+
+    public DecisionBean getBeanFromDecision(Decision decision) {
+        DecisionBean result = new DecisionBean();
+        result.setId(decision.getId());
+        result.setScore(decision.getScore());
+        result.setAnswerId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
+        result.setComments(decision.getComments());
+        result.setDateCreate(decision.getDateCreate());
+        result.setQuestionId(decision.getQuestionId().getId());
+        result.setUserId(decision.getVoterId().getUserId().getId());
+        return result;
+    }
+
+    public Integer getVotingAllScore(Long votingId) {
+        Integer result = 0;
+        Voting voting = votingRepository.findOne(votingId);
+        for (Voter voter : voting.getVoterSet()) {
+            result = result + voter.getShareCount();
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/questionfiles/{votingId}/{questionId}", method = RequestMethod.GET)
+    public List<Files> getVotingQuestionFiles(@PathVariable Long votingId, @PathVariable Long questionId) {
+        Voting voting = votingRepository.findOne(votingId);
+        List<Files> files = filesRepository.findByVotingId(voting);
+        List<Files> result = new ArrayList<>();
+        for (Files file:files) {
+            if (!file.getQuestionFileSet().isEmpty()) {
+                for (QuestionFile questionFile:file.getQuestionFileSet()) {
+                    if (questionFile.getQuestionId().getId().equals(questionId)) {
+                        result.add(file);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/questionfile/{filePath}", method = RequestMethod.GET)
+    public void getVotingQuestions(@PathVariable String filePath,
+                                   HttpServletResponse response) {
+        File file = new File("/opt/voting/files/"+filePath+".pdf");
+        try {
+            // get your file as InputStream
+            InputStream is = new FileInputStream("/opt/voting/files/"+filePath+".pdf");
+            // copy it to response's OutputStream
+            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+            response.flushBuffer();
+        } catch (IOException ex) {
+            throw new RuntimeException("IOError writing file to output stream");
+        }
     }
 }

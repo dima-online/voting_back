@@ -64,6 +64,14 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public SimpleResponse createVoting(@RequestBody @Valid Voting voting) {
+        Voting result = votingRepository.save(voting);
+        //TODO Проверка полей
+        return new SimpleResponse(result).SUCCESS();
+    }
+
+    @Override
     @RequestMapping(value = "/work/{userId}", method = RequestMethod.GET)
     public List<Voting> getWorkVotings(@PathVariable Long userId,
                                        @RequestParam(defaultValue = "0") int page,
@@ -106,7 +114,7 @@ public class VotingControllerImpl implements IVotingController {
         List<Question> question = questionRepository.findByVotingId(voting);
         List<QuestionBean> result = new ArrayList<>();
         for (Question q : question) {
-            QuestionBean bean = castFromQuestion(q);
+            QuestionBean bean = userController.castFromQuestion(q);
             result.add(bean);
         }
         return result;
@@ -120,7 +128,7 @@ public class VotingControllerImpl implements IVotingController {
         QuestionBean result = new QuestionBean();
         for (Question q : question) {
             if (q.getId().equals(qid)) {
-                result = castFromQuestion(q);
+                result = userController.castFromQuestion(q);
             }
         }
         return result;
@@ -132,11 +140,10 @@ public class VotingControllerImpl implements IVotingController {
         Voting voting = votingRepository.findOne(votingId);
         User user = userRepository.findOne(userId);
         List<QuestionBean> result = new ArrayList<>();
-
-        if (voting != null && user != null && canVote(voting, user)) {
+        if (voting != null && user != null && userController.canVote(voting, user)) {
             List<Question> question = questionRepository.findByVotingId(voting);
             for (Question q : question) {
-                QuestionBean bean = castFromQuestion(q);
+                QuestionBean bean = userController.castFromQuestion(q);
                 result.add(bean);
             }
 
@@ -144,21 +151,51 @@ public class VotingControllerImpl implements IVotingController {
         return result;
     }
 
-    private QuestionBean castFromQuestion(Question q) {
-        QuestionBean result = new QuestionBean();
-        result.setId(q.getId());
-        result.setDecision(q.getDecision());
-        result.setNum(q.getNum());
-        result.setQuestion(q.getQuestion());
-        result.setQuestionType(q.getQuestionType());
-        result.setVotingId(q.getVotingId().getId());
-        result.setAnswerSet(q.getAnswerSet());
-        result.setDecisionSet(q.getDecisionSet());
-        for (Answer answer : q.getAnswerSet()) {
-
+    @Override
+    @RequestMapping(value = "/start/{votingId}/{userId}", method = RequestMethod.POST)
+    public SimpleResponse startVoting(@PathVariable Long votingId, @PathVariable Long userId
+            , @RequestBody @Valid ConfirmBean confirmBean) {
+        if (confirmationService.check(confirmBean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            User user = userRepository.findOne(userId);
+            voting.setDateBegin(new Date());
+            voting.setStatus("STARTED");
+            return new SimpleResponse(userController.castToBean(voting, user));
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
         }
-        return result;
     }
+
+    @Override
+    @RequestMapping(value = "/stop/{votingId}/{userId}", method = RequestMethod.POST)
+    public SimpleResponse stopVoting(@PathVariable Long votingId, @PathVariable Long userId
+            , @RequestBody @Valid ConfirmBean confirmBean) {
+        if (confirmationService.check(confirmBean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            User user = userRepository.findOne(userId);
+            voting.setDateEnd(new Date());
+            voting.setStatus("STOPED");
+            return new SimpleResponse(userController.castToBean(voting, user));
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/close/{votingId}/{userId}", method = RequestMethod.POST)
+    public SimpleResponse closeVoting(@PathVariable Long votingId, @PathVariable Long userId
+            , @RequestBody @Valid ConfirmBean confirmBean) {
+        if (confirmationService.check(confirmBean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            User user = userRepository.findOne(userId);
+            voting.setDateClose(new Date());
+            voting.setStatus("CLOSED");
+            return new SimpleResponse(userController.castToBean(voting, user));
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
+        }
+    }
+
 
     @Override
     @RequestMapping(value = "/addq/{votingId}", method = RequestMethod.POST)
@@ -179,27 +216,6 @@ public class VotingControllerImpl implements IVotingController {
             }
             //TODO Добавить обращение у HL
             return new SimpleResponse(result).SUCCESS();
-        }
-    }
-
-    @Override
-    @RequestMapping(value = "/complate/{votingId}/{userId}", method = RequestMethod.POST)
-    public SimpleResponse complateVoting(@PathVariable Long votingId, @PathVariable Long userId, @RequestBody @Valid ConfirmBean bean) {
-        if (confirmationService.check(bean)) {
-            Voting voting = votingRepository.findOne(votingId);
-            User user = userRepository.findOne(userId);
-            Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
-            if (voter != null) {
-                voter.setDateVoting(bean.getDateConfirm());
-                voter.setPublicKey(bean.getPublicKey());
-                voter.setSignature(bean.getSignature());
-                voter = voterRepository.save(voter);
-                return new SimpleResponse(voter).SUCCESS();
-            } else {
-                return new SimpleResponse("Не верные данные голосующего").ERROR();
-            }
-        } else {
-            return new SimpleResponse("Данные не прошли проверку").ERROR();
         }
     }
 
@@ -296,30 +312,9 @@ public class VotingControllerImpl implements IVotingController {
         Voting voting = votingRepository.findOne(votingId);
         User user = userRepository.findOne(userId);
         Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
-        VoterBean result = new VoterBean();
-        result.setId(voter.getId());
-        result.setShareCount(voter.getShareCount());
-        Set<DecisionBean> beanSet = new HashSet();
-        for (Decision decision : voter.getDecisionSet()) {
-            DecisionBean bean = getBeanFromDecision(decision);
-            beanSet.add(bean);
-        }
-        result.setDecisions(beanSet);
-        result.setVoting(voter.getVotingId());
-        result.setUserId(userController.castUser(voter.getUserId()));
-        result.setSharePercent((float) 100 * voter.getShareCount() / getVotingAllScore(voting.getId()));
+        VoterBean result = userController.castToBean(voting, voter);
         return result;
     }
-
-    private int getVotingAllScore(Long votingId) {
-        int result = 0;
-        Voting voting = votingRepository.findOne(votingId);
-        for (Voter voter : voting.getVoterSet()) {
-            result = result + voter.getShareCount();
-        }
-        return result;
-    }
-
 
     private void addListAnswer(Question question, List<Answer> answers) {
         for (Answer next : answers) {
@@ -348,22 +343,14 @@ public class VotingControllerImpl implements IVotingController {
         addListAnswer(question, answers);
     }
 
-    private boolean canVote(Voting voting, User user) {
-        boolean result = false;
-        for (Voter voter : voting.getVoterSet()) {
-            if (voter.getUserId().equals(user)) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
     @Override
     public Decision getDecisionFromBean(DecisionBean bean) {
         Decision result = new Decision();
         Question question = questionRepository.findOne(bean.getQuestionId());
-        Answer answer = answerRepository.findOne(bean.getAnswerId());
+        Answer answer = null;
+        if (bean.getAnswerId() != null) {
+            answer = answerRepository.findOne(bean.getAnswerId());
+        }
         User user = userRepository.findOne(bean.getUserId());
         Voter voter = voterRepository.findByVotingIdAndUserId(question.getVotingId(), user);
         Date d = bean.getDateCreate();
@@ -387,18 +374,6 @@ public class VotingControllerImpl implements IVotingController {
             result.setScore(bean.getScore());
             result.setVoterId(voter);
         }
-        return result;
-    }
-
-    private DecisionBean getBeanFromDecision(Decision decision) {
-        DecisionBean result = new DecisionBean();
-        result.setId(decision.getId());
-        result.setScore(decision.getScore());
-        result.setAnswerId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
-        result.setComments(decision.getComments());
-        result.setDateCreate(decision.getDateCreate());
-        result.setQuestionId(decision.getQuestionId().getId());
-        result.setUserId(decision.getVoterId().getUserId().getId());
         return result;
     }
 

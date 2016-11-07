@@ -34,6 +34,7 @@ public class DecisionBean {
     }
 
     public Integer getScore() {
+        if (score==null) {score = 0;}
         return score;
     }
 

@@ -45,5 +45,9 @@ public interface IVotingController {
 
     Decision getDecisionFromBean(DecisionBean bean);
 
-    SimpleResponse complateVoting(Long votingId, Long userId, ConfirmBean bean);
+    SimpleResponse createVoting(Voting voting);
+
+    SimpleResponse startVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+    SimpleResponse stopVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+    SimpleResponse closeVoting(Long votingId, Long userId, ConfirmBean confirmBean);
 }
