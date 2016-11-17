@@ -17,7 +17,7 @@ public interface IUserController {
 
     SimpleResponse getUserByIdSimple(Long id);
 
-    User regUser(User user);
+    SimpleResponse regUser(RegUserBean userBean);
 
     SimpleResponse checkUser(User user);
 
@@ -26,7 +26,7 @@ public interface IUserController {
 
     SimpleResponse deleteUser(User user);
 
-    List<Organisation> getAllOrgs(Long userId);
+    List<OrgBean> getAllOrgs(Long userId);
 
     List<OrgBean> getAllOrgsWithWorkVoting(Long userId);
 
@@ -38,7 +38,7 @@ public interface IUserController {
 
     List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
 
-    QuestionBean castFromQuestion(Question q);
+    QuestionBean castFromQuestion(Question q, User user, boolean showPdf);
 
     boolean canVote(Voting voting, User user);
 
@@ -52,4 +52,8 @@ public interface IUserController {
     List<Files> getVotingQuestionFiles(Long votingId, Long questionId);
 
     VotingBean castToBean(Voting voting, User user);
+
+    OrgBean castToBean(Organisation org, User user);
+
+    SimpleResponse getUserpProfile(Long userId);
 }

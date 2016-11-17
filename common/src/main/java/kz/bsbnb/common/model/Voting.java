@@ -64,7 +64,7 @@ public class Voting implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastChanged;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "votingId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "votingId", fetch = FetchType.EAGER)
     private Set<Question> questionSet;
     @JsonIgnore
     @JoinColumn(name = "organisation_id", referencedColumnName = "id")

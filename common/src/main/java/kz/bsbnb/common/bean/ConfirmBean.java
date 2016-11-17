@@ -1,7 +1,5 @@
 package kz.bsbnb.common.bean;
 
-import kz.bsbnb.common.model.User;
-
 import java.util.Date;
 
 /**
@@ -13,7 +11,7 @@ public class ConfirmBean {
     private Date dateConfirm;
     private String publicKey;
     private String signature;
-    private User user;
+    private UserBean user;
 
     public ConfirmBean() {
     }
@@ -50,11 +48,11 @@ public class ConfirmBean {
         this.signature = signature;
     }
 
-    public User getUser() {
+    public UserBean getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserBean user) {
         this.user = user;
     }
 }

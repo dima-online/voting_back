@@ -12,14 +12,42 @@ public class OrgBean {
     private String externalId;
     private String status;
     private List<VotingBean> votingSet;
-    private int shareCount;
+    private Integer shareCount;
+    private Integer allShareCount;
+    private Integer userCount;
+    private Integer votingCount;
+    private Integer closedVotingCount;
 
     public OrgBean() {
     }
 
-    public int getShareCount() {return shareCount;}
+    public Integer getUserCount() {
+        return userCount;
+    }
 
-    public void setShareCount(int shareCount) {this.shareCount = shareCount;}
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
+    }
+
+    public Integer getVotingCount() {
+        return votingCount;
+    }
+
+    public void setVotingCount(Integer votingCount) {
+        this.votingCount = votingCount;
+    }
+
+    public Integer getClosedVotingCount() {
+        return closedVotingCount;
+    }
+
+    public void setClosedVotingCount(Integer closedVotingCount) {
+        this.closedVotingCount = closedVotingCount;
+    }
+
+    public Integer getShareCount() {return shareCount;}
+
+    public void setShareCount(Integer shareCount) {this.shareCount = shareCount;}
 
     public Long getId() {
         return id;
@@ -67,5 +95,13 @@ public class OrgBean {
 
     public void setVotingSet(List<VotingBean> votingSet) {
         this.votingSet = votingSet;
+    }
+
+    public Integer getAllShareCount() {
+        return allShareCount==null?0:allShareCount;
+    }
+
+    public void setAllShareCount(Integer allShareCount) {
+        this.allShareCount = allShareCount;
     }
 }

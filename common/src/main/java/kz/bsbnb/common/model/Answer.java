@@ -43,7 +43,7 @@ public class Answer implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Question questionId;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "answerId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answerId", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
 
     public Answer() {

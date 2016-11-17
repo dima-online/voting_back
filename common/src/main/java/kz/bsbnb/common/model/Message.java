@@ -5,15 +5,16 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -38,12 +39,14 @@ public class Message implements Serializable {
     private String body;
     @Basic(optional = false)
     @NotNull
+    @JsonIgnore
     @Column(name = "date_create")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreate;
     @Column(name = "date_read")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRead;
+    @JsonIgnore
     @OneToMany(mappedBy = "parentId", fetch = FetchType.EAGER)
     private Set<Message> messageSet;
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
@@ -55,6 +58,8 @@ public class Message implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User userId;
+    @Column(name = "from_user")
+    private Boolean fromUser;
 
     public Message() {
     }
@@ -139,6 +144,14 @@ public class Message implements Serializable {
 
     public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public Boolean getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(Boolean fromUser) {
+        this.fromUser = fromUser;
     }
 
     @Override

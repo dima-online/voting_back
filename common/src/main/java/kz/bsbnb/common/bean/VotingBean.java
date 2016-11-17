@@ -20,8 +20,26 @@ public class VotingBean {
     private Set<QuestionBean> questionSet;
     private Set<VoterBean> voterSet;
     private boolean canVote;
+    private Long organisationId;
+    private Integer questionCount;
 
     public VotingBean() {
+    }
+
+    public Long getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setOrganisationId(Long organisationId) {
+        this.organisationId = organisationId;
+    }
+
+    public Integer getQuestionCount() {
+        return questionCount;
+    }
+
+    public void setQuestionCount(Integer questionCount) {
+        this.questionCount = questionCount;
     }
 
     public Long getId() {
@@ -112,7 +130,11 @@ public class VotingBean {
         this.voterSet = voterSet;
     }
 
-    public boolean isCanVote() {return canVote;}
+    public boolean isCanVote() {
+        return canVote;
+    }
 
-    public void setCanVote(boolean canVote) {this.canVote = canVote;}
+    public void setCanVote(boolean canVote) {
+        this.canVote = canVote;
+    }
 }

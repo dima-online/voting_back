@@ -18,10 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -36,6 +33,10 @@ public class UserControllerImpl implements IUserController {
     @Autowired
     private IUserRepository userRepository;
     @Autowired
+    private IUserInfoRepository userInfoRepository;
+    @Autowired
+    private IOrganisationRepository organisationRepository;
+    @Autowired
     private UserProcessor userProcessor;
     @Autowired
     private IVotingRepository votingRepository;
@@ -48,6 +49,10 @@ public class UserControllerImpl implements IUserController {
     @Autowired
     private IQuestionRepository questionRepository;
 
+    //функция для криптовки паролей
+    public static String pwd(String password) {
+        return password;
+    }
 
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -81,10 +86,65 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
+    @RequestMapping(value = "/profile/{userId}", method = RequestMethod.GET)
+    public SimpleResponse getUserpProfile(@PathVariable Long userId) {
+        User user = userRepository.findOne(userId);
+        if (user == null) {
+            return new SimpleResponse("no user with such id").ERROR_NOT_FOUND();
+        }
+        UserProfileBean userData = new UserProfileBean();
+        userData.setUserId(user.getId());
+        if (user.getUserInfoId()!=null) {
+            userData.setPhone(user.getUserInfoId().getPhone());
+            userData.setEmail(user.getUserInfoId().getEmail());
+            String fName = user.getUserInfoId().getLastName()==null?" ":user.getUserInfoId().getLastName();
+            fName = fName +" "+ (user.getUserInfoId().getFirstName()==null?" ":user.getUserInfoId().getFirstName());
+            fName = fName +" "+ (user.getUserInfoId().getMiddleName()==null?" ":user.getUserInfoId().getMiddleName());
+            userData.setFullName(fName.trim());
+        }
+        userData.setIin(user.getIin());
+        List<UserOrgBean> userBeanList = new ArrayList<>();
+        for (UserRoles userRoles:user.getUserRolesSet()) {
+            UserOrgBean userBean = new UserOrgBean();
+            userBean.setRole(userRoles.getRole().name());
+            userBean.setUserId(userRoles.getUserId().getId());
+            userBean.setShareCount(userRoles.getShareCount());
+            userBean.setOrganisationId(userRoles.getOrgId().getId());
+            userBean.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+            userBeanList.add(userBean);
+        }
+        userData.setBeanList(userBeanList);
+        return new SimpleResponse(userData).SUCCESS();
+    }
+
+
+    @Override
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public User regUser(@RequestBody @Valid User user) {
-        userProcessor.mergeUser(user);
-        return userRepository.save(user);
+    public SimpleResponse regUser(@RequestBody @Valid RegUserBean userBean) {
+        User user = userRepository.findByIin(userBean.getIin());
+        if (user == null) {
+            user = new User();
+            user.setIin(userBean.getIin());
+            user.setUsername(userBean.getLogin());
+            user.setPassword(userBean.getPassword());
+            user.setStatus("NEW");
+            user = userRepository.save(user);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setStatus("NEW");
+            userInfo.setEmail(userBean.getEmail());
+            userInfo.setFirstName(userBean.getFirstName());
+            userInfo.setLastName(userBean.getLastName());
+            userInfo.setMiddleName(userBean.getMiddleName());
+            userInfo.setIdn(userBean.getIin());
+            userInfo.setOrg(userBean.getOrg());
+            userInfo = userInfoRepository.save(userInfo);
+            user.setUserInfoId(userInfo);
+            user = userRepository.save(user);
+            userBean = castUser(user, userInfo);
+            return new SimpleResponse(userBean).SUCCESS();
+        } else {
+            return new SimpleResponse("Пользователь с этим ИИН уже существует").ERROR_CUSTOM();
+        }
     }
 
     @Override
@@ -116,6 +176,8 @@ public class UserControllerImpl implements IUserController {
         }
     }
 
+
+
     @Override
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public SimpleResponse deleteUser(@RequestBody @Valid User user) {
@@ -130,13 +192,44 @@ public class UserControllerImpl implements IUserController {
 
     @Override
     @RequestMapping(value = "/orgs/{userId}", method = RequestMethod.GET)
-    public List<Organisation> getAllOrgs(@PathVariable Long userId) {
+    public List<OrgBean> getAllOrgs(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
-        List<Organisation> result = new ArrayList<>();
+        List<OrgBean> result = new ArrayList<>();
         for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            result.add(userRoles.getOrgId());
+            result.add(castToBean(userRoles.getOrgId(), localUser));
         }
         return result;
+    }
+
+    @Override
+    public OrgBean castToBean(Organisation org, User user) {
+        OrgBean bean = new OrgBean();
+        bean.setId(org.getId());
+        bean.setExternalId(org.getExternalId());
+        bean.setOrganisationName(org.getOrganisationName());
+        bean.setOrganisationNum(org.getOrganisationNum());
+        bean.setAllShareCount(org.getAllShareCount());
+        bean.setUserCount(org.getUserRolesSet().size());
+        bean.setVotingCount(org.getVotingSet().size());
+        Integer cnt = 0;
+        for (Voting voting : org.getVotingSet()) {
+            if (voting.getDateClose()!=null) {
+                cnt++;
+            }
+        }
+        bean.setClosedVotingCount(cnt);
+        bean.setStatus(org.getStatus());
+        UserRoles userRole = null;
+        if (user!=null) {
+            for (UserRoles userRoles : user.getUserRolesSet()) {
+                if (userRoles.getOrgId().equals(org)) {
+                    userRole = userRoles;
+                    break;
+                }
+            }
+        }
+        bean.setShareCount(userRole == null || userRole.getShareCount() == null ? 0 : userRole.getShareCount());
+        return bean;
     }
 
     @Override
@@ -145,18 +238,21 @@ public class UserControllerImpl implements IUserController {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
         if (localUser != null) {
-            for (UserRoles userRoles : localUser.getUserRolesSet()) {
-                OrgBean organisation = new OrgBean();
-                organisation.setId(userRoles.getOrgId().getId());
-                organisation.setExternalId(userRoles.getOrgId().getExternalId());
-                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
-                organisation.setStatus(userRoles.getOrgId().getStatus());
-                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
+            //for (UserRoles userRoles : localUser.getUserRolesSet()) {
+            List<Organisation> organisations = organisationRepository.getAllVoteOrg();
+            for (Organisation org : organisations) {
+                OrgBean organisation = castToBean(org, localUser);
+//                organisation.setId(userRoles.getOrgId().getId());
+//                organisation.setExternalId(userRoles.getOrgId().getExternalId());
+//                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+//                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
+//                organisation.setStatus(userRoles.getOrgId().getStatus());
+//                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
                 List<VotingBean> vSet = new ArrayList<>();
                 boolean canAdd = false;
-                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                    if (voting.getDateClose() == null) {
+                for (Voting voting : org.getVotingSet()) {
+//                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                    if (voting.getDateClose() == null && voting.getDateBegin() != null) {
                         VotingBean votingBean = castToBean(voting, localUser);
                         vSet.add(votingBean);
                         canAdd = true;
@@ -176,26 +272,31 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithOldVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            OrgBean organisation = new OrgBean();
-            organisation.setId(userRoles.getOrgId().getId());
-            organisation.setExternalId(userRoles.getOrgId().getExternalId());
-            organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-            organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
-            organisation.setStatus(userRoles.getOrgId().getStatus());
-            organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-            List<VotingBean> vSet = new ArrayList<>();
-            boolean canAdd = false;
-            for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                if (voting.getDateClose() != null) {
-                    VotingBean votingBean = castToBean(voting, localUser);
-                    vSet.add(votingBean);
-                    canAdd = true;
+        if (localUser != null) {
+            //for (UserRoles userRoles : localUser.getUserRolesSet()) {
+            List<Organisation> organisations = organisationRepository.getAllVoteOrg();
+            for (Organisation org : organisations) {
+                OrgBean organisation = castToBean(org, localUser);
+//                organisation.setId(userRoles.getOrgId().getId());
+//                organisation.setExternalId(userRoles.getOrgId().getExternalId());
+//                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+//                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
+//                organisation.setStatus(userRoles.getOrgId().getStatus());
+//                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
+                List<VotingBean> vSet = new ArrayList<>();
+                boolean canAdd = false;
+                for (Voting voting : org.getVotingSet()) {
+//                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                    if (voting.getDateClose() != null) {
+                        VotingBean votingBean = castToBean(voting, localUser);
+                        vSet.add(votingBean);
+                        canAdd = true;
+                    }
                 }
-            }
-            organisation.setVotingSet(vSet);
-            if (canAdd) {
-                result.add(organisation);
+                organisation.setVotingSet(vSet);
+                if (canAdd) {
+                    result.add(organisation);
+                }
             }
         }
         return result;
@@ -209,11 +310,15 @@ public class UserControllerImpl implements IUserController {
             User user = userRepository.findOne(userId);
             Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
             if (voter != null) {
-                voter.setDateVoting(bean.getDateConfirm());
-                voter.setPublicKey(bean.getPublicKey());
-                voter.setSignature(bean.getSignature());
-                voter = voterRepository.save(voter);
-                return new SimpleResponse(voter).SUCCESS();
+                if (voter.getDateVoting() != null) {
+                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
+                } else {
+                    voter.setDateVoting(bean.getDateConfirm() == null ? new Date() : bean.getDateConfirm());
+                    voter.setPublicKey(bean.getPublicKey());
+                    voter.setSignature(bean.getSignature());
+                    voter = voterRepository.save(voter);
+                    return new SimpleResponse(voter).SUCCESS();
+                }
             } else {
                 return new SimpleResponse("Не верные данные голосующего").ERROR_CUSTOM();
             }
@@ -229,20 +334,15 @@ public class UserControllerImpl implements IUserController {
         User user = userRepository.findOne(userId);
         List<QuestionBean> result = new ArrayList<>();
 
-        if (voting != null && user != null && canVote(voting, user)) {
+        if (voting != null && user != null) {
             List<Question> question = questionRepository.findByVotingId(voting);
             for (Question q : question) {
-                QuestionBean bean = castFromQuestion(q);
+                QuestionBean bean = castFromQuestion(q, user, canVote(voting, user));
                 result.add(bean);
             }
 
         }
         return result;
-    }
-
-    //функция для криптовки паролей
-    public static String pwd(String password) {
-        return password;
     }
 
     //функция создания UserBean из User
@@ -253,7 +353,12 @@ public class UserControllerImpl implements IUserController {
         userBean.setLogin(user.getUsername());
         userBean.setIin(user.getIin());
         if (user.getUserInfoId() != null) {
-            userBean.setUserInfo(user.getUserInfoId());
+            userBean.setEmail(user.getUserInfoId().getEmail());
+            String fName = user.getUserInfoId().getLastName()==null?" ":user.getUserInfoId().getLastName();
+            fName = fName +" "+ (user.getUserInfoId().getFirstName()==null?" ":user.getUserInfoId().getFirstName());
+            fName = fName +" "+ (user.getUserInfoId().getMiddleName()==null?" ":user.getUserInfoId().getMiddleName());
+            userBean.setFullName(fName.trim());
+            userBean.setPhone(user.getUserInfoId().getPhone());
         }
         if (!user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;
@@ -264,12 +369,49 @@ public class UserControllerImpl implements IUserController {
                 }
             }
             userBean.setRole(role);
+        } else {
+            Role role = Role.ROLE_USER;
+            userBean.setRole(role);
+        }
+        return userBean;
+    }
+
+    public RegUserBean castUser(User user, UserInfo userInfo) {
+
+        RegUserBean userBean = new RegUserBean();
+        userBean.setId(user.getId());
+        userBean.setLogin(user.getUsername());
+        userBean.setIin(user.getIin());
+        if (userInfo != null) {
+            userBean.setEmail(userInfo.getEmail());
+            String fName = userInfo.getLastName()==null?" ":userInfo.getLastName();
+            fName = fName +" "+ (userInfo.getFirstName()==null?" ":userInfo.getFirstName());
+            fName = fName +" "+ (userInfo.getMiddleName()==null?" ":userInfo.getMiddleName());
+            userBean.setFullName(fName.trim());
+            userBean.setPhone(userInfo.getPhone());
+            userBean.setLastName(userInfo.getLastName());
+            userBean.setFirstName(userInfo.getFirstName());
+            userBean.setMiddleName(userInfo.getMiddleName());
+            userBean.setOrg(userInfo.getOrg());
+        }
+        if (user.getUserRolesSet()!=null && !user.getUserRolesSet().isEmpty()) {
+            Role role = Role.ROLE_USER;
+            for (UserRoles userRole : user.getUserRolesSet()) {
+                Role temp = userRole.getRole();
+                if (role.compareTo(temp) > 0) {
+                    role = temp;
+                }
+            }
+            userBean.setRole(role.name());
+        } else {
+            Role role = Role.ROLE_USER;
+            userBean.setRole(role.name());
         }
         return userBean;
     }
 
     @Override
-    public QuestionBean castFromQuestion(Question q) {
+    public QuestionBean castFromQuestion(Question q, User user, boolean showPdf) {
         QuestionBean result = new QuestionBean();
         result.setId(q.getId());
         result.setDecision(q.getDecision());
@@ -278,10 +420,21 @@ public class UserControllerImpl implements IUserController {
         result.setQuestionType(q.getQuestionType());
         result.setVotingId(q.getVotingId().getId());
         result.setAnswerSet(q.getAnswerSet());
+        Set<Files> files = new HashSet<>();
+        if (showPdf) {
+            if (!q.getQuestionFileSet().isEmpty()) {
+                for (QuestionFile qFile : q.getQuestionFileSet()) {
+                    files.add(qFile.getFilesId());
+                }
+            }
+        }
+        result.setQuestionFileSet(files);
         Set<DecisionBean> beanSet = new HashSet();
         for (Decision decision : q.getDecisionSet()) {
-            DecisionBean bean = getBeanFromDecision(decision);
-            beanSet.add(bean);
+            if (decision.getVoterId().getUserId().equals(user)) {
+                DecisionBean bean = getBeanFromDecision(decision);
+                beanSet.add(bean);
+            }
         }
         result.setDecisionSet(beanSet);
         for (Answer answer : q.getAnswerSet()) {
@@ -293,11 +446,9 @@ public class UserControllerImpl implements IUserController {
     @Override
     public boolean canVote(Voting voting, User user) {
         boolean result = false;
-        for (Voter voter : voting.getVoterSet()) {
-            if (voter.getUserId().equals(user)) {
-                result = true;
-                break;
-            }
+        Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+        if (voter != null && voter.getDateVoting() == null) {
+            result = true;
         }
         return result;
     }
@@ -331,26 +482,29 @@ public class UserControllerImpl implements IUserController {
         result.setDateEnd(voting.getDateEnd());
         result.setId(voting.getId());
         result.setLastChanged(voting.getLastChanged());
-
-        if (user.getId().equals(0L)) {
-            Set<QuestionBean> questionBeanSet = new HashSet<>();
-            for (Question question : voting.getQuestionSet()) {
-                questionBeanSet.add(castFromQuestion(question));
-            }
-            result.setQuestionSet(questionBeanSet);
-        }
+        result.setQuestionCount(voting.getQuestionSet().size());
         result.setStatus(voting.getStatus());
         result.setSubject(voting.getSubject());
         result.setVotingType(voting.getVotingType());
+        result.setOrganisationId(voting.getOrganisationId().getId());
         //TODO добавить проверку прав
+        boolean canReadPdf = false;
         if (user.getId().equals(0L)) {
             Set<VoterBean> voterBeanSet = new HashSet<>();
             for (Voter voter : voting.getVoterSet()) {
                 if (voter.getUserId().equals(user)) {
                     voterBeanSet.add(castToBean(voting, voter));
+                    canReadPdf = true;
                 }
             }
             result.setVoterSet(voterBeanSet);
+        }
+        if (user.getId().equals(0L)) {
+            Set<QuestionBean> questionBeanSet = new HashSet<>();
+            for (Question question : voting.getQuestionSet()) {
+                questionBeanSet.add(castFromQuestion(question, user, canReadPdf));
+            }
+            result.setQuestionSet(questionBeanSet);
         }
         return result;
     }
@@ -382,9 +536,9 @@ public class UserControllerImpl implements IUserController {
         Voting voting = votingRepository.findOne(votingId);
         List<Files> files = filesRepository.findByVotingId(voting);
         List<Files> result = new ArrayList<>();
-        for (Files file:files) {
+        for (Files file : files) {
             if (!file.getQuestionFileSet().isEmpty()) {
-                for (QuestionFile questionFile:file.getQuestionFileSet()) {
+                for (QuestionFile questionFile : file.getQuestionFileSet()) {
                     if (questionFile.getQuestionId().getId().equals(questionId)) {
                         result.add(file);
                     }
@@ -398,15 +552,26 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/questionfile/{filePath}", method = RequestMethod.GET)
     public void getVotingQuestions(@PathVariable String filePath,
                                    HttpServletResponse response) {
-        File file = new File("/opt/voting/files/"+filePath+".pdf");
-        try {
-            // get your file as InputStream
-            InputStream is = new FileInputStream("/opt/voting/files/"+filePath+".pdf");
-            // copy it to response's OutputStream
-            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-            response.flushBuffer();
-        } catch (IOException ex) {
-            throw new RuntimeException("IOError writing file to output stream");
+        File file = new File("/opt/voting/files/" + filePath + ".pdf");
+        if (file.exists() && !file.isDirectory()) {
+            try {
+                // get your file as InputStream
+                // do something
+
+                InputStream is = new FileInputStream("/opt/voting/files/" + filePath + ".pdf");
+                // copy it to response's OutputStream
+                org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+                response.flushBuffer();
+            } catch (IOException ex) {
+                throw new RuntimeException("IOError writing file to output stream");
+            }
+        } else {
+            try {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            } catch (IOException e) {
+                throw new RuntimeException("IOError writing file to output stream");
+            }
+
         }
     }
 }

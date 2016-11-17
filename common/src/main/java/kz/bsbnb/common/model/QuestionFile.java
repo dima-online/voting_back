@@ -1,5 +1,6 @@
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ public class QuestionFile implements Serializable {
     @JoinColumn(name = "files_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Files filesId;
+    @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Question questionId;

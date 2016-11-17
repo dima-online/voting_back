@@ -1,9 +1,6 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.ConfirmBean;
-import kz.bsbnb.common.bean.DecisionBean;
-import kz.bsbnb.common.bean.QuestionBean;
-import kz.bsbnb.common.bean.VoterBean;
+import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.model.Answer;
 import kz.bsbnb.common.model.Decision;
 import kz.bsbnb.common.model.Question;
@@ -45,9 +42,12 @@ public interface IVotingController {
 
     Decision getDecisionFromBean(DecisionBean bean);
 
-    SimpleResponse createVoting(Voting voting);
+    SimpleResponse createVoting(RegVotingBean votingBean);
 
     SimpleResponse startVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+    SimpleResponse restartVoting(Long votingId, Long userId, ConfirmBean confirmBean);
     SimpleResponse stopVoting(Long votingId, Long userId, ConfirmBean confirmBean);
     SimpleResponse closeVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+    SimpleResponse editVoting(RegVotingBean votingBean);
+    SimpleResponse addVoter(Long userId, RegVoterBean regVoterBean);
 }

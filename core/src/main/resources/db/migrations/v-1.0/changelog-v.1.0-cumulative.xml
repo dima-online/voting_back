@@ -9,4 +9,7 @@
     <include file="2016-10-19--03-edit_decision_field.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--04-edit_user_and_voter_fields.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--05-add_files.xml" relativeToChangelogFile="true"/>
+    <include file="2016-10-19--06-change_user_info.xml" relativeToChangelogFile="true"/>
+    <include file="2016-10-19--07-change_message.xml" relativeToChangelogFile="true"/>
+    <include file="2016-10-19--08-change_organisation.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

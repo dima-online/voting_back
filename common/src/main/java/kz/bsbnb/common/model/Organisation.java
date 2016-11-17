@@ -8,11 +8,11 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  *
@@ -49,6 +49,9 @@ public class Organisation implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "organisationId", fetch = FetchType.EAGER)
     private Set<Message> messageSet;
+    @Basic(optional = false)
+    @Column(name = "all_share_count")
+    private Integer allShareCount;
 
     public Organisation() {
     }
@@ -123,6 +126,14 @@ public class Organisation implements Serializable {
 
     public void setMessageSet(Set<Message> messageSet) {
         this.messageSet = messageSet;
+    }
+
+    public Integer getAllShareCount() {
+        return allShareCount;
+    }
+
+    public void setAllShareCount(Integer allShareCount) {
+        this.allShareCount = allShareCount;
     }
 
     @Override

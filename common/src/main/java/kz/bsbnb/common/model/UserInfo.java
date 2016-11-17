@@ -8,11 +8,11 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  *
@@ -55,6 +55,8 @@ public class UserInfo implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "userInfoId", fetch = FetchType.EAGER)
     private Set<User> userSet;
+    @Column(name = "is_org")
+    private Boolean isOrg;
 
     public UserInfo() {
     }
@@ -135,6 +137,10 @@ public class UserInfo implements Serializable {
     public void setUserSet(Set<User> userSet) {
         this.userSet = userSet;
     }
+
+    public Boolean getOrg() {return isOrg;}
+
+    public void setOrg(Boolean org) {isOrg = org;}
 
     @Override
     public int hashCode() {
