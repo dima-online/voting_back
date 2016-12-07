@@ -3,20 +3,15 @@ package kz.bsbnb.block.controller.voting.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.bsbnb.block.controller.voting.IVotingDeploy;
 import kz.bsbnb.block.model.HLCommand;
-import kz.bsbnb.block.model.QuestionPoint;
-import kz.bsbnb.block.model.UserPoint;
 import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
 import kz.bsbnb.block.util.HLCommandBuilder;
-import kz.bsbnb.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 /**
  * Created by kanattulbassiyev on 8/15/16.
@@ -45,7 +40,7 @@ public class VotingDeployImpl implements IVotingDeploy {
                 "}";*/
 
     @Override
-    @RequestMapping("/voting/deploy")
+    @RequestMapping(value = "/voting/deploy", method = RequestMethod.POST)
     public Object deployChainCode(@RequestParam(value = "path", required = true) final String path,
                                   @RequestParam(value = "chainCodeName", required = false) String chainCodeName,
                                   @RequestParam(value = "id", required = false, defaultValue = "1") Long id,

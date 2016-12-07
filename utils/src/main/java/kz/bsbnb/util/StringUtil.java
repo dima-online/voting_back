@@ -3,6 +3,7 @@ package kz.bsbnb.util;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Created by ruslan on 19.10.16.
@@ -36,13 +37,64 @@ public class StringUtil {
         return result;
     }
 
-    public static String RND(int count) {
-        String result = "";
-        for (int i = 1; i <= count; i++) {
-            int n = (int) (Math.random() * 10);
-            result = result + String.valueOf(n);
-//            result = result + String.valueOf(i); --Простой пароль
+    public static String RND(int from, int to) {
+//        for (int i = 1; i <= count; i++) {
+//            int n = (int) (Math.random() * 10);
+//            result = result + String.valueOf(n);
+////            result = result + String.valueOf(i); --Простой пароль
+//        }
+        String result  = "";
+        Random r     = new Random();
+        int cntchars = from + r.nextInt(to - from + 1);
+
+        for (int i = 0; i < cntchars; ++i) {
+            char next = 0;
+            int range = 10;
+
+            switch(r.nextInt(3)) {
+                case 0: {next = '0'; range = 10;} break;
+                case 1: {next = 'a'; range = 26;} break;
+                case 2: {next = 'A'; range = 26;} break;
+            }
+
+            result += (char)((r.nextInt(range)) + next);
         }
+
         return result;
+    }
+
+    //assertTrue(is_pdf(Files.readAllBytes(Paths.get("output.pdf"));
+    public static boolean is_pdf(byte[] data) {
+        if (data != null && data.length > 4 &&
+                data[0] == 0x25 && // %
+                data[1] == 0x50 && // P
+                data[2] == 0x44 && // D
+                data[3] == 0x46 && // F
+                data[4] == 0x2D) { // -
+
+            // version 1.3 file terminator
+            if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x33 &&
+                    data[data.length - 7] == 0x25 && // %
+                    data[data.length - 6] == 0x25 && // %
+                    data[data.length - 5] == 0x45 && // E
+                    data[data.length - 4] == 0x4F && // O
+                    data[data.length - 3] == 0x46 && // F
+                    data[data.length - 2] == 0x20 && // SPACE
+                    data[data.length - 1] == 0x0A) { // EOL
+                return true;
+            }
+
+            // version 1.3 file terminator
+            if (data[5] == 0x31 && data[6] == 0x2E && data[7] == 0x34 &&
+                    data[data.length - 6] == 0x25 && // %
+                    data[data.length - 5] == 0x25 && // %
+                    data[data.length - 4] == 0x45 && // E
+                    data[data.length - 3] == 0x4F && // O
+                    data[data.length - 2] == 0x46 && // F
+                    data[data.length - 1] == 0x0A) { // EOL
+                return true;
+            }
+        }
+        return false;
     }
 }

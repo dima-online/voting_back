@@ -1,6 +1,6 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.UserBean;
+import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.model.Organisation;
 import kz.bsbnb.util.SimpleResponse;
 
@@ -12,13 +12,20 @@ import java.util.List;
 public interface IOrganisationController {
     List<Organisation> getOrganisations(int page, int count);
 
-    Organisation getOrganisationById(Long id);
+    OrgBean getOrganisationById(Long id);
+    RegOrgBean getRegOrganisationById(Long id);
 
-    Organisation newOrganisation(Organisation organisation);
+    SimpleResponse newOrganisation(Organisation organisation);
 
-    SimpleResponse addUserToOrganisation(Long orgId, UserBean userBean);
+    SimpleResponse newOrganisation(RegOrgBean organisation);
+
+    SimpleResponse addUserToOrganisation(Long orgId, RegUserBean userBean);
 
     public List<UserBean> getAllUser(Long orgId);
 
     SimpleResponse delOrganisation(Organisation organisation);
+
+    SimpleResponse editOrganisation(RegOrgBean regOrgBean);
+
+    SimpleResponse addRole(Long adminId, RegRoleBean regRoleBean);
 }

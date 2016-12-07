@@ -1,5 +1,6 @@
 package kz.bsbnb;
 
+import kz.bsbnb.util.CryptUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +21,8 @@ public class BlockChainApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BlockChainApplication.class, args);
+        //Сделано для инициализации сертификатов
+        CryptUtil.signXML("<test></test>","/opt/voting/test/test.p12","123456");
     }
 
     @Bean

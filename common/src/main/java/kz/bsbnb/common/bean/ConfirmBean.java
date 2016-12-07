@@ -1,7 +1,5 @@
 package kz.bsbnb.common.bean;
 
-import kz.bsbnb.common.model.User;
-
 import java.util.Date;
 
 /**
@@ -9,21 +7,20 @@ import java.util.Date;
  */
 public class ConfirmBean {
 
-    private Long id;
+    private Long userId;
     private Date dateConfirm;
-    private String publicKey;
-    private String signature;
-    private User user;
+    private String xmlBody;
+    private String iin;
 
     public ConfirmBean() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Date getDateConfirm() {
@@ -34,27 +31,19 @@ public class ConfirmBean {
         this.dateConfirm = dateConfirm;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public String getXmlBody() {
+        return xmlBody;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setXmlBody(String xmlBody) {
+        this.xmlBody = xmlBody;
     }
 
-    public String getSignature() {
-        return signature;
+    public String getIin() {
+        return iin;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setIin(String iin) {
+        this.iin = iin;
     }
 }

@@ -13,8 +13,17 @@ public class DecisionBean {
     private Long questionId;
     private String comments;
     private Long userId;
+    private ConfirmBean confirm;
 
     public DecisionBean() {
+    }
+
+    public ConfirmBean getConfirm() {
+        return confirm;
+    }
+
+    public void setConfirm(ConfirmBean confirm) {
+        this.confirm = confirm;
     }
 
     public Long getId() {
@@ -34,6 +43,7 @@ public class DecisionBean {
     }
 
     public Integer getScore() {
+        if (score==null) {score = 0;}
         return score;
     }
 

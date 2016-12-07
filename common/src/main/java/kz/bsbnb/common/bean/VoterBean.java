@@ -1,7 +1,5 @@
 package kz.bsbnb.common.bean;
 
-import kz.bsbnb.common.model.Voting;
-
 import java.util.Set;
 
 /**
@@ -11,9 +9,9 @@ public class VoterBean {
 
     private Long id;
     private UserBean userId;
-    private Voting voting;
+//    private VotingBean voting;
     private int shareCount;
-    private float sharePercent;
+    private double sharePercent;
     private Set<DecisionBean> decisions;
 
     public VoterBean() {
@@ -35,13 +33,13 @@ public class VoterBean {
         this.userId = userId;
     }
 
-    public Voting getVoting() {
-        return voting;
-    }
-
-    public void setVoting(Voting voting) {
-        this.voting = voting;
-    }
+//    public VotingBean getVoting() {
+//        return voting;
+//    }
+//
+//    public void setVoting(VotingBean voting) {
+//        this.voting = voting;
+//    }
 
     public int getShareCount() {
         return shareCount;
@@ -51,11 +49,11 @@ public class VoterBean {
         this.shareCount = shareCount;
     }
 
-    public float getSharePercent() {
+    public double getSharePercent() {
         return sharePercent;
     }
 
-    public void setSharePercent(float sharePercent) {this.sharePercent = sharePercent;}
+    public void setSharePercent(double sharePercent) {this.sharePercent = sharePercent;}
 
     public Set<DecisionBean> getDecisions() {
         return decisions;

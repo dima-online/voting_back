@@ -1,7 +1,7 @@
 package kz.bsbnb.common.bean;
 
 import kz.bsbnb.common.model.Answer;
-import kz.bsbnb.common.model.Decision;
+import kz.bsbnb.common.model.Files;
 
 import java.util.Set;
 
@@ -15,10 +15,18 @@ public class QuestionBean {
     private Integer num;
     private String decision;
     private Set<Answer> answerSet;
-    private Set<Decision> decisionSet;
+    private Set<DecisionBean> decisionSet;
     private Long votingId;
-
+    private Set<Files> questionFileSet;
     public QuestionBean() {
+    }
+
+    public Set<Files> getQuestionFileSet() {
+        return questionFileSet;
+    }
+
+    public void setQuestionFileSet(Set<Files> questionFileSet) {
+        this.questionFileSet = questionFileSet;
     }
 
     public Long getId() {
@@ -69,11 +77,11 @@ public class QuestionBean {
         this.answerSet = answerSet;
     }
 
-    public Set<Decision> getDecisionSet() {
+    public Set<DecisionBean> getDecisionSet() {
         return decisionSet;
     }
 
-    public void setDecisionSet(Set<Decision> decisionSet) {
+    public void setDecisionSet(Set<DecisionBean> decisionSet) {
         this.decisionSet = decisionSet;
     }
 

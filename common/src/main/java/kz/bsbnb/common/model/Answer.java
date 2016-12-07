@@ -8,12 +8,12 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
-import java.io.Serializable;
-import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.util.Set;
 
 /**
  *
@@ -38,11 +38,12 @@ public class Answer implements Serializable {
     @Size(max = 2000)
     @Column(name = "final_score")
     private String finalScore;
+    @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Question questionId;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "answerId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answerId", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
 
     public Answer() {

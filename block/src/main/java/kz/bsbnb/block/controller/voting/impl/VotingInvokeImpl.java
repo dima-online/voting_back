@@ -6,14 +6,11 @@ import kz.bsbnb.block.model.HLCommand;
 import kz.bsbnb.block.processor.HLCommandProcessor;
 import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
-import kz.bsbnb.block.util.Constants;
-import kz.bsbnb.block.util.HLCommandBuilder;
-import kz.bsbnb.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +46,7 @@ public class VotingInvokeImpl implements IVotingInvoke {
         "}";*/
 
     @Override
-    @RequestMapping("/voting/register")
+    @RequestMapping(value = "/voting/register", method = RequestMethod.POST)
     public Object register(
                         @RequestParam(value = "voteId") final Long voteId,
                        @RequestParam(value = "questions") final String questions,
@@ -84,7 +81,7 @@ public class VotingInvokeImpl implements IVotingInvoke {
     }
 
     @Override
-    @RequestMapping("/voting/vote")
+    @RequestMapping(value = "/voting/vote", method = RequestMethod.POST)
     public Object vote(@RequestParam(value = "voteId") Long voteId,
                        @RequestParam(value = "userId") Long userId,
                        @RequestParam(value = "question") String question,
@@ -105,7 +102,7 @@ public class VotingInvokeImpl implements IVotingInvoke {
     }
 
     @Override
-    @RequestMapping("/voting/transfer")
+    @RequestMapping(value = "/voting/transfer", method = RequestMethod.POST)
     public Object transfer(@RequestParam(value = "voteId") Long voteId,
                            @RequestParam(value = "userIdFrom") Long userIdFrom,
                            @RequestParam(value = "userIdTo") Long userIdTo,

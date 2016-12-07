@@ -6,14 +6,11 @@ import kz.bsbnb.block.model.HLCommand;
 import kz.bsbnb.block.processor.HLCommandProcessor;
 import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
-import kz.bsbnb.block.util.Constants;
-import kz.bsbnb.block.util.HLCommandBuilder;
-import kz.bsbnb.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by kanattulbassiyev on 8/15/16.
@@ -28,7 +25,7 @@ public class VotingQueryImpl implements IVotingQuery {
     private HyperLedgerProcessor hyperLedgerProcessor;
 
     @Override
-    @RequestMapping("/voting/getUserInfo")
+    @RequestMapping(value = "/voting/getUserInfo", method = RequestMethod.GET)
     public Object getUserInfo(
             @RequestParam(value = "voteId") final Long voteId,
             @RequestParam(value = "userId") final Long userId) {
@@ -44,7 +41,7 @@ public class VotingQueryImpl implements IVotingQuery {
     }
 
     @Override
-    @RequestMapping("/voting/getAnswerInfo")
+    @RequestMapping(value = "/voting/getAnswerInfo", method = RequestMethod.GET)
     public Object getAnswerInfo(
             @RequestParam(value = "voteId") final Long voteId,
             @RequestParam(value = "userId") final Long userId,
@@ -61,7 +58,7 @@ public class VotingQueryImpl implements IVotingQuery {
     }
 
     @Override
-    @RequestMapping("/voting/getQuestionInfo")
+    @RequestMapping(value = "/voting/getQuestionInfo", method = RequestMethod.GET)
     public Object getQuestionInfo(
             @RequestParam(value = "voteId") final Long voteId,
             @RequestParam(value = "question") final String question) {

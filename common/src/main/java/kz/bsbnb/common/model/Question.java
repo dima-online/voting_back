@@ -45,15 +45,18 @@ public class Question implements Serializable {
     @Column(name = "decision")
     private String decision;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
     @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voting votingId;
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
+    private Set<QuestionFile> questionFileSet;
 
     public Question() {
     }
@@ -65,6 +68,15 @@ public class Question implements Serializable {
     public Question(Long id, String question) {
         this.id = id;
         this.question = question;
+    }
+
+    @XmlTransient
+    public Set<QuestionFile> getQuestionFileSet() {
+        return questionFileSet;
+    }
+
+    public void setQuestionFileSet(Set<QuestionFile> questionFileSet) {
+        this.questionFileSet = questionFileSet;
     }
 
     public Long getId() {
