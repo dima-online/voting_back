@@ -58,9 +58,13 @@ public class VotingInvokeImpl implements IVotingInvoke {
 
         List<String> list = new ArrayList<>();
         list.add(String.valueOf(voteId));
-        list.add(questions);
+        for (String s: questions.split(" ")) {
+            list.add(s);
+        }
         list.add(".");
-        list.add(questionsAccum);
+        for (String s: questionsAccum.split(" ")) {
+            list.add(s);
+        }
         list.add(".");
 
         for (String s: usersPoints.split(" ")) {

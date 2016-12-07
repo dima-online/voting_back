@@ -110,8 +110,10 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 	var voteId int32
 	var userId int32
 	var points int32
+	var qint int32
 	var throwError error
 	var v int
+	var qq int
 
 
 	v, err := strconv.Atoi(args[0])
@@ -138,8 +140,15 @@ func (t *SimpleChaincode) register(stub shim.ChaincodeStubInterface, args []stri
 			continue
 		} else {
 			if flag == 0 {
-				question = args[i]
-				qcol = strconv.Itoa(int(voteId)) + "_" + question
+				//question = args[i]
+				qq, err = strconv.Atoi(args[i])
+				if err != nil {
+					throwError = errors.New("Expecting integer value for question to register")
+					return errorJson("register", throwError), throwError
+				}
+				qint = int32(qq)
+
+				qcol = strconv.Itoa(int(voteId)) + "_" + strconv.Itoa(int(qint))
 				ok, err := stub.InsertRow("questions", shim.Row{
 					Columns: []*shim.Column{
 						&shim.Column{Value: &shim.Column_String_{String_: qcol}},
