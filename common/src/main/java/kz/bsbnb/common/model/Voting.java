@@ -75,7 +75,7 @@ public class Voting implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User whoChanged;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "votingId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "votingId", fetch = FetchType.EAGER)
     private Set<Voter> voterSet;
 
     public Voting() {

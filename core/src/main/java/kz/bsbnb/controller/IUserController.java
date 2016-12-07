@@ -22,7 +22,9 @@ public interface IUserController {
     SimpleResponse checkUser(User user);
 
     //Смена пароля
-    SimpleResponse updateUser(User user);
+    SimpleResponse updateUser(RegUserBean user);
+
+    SimpleResponse updateProfileUser(RegUserBean userBean);
 
     SimpleResponse deleteUser(User user);
 
@@ -56,4 +58,12 @@ public interface IUserController {
     OrgBean castToBean(Organisation org, User user);
 
     SimpleResponse getUserpProfile(Long userId);
+
+    public SimpleResponse signData(DecisionBean bean);
+
+    public SimpleResponse verifyData(DecisionBean bean);
+
+    SimpleResponse verifyIIN(String iin);
+
+    SimpleResponse remind(RegUserBean userBean);
 }

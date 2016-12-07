@@ -21,9 +21,18 @@ public class VotingBean {
     private Set<VoterBean> voterSet;
     private boolean canVote;
     private Long organisationId;
+    private String organisationName;
     private Integer questionCount;
 
     public VotingBean() {
+    }
+
+    public String getOrganisationName() {
+        return organisationName;
+    }
+
+    public void setOrganisationName(String organisationName) {
+        this.organisationName = organisationName;
     }
 
     public Long getOrganisationId() {

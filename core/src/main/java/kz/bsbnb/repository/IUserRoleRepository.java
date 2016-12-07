@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Olzhas.Pazyldayev on 12.08.2016.
  */
 public interface IUserRoleRepository extends PagingAndSortingRepository<UserRoles, Long> {
-    UserRoles findByRole(Role role);
+    List<UserRoles> findByRole(Role role);
 
     List<UserRoles> findByUserIdAndOrgId(User user, Organisation organisation);
 }

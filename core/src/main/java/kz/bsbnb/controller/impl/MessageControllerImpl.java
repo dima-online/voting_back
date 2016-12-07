@@ -2,9 +2,11 @@ package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.MessageBean;
 import kz.bsbnb.common.bean.ThreadBean;
+import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.Message;
 import kz.bsbnb.common.model.Organisation;
 import kz.bsbnb.common.model.User;
+import kz.bsbnb.common.model.UserRoles;
 import kz.bsbnb.controller.IMessageController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.repository.IMessageRepository;
@@ -133,6 +135,32 @@ public class MessageControllerImpl implements IMessageController {
                 }
             }
         }
+
+        Role role = Role.ROLE_USER;
+        for (UserRoles userRole : user.getUserRolesSet()) {
+            Role temp = userRole.getRole();
+            if (role.compareTo(temp) > 0) {
+                role = temp;
+            }
+            if (temp.equals(Role.ROLE_OPER)) {
+                List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+                for (Message m : messages) {
+                    if (m.getParentId() == null) {
+                        result.add(castToThreadBean(m));
+                    }
+                }
+            }
+        }
+        if (role.equals(Role.ROLE_ADMIN)) {
+//            List<Message> messages = messageRepository.findByOrganisationId(null);
+            List<Message> messages = (List<Message>) messageRepository.findAll();
+            for (Message m : messages) {
+                if (m.getParentId() == null) {
+                    result.add(castToThreadBean(m));
+                }
+            }
+        }
+
         Collections.sort(result, new Comparator<ThreadBean>() {
 
             @Override
@@ -198,6 +226,7 @@ public class MessageControllerImpl implements IMessageController {
         }
         if (message.getUserId() != null) {
             result.setUserId(message.getUserId().getId());
+            result.setUserName(message.getUserId().getUserInfoId().getLastName());
         }
         return result;
     }

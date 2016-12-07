@@ -12,4 +12,6 @@
     <include file="2016-10-19--06-change_user_info.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--07-change_message.xml" relativeToChangelogFile="true"/>
     <include file="2016-10-19--08-change_organisation.xml" relativeToChangelogFile="true"/>
+    <include file="2016-11-20--09-add_attribute.xml" relativeToChangelogFile="true"/>
+    <include file="2016-12-02--10-add_reestr.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

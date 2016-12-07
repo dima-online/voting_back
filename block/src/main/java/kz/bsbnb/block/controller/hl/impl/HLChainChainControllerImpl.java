@@ -5,6 +5,7 @@ import kz.bsbnb.block.model.HLChain;
 import kz.bsbnb.block.util.BlockChainProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,7 +18,7 @@ public class HLChainChainControllerImpl implements IHLChainController {
     private BlockChainProperties blockchainProperties;
 
     @Override
-    @RequestMapping("/hl/chain")
+    @RequestMapping(value = "/hl/chain", method = RequestMethod.GET)
     public HLChain getChain() {
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(blockchainProperties.getServer() + "/chain", HLChain.class);

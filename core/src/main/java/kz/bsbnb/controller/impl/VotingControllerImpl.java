@@ -32,6 +32,9 @@ public class VotingControllerImpl implements IVotingController {
     IUserRepository userRepository;
 
     @Autowired
+    IUserRoleRepository  userRoleRepository;
+
+    @Autowired
     IQuestionRepository questionRepository;
 
     @Autowired
@@ -82,15 +85,19 @@ public class VotingControllerImpl implements IVotingController {
         User user = userRepository.findOne(votingBean.getUserId());
         Voting voting = castFromBean(votingBean, user);
         Voting oldVoting = votingRepository.findOne(votingBean.getId());
-        oldVoting.setWhoChanged(user);
-        oldVoting.setLastChanged(new Date());
-        oldVoting.setDateEnd(voting.getDateEnd());
-        oldVoting.setDateBegin(voting.getDateBegin());
-        oldVoting.setSubject(voting.getSubject());
-        oldVoting.setVotingType(voting.getVotingType());
-        oldVoting = votingRepository.save(oldVoting);
-        RegVotingBean result = castToBean(oldVoting);
-        return new SimpleResponse(result).SUCCESS();
+        if (oldVoting != null) {
+            oldVoting.setWhoChanged(user);
+            oldVoting.setLastChanged(new Date());
+            oldVoting.setDateEnd(voting.getDateEnd());
+            oldVoting.setDateBegin(voting.getDateBegin());
+            oldVoting.setSubject(voting.getSubject());
+            oldVoting.setVotingType(voting.getVotingType());
+            oldVoting = votingRepository.save(oldVoting);
+            RegVotingBean result = castToBean(oldVoting);
+            return new SimpleResponse(result).SUCCESS();
+        } else {
+            return new SimpleResponse("Не найдено голосование с ID="+votingBean.getId()).ERROR_NOT_FOUND();
+        }
     }
 
     private RegVotingBean castToBean(Voting voting) {
@@ -160,13 +167,28 @@ public class VotingControllerImpl implements IVotingController {
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "20") int count) {
         Voting voting = votingRepository.findOne(votingId);
-        List<Question> question = questionRepository.findByVotingId(voting);
-        List<QuestionBean> result = new ArrayList<>();
-        for (Question q : question) {
-            QuestionBean bean = userController.castFromQuestion(q, new User(), false);
-            result.add(bean);
+        if (voting==null) {
+            return new ArrayList<>();
+        } else {
+            List<Question> question = questionRepository.findByVotingId(voting);
+            List<QuestionBean> result = new ArrayList<>();
+            for (Question q : question) {
+                QuestionBean bean = userController.castFromQuestion(q, new User(), false);
+                result.add(bean);
+            }
+            return result;
         }
-        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/{votingId}", method = RequestMethod.GET)
+    public SimpleResponse getVoting(@PathVariable Long votingId) {
+        Voting voting = votingRepository.findOne(votingId);
+        if (voting==null) {
+            return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
+        } else {
+            return new SimpleResponse(voting).SUCCESS();
+        }
     }
 
     @Override
@@ -216,16 +238,45 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
+    @RequestMapping(value = "/delete/{votingId}/{userId}", method = RequestMethod.DELETE)
+    public SimpleResponse deleteVoting(@PathVariable Long votingId, @PathVariable Long userId
+            , @RequestBody @Valid ConfirmBean confirmBean) {
+        if (confirmationService.check(confirmBean)) {
+            Voting voting = votingRepository.findOne(votingId);
+            if (voting==null) {
+                return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
+            } else {
+                User user = userRepository.findOne(userId);
+                if (voting.getStatus().equals("CREATED")||voting.getStatus().equals("NEW")) {
+                    for (Question question : voting.getQuestionSet()) {
+                        deleteVotingQuestions(votingId, question);
+                    }
+                    votingRepository.delete(voting);
+                    return new SimpleResponse("Голосование успешно удалено").SUCCESS();
+                } else {
+                    return new SimpleResponse("Голосование не может быть удалено").ERROR_CUSTOM();
+                }
+            }
+        } else {
+            return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
     @RequestMapping(value = "/restart/{votingId}/{userId}", method = RequestMethod.POST)
     public SimpleResponse restartVoting(@PathVariable Long votingId, @PathVariable Long userId
             , @RequestBody @Valid ConfirmBean confirmBean) {
         if (confirmationService.check(confirmBean)) {
             Voting voting = votingRepository.findOne(votingId);
-            User user = userRepository.findOne(userId);
-            voting.setStatus("STARTED");
-            voting.setDateClose(null);
-            voting = votingRepository.save(voting);
-            return new SimpleResponse(userController.castToBean(voting, user));
+            if (voting==null) {
+                return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
+            } else {
+                User user = userRepository.findOne(userId);
+                voting.setStatus("STARTED");
+                voting.setDateClose(null);
+                voting = votingRepository.save(voting);
+                return new SimpleResponse(userController.castToBean(voting, user));
+            }
         } else {
             return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
         }
@@ -237,10 +288,14 @@ public class VotingControllerImpl implements IVotingController {
             , @RequestBody @Valid ConfirmBean confirmBean) {
         if (confirmationService.check(confirmBean)) {
             Voting voting = votingRepository.findOne(votingId);
-            User user = userRepository.findOne(userId);
-            voting.setStatus("STOPED");
-            voting = votingRepository.save(voting);
-            return new SimpleResponse(userController.castToBean(voting, user));
+            if (voting==null) {
+                return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
+            } else {
+                User user = userRepository.findOne(userId);
+                voting.setStatus("STOPED");
+                voting = votingRepository.save(voting);
+                return new SimpleResponse(userController.castToBean(voting, user));
+            }
         } else {
             return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
         }
@@ -252,11 +307,15 @@ public class VotingControllerImpl implements IVotingController {
             , @RequestBody @Valid ConfirmBean confirmBean) {
         if (confirmationService.check(confirmBean)) {
             Voting voting = votingRepository.findOne(votingId);
-            User user = userRepository.findOne(userId);
-            voting.setDateClose(new Date());
-            voting.setStatus("CLOSED");
-            voting = votingRepository.save(voting);
-            return new SimpleResponse(userController.castToBean(voting, user));
+            if (voting==null) {
+                return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
+            } else {
+                User user = userRepository.findOne(userId);
+                voting.setDateClose(new Date());
+                voting.setStatus("CLOSED");
+                voting = votingRepository.save(voting);
+                return new SimpleResponse(userController.castToBean(voting, user));
+            }
         } else {
             return new SimpleResponse("Данные не прошли проверку").ERROR_CUSTOM();
         }
@@ -391,6 +450,21 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
+    @RequestMapping(value = "/delVoter/{votingId}/{userId}", method = RequestMethod.DELETE)
+    public SimpleResponse delVoter(@PathVariable Long votingId, @PathVariable Long userId) {
+        Voting voting = votingRepository.findOne(votingId);
+        User user = userRepository.findOne(userId);
+        Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+        if (voter!=null) {
+            voterRepository.delete(voter);
+            return new SimpleResponse("Голосующий удален").SUCCESS();
+        } else {
+            return new SimpleResponse("Голосующего не существует").ERROR_CUSTOM();
+        }
+    }
+
+
+    @Override
     @RequestMapping(value = "/addVoter/{userId}", method = RequestMethod.POST)
     public SimpleResponse addVoter(@PathVariable Long userId, @RequestBody @Valid RegVoterBean regVoterBean) {
         User adminUser = userRepository.findOne(userId);
@@ -408,6 +482,21 @@ public class VotingControllerImpl implements IVotingController {
                 voter.setShareCount(regVoterBean.getShareCount()==null?0:regVoterBean.getShareCount());
                 voter = voterRepository.save(voter);
                 regVoterBean.setId(voter.getId());
+                List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, voting.getOrganisationId());
+                if (userRoles.isEmpty()) {
+                    UserRoles userRole = new UserRoles();
+                    userRole.setCannotVote(0);
+                    userRole.setOrgId(voting.getOrganisationId());
+                    userRole.setShareCount(regVoterBean.getShareCount()==null?0:regVoterBean.getShareCount());
+                    userRole.setRole(Role.ROLE_USER);
+                    userRole.setUserId(user);
+                    userRoleRepository.save(userRole);
+                } else {
+                    for (UserRoles userRole:userRoles) {
+                        userRole.setShareCount(regVoterBean.getShareCount()==null?0:regVoterBean.getShareCount());
+                        userRoleRepository.save(userRole);
+                    }
+                }
                 return new SimpleResponse(regVoterBean).SUCCESS();
             }
         } else {
@@ -430,11 +519,11 @@ public class VotingControllerImpl implements IVotingController {
         List<Answer> answers = new ArrayList<>();
         Answer answerYes = new Answer();
         answerYes.setQuestionId(question);
-        answerYes.setAnswer("Да");//Yes
+        answerYes.setAnswer("За");//Yes
         answers.add(answerYes);
         Answer answerNo = new Answer();
         answerNo.setQuestionId(question);
-        answerNo.setAnswer("Нет");//No
+        answerNo.setAnswer("Против");//No
         answers.add(answerNo);
         Answer answerAbstained = new Answer();
         answerAbstained.setQuestionId(question);

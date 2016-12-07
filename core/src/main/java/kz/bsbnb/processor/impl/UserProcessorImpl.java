@@ -21,12 +21,12 @@ public class UserProcessorImpl implements UserProcessor {
     private IUserRoleRepository userRoleRepository;
 
     public void mergeUser(User user) {
-        Set<UserRoles> roles = new HashSet<>();
-        user.getAuthorities().forEach(userRole1 -> {
-            UserRoles userRole = userRoleRepository.findByRole(Role.getRole(userRole1.getAuthority()));
-            roles.add(userRole);
-        });
-        user.setUserRolesSet(roles);
+//        Set<UserRoles> roles = new HashSet<>();
+//        user.getAuthorities().forEach(userRole1 -> {
+//            UserRoles userRole = userRoleRepository.findByRole(Role.getRole(userRole1.getAuthority()));
+//            roles.add(userRole);
+//        });
+//        user.setUserRolesSet(roles);
 
     }
 }

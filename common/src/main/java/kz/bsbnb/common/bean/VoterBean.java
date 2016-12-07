@@ -11,7 +11,7 @@ public class VoterBean {
     private UserBean userId;
 //    private VotingBean voting;
     private int shareCount;
-    private float sharePercent;
+    private double sharePercent;
     private Set<DecisionBean> decisions;
 
     public VoterBean() {
@@ -49,11 +49,11 @@ public class VoterBean {
         this.shareCount = shareCount;
     }
 
-    public float getSharePercent() {
+    public double getSharePercent() {
         return sharePercent;
     }
 
-    public void setSharePercent(float sharePercent) {this.sharePercent = sharePercent;}
+    public void setSharePercent(double sharePercent) {this.sharePercent = sharePercent;}
 
     public Set<DecisionBean> getDecisions() {
         return decisions;

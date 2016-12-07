@@ -1,6 +1,7 @@
 package kz.bsbnb.cli;
 
 import kz.bsbnb.BlockChainApplication;
+import kz.bsbnb.util.CryptUtil;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,6 +35,8 @@ public class StartCLI {
         shell.promptLoop();
         shell.waitForComplete();
         ctx.close();
+        //Сделано для инициализации сертификатов
+        CryptUtil.signXML("<test></test>","/opt/voting/test/test.p12","123456");
     }
     // is necessary, autowired in:
     // org.springframework.shell.converters.AvailableCommandsConverter

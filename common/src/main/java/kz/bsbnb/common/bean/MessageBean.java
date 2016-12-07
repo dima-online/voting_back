@@ -14,6 +14,7 @@ public class MessageBean {
     private Date dateRead;
     private Long parentId;
     private Long userId;
+    private String userName;
     private Long organisationId;
     private String organisationName;
     private Boolean fromUser;
@@ -99,5 +100,13 @@ public class MessageBean {
 
     public void setOrganisationName(String organisationName) {
         this.organisationName = organisationName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

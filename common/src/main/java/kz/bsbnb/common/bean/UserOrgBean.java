@@ -9,6 +9,7 @@ public class UserOrgBean {
     private String role;
     private String organisationName;
     private Integer shareCount;
+    private double sharePercent;
 
     public UserOrgBean() {
     }
@@ -51,5 +52,13 @@ public class UserOrgBean {
 
     public void setShareCount(Integer shareCount) {
         this.shareCount = shareCount;
+    }
+
+    public double getSharePercent() {
+        return sharePercent;
+    }
+
+    public void setSharePercent(double sharePercent) {
+        this.sharePercent = sharePercent;
     }
 }

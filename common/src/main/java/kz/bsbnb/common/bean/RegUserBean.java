@@ -18,8 +18,17 @@ public class RegUserBean {
     private String middleName;
     private String password;
     private String oldPassword;
+    private Integer shareCount;
 
     public RegUserBean() {
+    }
+
+    public Integer getShareCount() {
+        return shareCount;
+    }
+
+    public void setShareCount(Integer shareCount) {
+        this.shareCount = shareCount;
     }
 
     public String getPhone() {
