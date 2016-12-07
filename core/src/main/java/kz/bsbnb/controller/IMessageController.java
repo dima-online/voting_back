@@ -22,4 +22,6 @@ public interface IMessageController {
     SimpleResponse readMessage(Long messageId);
 
     SimpleResponse deleteMessage(Long messageId);
+
+    List<MessageBean> getUserMessages(Long threadId, Long userId);
 }

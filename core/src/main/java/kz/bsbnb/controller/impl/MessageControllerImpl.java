@@ -12,6 +12,7 @@ import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.repository.IMessageRepository;
 import kz.bsbnb.repository.IOrganisationRepository;
 import kz.bsbnb.repository.IUserRepository;
+import kz.bsbnb.repository.IUserRoleRepository;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,8 @@ public class MessageControllerImpl implements IMessageController {
 
     @Autowired
     IUserRepository userRepository;
+    @Autowired
+    IUserRoleRepository userRoleRepository;
 
     @Autowired
     IUserController userController;
@@ -85,7 +88,7 @@ public class MessageControllerImpl implements IMessageController {
             organisation = parent.getOrganisationId();
         }
         mess.setOrganisationId(organisation);
-        mess.setSubject(message.getSubject()==null?parent.getSubject():message.getSubject());
+        mess.setSubject(message.getSubject() == null ? parent.getSubject() : message.getSubject());
         User user = null;
         if (message.getUserId() != null) {
             user = userRepository.findOne(message.getUserId());
@@ -93,6 +96,8 @@ public class MessageControllerImpl implements IMessageController {
             user = parent.getUserId();
         }
         mess.setUserId(user);
+        parent.setDateRead(null);
+        messageRepository.save(parent);
         mess = messageRepository.save(mess);
         message.setId(mess.getId());
         return new SimpleResponse(castToBean(mess)).SUCCESS();
@@ -186,9 +191,164 @@ public class MessageControllerImpl implements IMessageController {
 
             @Override
             public int compare(MessageBean o1, MessageBean o2) {
-                    return o2.getDateCreate().compareTo(o1.getDateCreate());
+                return o2.getDateCreate().compareTo(o1.getDateCreate());
             }
         });
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/listMessage/{threadId}/{userId}", method = RequestMethod.GET)
+    public List<MessageBean> getUserMessages(@PathVariable Long threadId, @PathVariable Long userId) {
+        Message message = messageRepository.findOne(threadId);
+        User user = userRepository.findOne(userId);
+        Role role = getUserRole(user);
+        List<MessageBean> result = new ArrayList<>();
+        if (role.equals(Role.ROLE_USER)) {
+            if (message.getUserId().equals(user)) {
+                if (message != null) {
+                    Message temp = message;
+                    for (Message m : message.getMessageSet()) {
+                        if (m.getDateCreate().after(temp.getDateCreate())) {
+                            temp = m;
+                        }
+                    }
+                    if (temp.getDateRead() == null && !temp.getFromUser()) {
+                        message.setDateRead(new Date());
+                        temp.setDateRead(new Date());
+                        messageRepository.save(temp);
+                        message = messageRepository.save(message);
+                    }
+
+                    result.add(castToBean(message));
+                    for (Message m : message.getMessageSet()) {
+                        result.add(castToBean(m));
+                    }
+                }
+
+            } else {
+                return result;
+            }
+        } else if (role.equals(Role.ROLE_OPER)) {
+            if (message.getOrganisationId()==null && !message.getUserId().equals(user)) {
+                return result;
+            } else {
+                if (message.getOrganisationId()!=null) {
+                    if (message.getUserId().equals(user)) {
+                        if (message != null) {
+                            Message temp = message;
+                            for (Message m : message.getMessageSet()) {
+                                if (m.getDateCreate().after(temp.getDateCreate())) {
+                                    temp = m;
+                                }
+                            }
+                            if (temp.getDateRead() == null && !temp.getFromUser()) {
+                                message.setDateRead(new Date());
+                                temp.setDateRead(new Date());
+                                messageRepository.save(temp);
+                                message = messageRepository.save(message);
+                            }
+
+                            result.add(castToBean(message));
+                            for (Message m : message.getMessageSet()) {
+                                result.add(castToBean(m));
+                            }
+                        }
+
+                    } else {
+                        List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, message.getOrganisationId());
+                        boolean isOper = false;
+                        for (UserRoles userRole : userRoles) {
+                            if (userRole.getRole().equals(role)) {
+                                isOper = true;
+                            }
+                        }
+                        if (isOper) {
+                            if (message != null) {
+                                Message temp = message;
+                                for (Message m : message.getMessageSet()) {
+                                    if (m.getDateCreate().after(temp.getDateCreate())) {
+                                        temp = m;
+                                    }
+                                }
+                                if (temp.getDateRead() == null && temp.getFromUser()) {
+                                    message.setDateRead(new Date());
+                                    temp.setDateRead(new Date());
+                                    messageRepository.save(temp);
+                                    message = messageRepository.save(message);
+                                }
+
+                                result.add(castToBean(message));
+                                for (Message m : message.getMessageSet()) {
+                                    result.add(castToBean(m));
+                                }
+                            }
+                        } else {
+                            return result;
+                        }
+                    }
+                } else {
+                    if (message != null) {
+                        Message temp = message;
+                        for (Message m : message.getMessageSet()) {
+                            if (m.getDateCreate().after(temp.getDateCreate())) {
+                                temp = m;
+                            }
+                        }
+                        if (temp.getDateRead() == null && !temp.getFromUser()) {
+                            message.setDateRead(new Date());
+                            temp.setDateRead(new Date());
+                            messageRepository.save(temp);
+                            message = messageRepository.save(message);
+                        }
+
+                        result.add(castToBean(message));
+                        for (Message m : message.getMessageSet()) {
+                            result.add(castToBean(m));
+                        }
+                    }
+                }
+            }
+        } else {
+            if (message != null) {
+                Message temp = message;
+                for (Message m : message.getMessageSet()) {
+                    if (m.getDateCreate().after(temp.getDateCreate())) {
+                        temp = m;
+                    }
+                }
+                if (temp.getDateRead() == null && temp.getFromUser() && message.getOrganisationId()==null) {
+                    message.setDateRead(new Date());
+                    temp.setDateRead(new Date());
+                    messageRepository.save(temp);
+                    message = messageRepository.save(message);
+                }
+
+                result.add(castToBean(message));
+                for (Message m : message.getMessageSet()) {
+                    result.add(castToBean(m));
+                }
+            }
+        }
+
+        Collections.sort(result, new Comparator<MessageBean>() {
+
+            @Override
+            public int compare(MessageBean o1, MessageBean o2) {
+                return o2.getDateCreate().compareTo(o1.getDateCreate());
+            }
+        });
+        return result;
+    }
+
+    private Role getUserRole(User user) {
+        Role result = Role.ROLE_USER;
+        for (UserRoles userRoles : user.getUserRolesSet()) {
+            Role temp = userRoles.getRole();
+            if (result.compareTo(temp) > 0) {
+                result = temp;
+            }
+        }
         return result;
     }
 
@@ -210,9 +370,9 @@ public class MessageControllerImpl implements IMessageController {
         MessageBean result = new MessageBean();
         result.setDateRead(message.getDateRead());
         result.setId(message.getId());
-        if (message.getParentId()!=null) {
+        if (message.getParentId() != null) {
             result.setParentId(message.getParentId().getId());
-            result.setSubject(message.getSubject()==null?message.getParentId().getSubject():message.getSubject());
+            result.setSubject(message.getSubject() == null ? message.getParentId().getSubject() : message.getSubject());
         } else {
             result.setSubject(message.getSubject());
         }
@@ -239,7 +399,7 @@ public class MessageControllerImpl implements IMessageController {
         result.setBody(message.getBody());
         result.setDateCreate(message.getDateCreate());
         result.setFromUser(message.getFromUser());
-        result.setMessageCount(message.getMessageSet()==null?0:message.getMessageSet().size());
+        result.setMessageCount(message.getMessageSet() == null ? 0 : message.getMessageSet().size());
         if (message.getOrganisationId() != null) {
             result.setOrganisationId(message.getOrganisationId().getId());
             result.setOrganisationName(message.getOrganisationId().getOrganisationName());

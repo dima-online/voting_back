@@ -54,4 +54,5 @@ public interface IVotingController {
 
     SimpleResponse deleteVoting(Long votingId, Long userId, ConfirmBean confirmBean);
     SimpleResponse getVoting(Long votingId);
+    SimpleResponse editVotingAnswer(Long questionId, ConfirmBean confirmBean);
 }

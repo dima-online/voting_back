@@ -133,29 +133,46 @@ public class UserControllerImpl implements IUserController {
     public SimpleResponse regUser(@RequestBody @Valid RegUserBean userBean) {
         User user = userRepository.findByIin(userBean.getIin());
         if (user == null) {
-            user = new User();
-            user.setIin(userBean.getIin());
-            user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
-            user.setPassword(userBean.getPassword());
-            user.setStatus("NEW");
-            user = userRepository.save(user);
-            UserInfo userInfo = new UserInfo();
-            userInfo.setStatus("NEW");
-            userInfo.setEmail(userBean.getEmail());
-            userInfo.setPhone(userBean.getPhone());
-            userInfo.setFirstName(userBean.getFirstName());
-            userInfo.setLastName(userBean.getLastName());
-            if (userBean.getOrg() != null && userBean.getOrg()) {
-                userInfo.setLastName(userBean.getFullName());
+            try {
+                if (CheckUtil.INN(userBean.getIin())) {
+                    PasswordUtil passwordValidator = new PasswordUtil();
+                    if (passwordValidator.validate(userBean.getPassword())) {
+                        user = new User();
+                        user.setIin(userBean.getIin());
+                        user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
+                        user.setPassword(userBean.getPassword());
+                        user.setStatus("NEW");
+                        user = userRepository.save(user);
+                        UserInfo userInfo = new UserInfo();
+                        userInfo.setStatus("NEW");
+                        userInfo.setEmail(userBean.getEmail());
+                        userInfo.setPhone(userBean.getPhone());
+                        userInfo.setFirstName(userBean.getFirstName());
+                        userInfo.setLastName(userBean.getLastName());
+                        if (userBean.getOrg() != null && userBean.getOrg()) {
+                            userInfo.setLastName(userBean.getFullName());
+                        }
+                        userInfo.setMiddleName(userBean.getMiddleName());
+                        userInfo.setIdn(userBean.getIin());
+                        userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
+                        userInfo = userInfoRepository.save(userInfo);
+                        user.setUserInfoId(userInfo);
+                        user = userRepository.save(user);
+                        userBean = castUser(user, userInfo);
+                        return new SimpleResponse(userBean).SUCCESS();
+                    } else {
+                        return new SimpleResponse("Пароль должен быть от 8-14 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
+                    }
+                } else {
+                    return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
+                }
+            } catch (CheckUtil.INNLenException e) {
+                return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+            } catch (CheckUtil.INNNotValidChar innNotValidChar) {
+                return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
+            } catch (CheckUtil.INNControlSum10 innControlSum10) {
+                return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
             }
-            userInfo.setMiddleName(userBean.getMiddleName());
-            userInfo.setIdn(userBean.getIin());
-            userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
-            userInfo = userInfoRepository.save(userInfo);
-            user.setUserInfoId(userInfo);
-            user = userRepository.save(user);
-            userBean = castUser(user, userInfo);
-            return new SimpleResponse(userBean).SUCCESS();
         } else {
             return new SimpleResponse("Пользователь с этим ИИН уже существует").ERROR_CUSTOM();
         }
@@ -166,14 +183,15 @@ public class UserControllerImpl implements IUserController {
     public SimpleResponse remind(@RequestBody @Valid RegUserBean userBean) {
         User user = userRepository.findByIin(userBean.getIin());
         if (user != null) {
-            if (user.getUserInfoId().getEmail()!=null) {
-                if (userBean.getEmail()!=null) {
+            if (user.getUserInfoId().getEmail() != null) {
+                if (userBean.getEmail() != null) {
                     if (user.getUserInfoId().getEmail().equals(userBean.getEmail())) {
                         List<String> rec = new ArrayList<>();
                         rec.add(userBean.getEmail());
-                        String pswd = StringUtil.RND(6);
+                        String pswd = StringUtil.RND(8,8);
                         user.setPassword(pwd(pswd));
-                        EmailUtil.send(rec,"ЕРЦБ Голосование","Ваш новый временный пароль "+pswd);
+                        userRepository.save(user);
+                        EmailUtil.send(rec, "ЕРЦБ Голосование", "Ваш новый временный пароль " + pswd);
                         return new SimpleResponse("На указанный вами адрес направлено письмо").SUCCESS();
                     } else {
                         return new SimpleResponse("Адрес введенный вами не совпадает с email пользователя").ERROR_CUSTOM();

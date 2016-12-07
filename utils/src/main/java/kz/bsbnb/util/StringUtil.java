@@ -3,6 +3,7 @@ package kz.bsbnb.util;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  * Created by ruslan on 19.10.16.
@@ -36,13 +37,29 @@ public class StringUtil {
         return result;
     }
 
-    public static String RND(int count) {
-        String result = "";
-        for (int i = 1; i <= count; i++) {
-            int n = (int) (Math.random() * 10);
-            result = result + String.valueOf(n);
-//            result = result + String.valueOf(i); --Простой пароль
+    public static String RND(int from, int to) {
+//        for (int i = 1; i <= count; i++) {
+//            int n = (int) (Math.random() * 10);
+//            result = result + String.valueOf(n);
+////            result = result + String.valueOf(i); --Простой пароль
+//        }
+        String result  = "";
+        Random r     = new Random();
+        int cntchars = from + r.nextInt(to - from + 1);
+
+        for (int i = 0; i < cntchars; ++i) {
+            char next = 0;
+            int range = 10;
+
+            switch(r.nextInt(3)) {
+                case 0: {next = '0'; range = 10;} break;
+                case 1: {next = 'a'; range = 26;} break;
+                case 2: {next = 'A'; range = 26;} break;
+            }
+
+            result += (char)((r.nextInt(range)) + next);
         }
+
         return result;
     }
 

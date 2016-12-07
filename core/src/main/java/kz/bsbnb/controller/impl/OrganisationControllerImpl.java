@@ -264,7 +264,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
             }
         }
 
-        String pswd = StringUtil.RND(6);
+        String pswd = StringUtil.RND(8,8);
         if (user == null) {
 //            user = new User();
 //            user.setUsername(userBean.getLogin());
