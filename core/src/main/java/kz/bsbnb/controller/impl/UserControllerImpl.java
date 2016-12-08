@@ -111,17 +111,35 @@ public class UserControllerImpl implements IUserController {
         userData.setIin(user.getIin());
         List<UserOrgBean> userBeanList = new ArrayList<>();
         for (UserRoles userRoles : user.getUserRolesSet()) {
-            UserOrgBean userBean = new UserOrgBean();
-            userBean.setRole(userRoles.getRole().name());
-            userBean.setUserId(userRoles.getUserId().getId());
-            if (userRoles.getShareCount() == null || userRoles.getShareCount() == 0) {
-                userRoles.setShareCount(1);
+            UserOrgBean userBean = null;
+            boolean isFound = false;
+            if (userBeanList.isEmpty()) {
+                userBean = new UserOrgBean();
+            } else {
+                for (UserOrgBean orgBean: userBeanList) {
+                    if (orgBean.getOrganisationId().equals(userRoles.getOrgId().getId())) {
+                        userBean = orgBean;
+                        isFound = true;
+                    } else {
+                        userBean = new UserOrgBean();
+                    }
+                }
             }
-            userBean.setShareCount(userRoles.getShareCount());
-            userBean.setSharePercent(100.0 * userRoles.getShareCount() / (userRoles.getOrgId() == null || userRoles.getOrgId().getAllShareCount() == null ? userRoles.getShareCount() : userRoles.getOrgId().getAllShareCount()));
-            userBean.setOrganisationId(userRoles.getOrgId().getId());
-            userBean.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-            userBeanList.add(userBean);
+            userBean.addRole(userRoles.getRole().name());
+            userBean.setRole(userRoles.getRole().name());
+            if (userRoles.getRole().equals(Role.ROLE_USER)) {
+                if (userRoles.getShareCount() == null || userRoles.getShareCount() == 0) {
+                    userRoles.setShareCount(1);
+                }
+                userBean.setShareCount(userRoles.getShareCount());
+                userBean.setSharePercent(100.0 * userRoles.getShareCount() / (userRoles.getOrgId() == null || userRoles.getOrgId().getAllShareCount() == null ? userRoles.getShareCount() : userRoles.getOrgId().getAllShareCount()));
+            }
+            if (!isFound) {
+                userBean.setUserId(userRoles.getUserId().getId());
+                userBean.setOrganisationId(userRoles.getOrgId().getId());
+                userBean.setOrganisationName(userRoles.getOrgId().getOrganisationName());
+                userBeanList.add(userBean);
+            }
         }
         userData.setBeanList(userBeanList);
         return new SimpleResponse(userData).SUCCESS();
@@ -495,16 +513,19 @@ public class UserControllerImpl implements IUserController {
         }
         if (!user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;
+            userBean.addRole(role);
             for (UserRoles userRole : user.getUserRolesSet()) {
                 Role temp = userRole.getRole();
                 if (role.compareTo(temp) > 0) {
                     role = temp;
+                    userBean.addRole(role);
                 }
             }
             userBean.setRole(role);
         } else {
             Role role = Role.ROLE_USER;
             userBean.setRole(role);
+            userBean.addRole(role);
         }
         return userBean;
     }
@@ -630,9 +651,9 @@ public class UserControllerImpl implements IUserController {
         result.setVotingType(voting.getVotingType());
         result.setOrganisationId(voting.getOrganisationId().getId());
         result.setOrganisationName(voting.getOrganisationId().getOrganisationName());
-        //TODO добавить проверку прав
+        Role role = getRole(user, voting.getOrganisationId());
         boolean canReadPdf = false;
-        if (user.getId().equals(0L)) {
+        if (role.equals(Role.ROLE_ADMIN)) {
             Set<VoterBean> voterBeanSet = new HashSet<>();
             for (Voter voter : voting.getVoterSet()) {
                 if (voter.getUserId().equals(user)) {
@@ -642,7 +663,7 @@ public class UserControllerImpl implements IUserController {
             }
             result.setVoterSet(voterBeanSet);
         }
-        if (user.getId().equals(0L)) {
+        if (role.equals(Role.ROLE_ADMIN)||role.equals(Role.ROLE_OPER)) {
             Set<QuestionBean> questionBeanSet = new HashSet<>();
             List<Question> sortedList = new ArrayList<>(voting.getQuestionSet());
             Collections.sort(sortedList, new Comparator<Question>() {
@@ -659,6 +680,20 @@ public class UserControllerImpl implements IUserController {
                 questionBeanSet.add(castFromQuestion(question, user, canReadPdf));
             }
             result.setQuestionSet(questionBeanSet);
+        }
+        return result;
+    }
+
+    @Override
+    public Role getRole(User user, Organisation organisation) {
+        Role result = Role.ROLE_USER;
+        for (UserRoles userRoles : user.getUserRolesSet()) {
+            if (userRoles.getOrgId().equals(organisation)) {
+                Role temp = userRoles.getRole();
+                if (result.compareTo(temp) > 0) {
+                    result = temp;
+                }
+            }
         }
         return result;
     }

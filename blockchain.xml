@@ -1,0 +1,866 @@
+<?xml version="1.0" encoding="UTF-8"?><Db flnm="blockchain" nm="blockchain" ver="1.3.4">
+  <VerLbl/>
+  <VerNotes/>
+  <DefTblOpts/>
+  <DocFolder>/home/ruslan/IdeaProjects/voting</DocFolder>
+  <Sch Cm="" nm="core">
+    <Tbl UsSo="1" nm="answer">
+      <Cm>Ответы</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkanswer"/>
+      <Cl au="1" df="nextval('core.answer_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="answer" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="question_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="final_score" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Финалные результат по этому ответу</Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_answer_question" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="question" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="answer" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="question_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="attribute">
+      <Cm>Атрибуты</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkattribute"/>
+      <Cl au="1" df="nextval('core.attribute_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="object" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Код объекта</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="object_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID объекта</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="type_value" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Тип значения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="value" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Значение</Cm>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="decision">
+      <Cm>Решение по вопросу</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkdecision"/>
+      <Cl au="1" df="nextval('core.decision_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="date_create" nu="0">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата создания решения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="voter_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID голосующего</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="question_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID вопроса</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="answer_id" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID вопроса</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="score" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Количество баллов</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="comments" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Другой ответ</Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_decision_answer" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="answer" oe="1" sch="core" zr="1"/>
+        <CdTb mn="1" nm="decision" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="answer_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_decision_question" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="question" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="decision" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="question_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_decision_voter" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="voter" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="decision" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="voter_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="files">
+      <Cm>Материалы</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkfiles"/>
+      <Cl au="1" df="nextval('core.files_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="file_name" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Наименование файла</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="file_path" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="500" sc="null" sg="1" un="0"/>
+        <Cm>Наименование файла на сервере</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="voting_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID голосования</Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_files_voting" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="voting" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="files" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="voting_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="message">
+      <Cm>Сообщения</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkmessage"/>
+      <Cl au="1" df="nextval('core.message_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="organisation_id" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="subject" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Тема сообщения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="body" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20000" sc="null" sg="1" un="0"/>
+        <Cm>Тело сообщения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="parent_id" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID предыдущего сообщения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_create" nu="0">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата сообщения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="user_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="date_read" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата прочтения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="from_user" nu="1">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Fk deAc="3" nm="fk_message_message" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="message" oe="1" sch="core" zr="1"/>
+        <CdTb mn="1" nm="message" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="parent_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_message_organisation" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="1"/>
+        <CdTb mn="1" nm="message" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="organisation_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_message_user" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="user" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="message" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="user_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="organisation">
+      <Cm>Акционерное общество</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkorganisation"/>
+      <Cl au="1" df="nextval('core.organisation_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="organisation_name" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Наименование организации</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="organisation_num" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="50" sc="null" sg="1" un="0"/>
+        <Cm>Регистрационный номер организации</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="external_id" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="50" sc="null" sg="1" un="0"/>
+        <Cm>ID организации во внешней системе</Cm>
+      </Cl>
+      <Cl au="0" df="NEW" nm="status" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Статусы организации NEW APPrOVED CAN_VOTE CANNOT_VOTE</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="all_share_count" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Общее количество акции</Cm>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="question">
+      <Cm>Вопросы</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkquestion"/>
+      <Cl au="1" df="nextval('core.question_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="question" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="num" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Номер вопроса</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="decision" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Итоговое решение по вопросу</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="voting_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="question_type" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Тип вопроса ORDINARY CUMULATIVE </Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_question_voting" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="voting" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="question" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="voting_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="question_file">
+      <Cm>Материалы вопроса</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkquestion_file"/>
+      <Cl au="1" df="nextval('core.question_file_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="files_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="question_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Fk deAc="3" nm="fk_question_file_files" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="files" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="question_file" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="files_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_question_file_question" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="question" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="question_file" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="question_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="user">
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="user_pkey"/>
+      <Cl au="1" df="nextval('core.user_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="iin" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="username" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="password" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="status" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="user_info_id" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Fk deAc="3" nm="user_user_info_fk" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="user_info" oe="1" sch="core" zr="1"/>
+        <CdTb mn="1" nm="user" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="user_info_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="user_info">
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="user_info_pkey"/>
+      <Cl au="1" df="nextval('core.user_info_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="last_name" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="first_name" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="middle_name" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="idn" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="12" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="phone" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="email" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="status" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="is_org" nu="1">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Признак фр. лица</Cm>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="user_roles">
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkuser_roles"/>
+      <Cl au="1" df="nextval('core.user_roles_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="role_code" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Роль ADMIN OPERATOR USER</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="org_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID организации</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="user_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="share_count" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Последние количество акции</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="cannot_vote" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Признак возможности голосовать 0 - Может голосовать 1- неможет голосовать 2 - условный голос 3 - запрет на голосование</Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_user_roles_organisation" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="user_roles" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="org_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_user_roles_user" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="user" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="user_roles" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="user_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="voter">
+      <Cm>Участник голосования</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkvoter"/>
+      <Cl au="1" df="nextval('core.voter_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="user_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="voting_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="date_adding" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата добавления в список голосования</Cm>
+      </Cl>
+      <Cl au="0" df="0" nm="share_count" nu="0">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Количество акции</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="signature" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Код проверки подлинности</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="public_key" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
+        <Cm>Публичный ключ проверки</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_voting" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата фиксации голосования</Cm>
+      </Cl>
+      <Fk deAc="3" nm="fk_voter_user" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="user" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="voter" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="user_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_voter_voting" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="voting" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="voter" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="voting_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="voting">
+      <Cm>Голосование</Cm>
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pkvoting"/>
+      <Cl au="1" df="nextval('core.voting_id_seq'::regclass)" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="voting_type" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Тип голосования SIMPLE MIXED</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="subject" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Тема голосования</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_create" nu="0">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата создания голосования</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_begin" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата начала голосования</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_end" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата окончания голосования</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_close" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата закрытия голосования</Cm>
+      </Cl>
+      <Cl au="0" df="CREATED" nm="status" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="50" sc="null" sg="1" un="0"/>
+        <Cm>Статус голосования CREATED STARTED ENDED CLOSED CANCELED</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="last_changed" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата последнего изменения</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="who_changed" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Пользователь сделавший последнее изменение</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="organisation_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Fk deAc="3" nm="fk_voting_organisation" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="voting" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="organisation_id" prCl="id"/>
+      </Fk>
+      <Fk deAc="3" nm="fk_voting_user" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="user" oe="1" sch="core" zr="0"/>
+        <CdTb mn="1" nm="voting" oe="0" sch="core" zr="1"/>
+        <ClPr cdCl="who_changed" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Seq incr="1" nm="answer_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="attribute_id_seq">
+      <Cm>DbWrench Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="decision_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="files_id_seq">
+      <Cm>DbWrench Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="message_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="organisation_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="question_file_id_seq">
+      <Cm>DbWrench Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="question_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="user_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="user_info_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="user_roles_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="voter_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <Seq incr="1" nm="voting_id_seq">
+      <Cm>Autogenerated Sequence.</Cm>
+    </Seq>
+    <CustomTypes/>
+  </Sch>
+  <Sch Cm="" nm="external">
+    <Tbl UsSo="1" nm="reestr">
+      <Cm>Реестр</Cm>
+      <TblOpts/>
+      <Pk ClNs="id" nm="pkreestr"/>
+      <Cl au="1" df="" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="reestr_head_id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID заголовка</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="name" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Наименование фамилия</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="firstname" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Имя</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="surname" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Отчество</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="iin" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>ИИН/БИН</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="share_type" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
+        <Cm>Тип ЦБ</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="NIN" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
+        <Cm>НИН</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="share_count" nu="0">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Количество голосующих акции</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="share_percent" nu="0">
+        <DT arr="0" ds="Float" en="" id="6" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Процент голосующих акции</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="all_share_count" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="email" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="phone" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Fk deAc="3" nm="fk_reestr_reestr_head" prLkCl="id" upAc="3">
+        <PrTb mn="0" nm="reestr_head" oe="1" sch="external" zr="0"/>
+        <CdTb mn="1" nm="reestr" oe="0" sch="external" zr="1"/>
+        <ClPr cdCl="reestr_head_id" prCl="id"/>
+      </Fk>
+      <UniqueConstraints/>
+      <SchTrHis>
+        <StPr stA="core" stB="reestr"/>
+      </SchTrHis>
+    </Tbl>
+    <Tbl UsSo="1" nm="reestr_head">
+      <Cm>Заголовок реестра</Cm>
+      <TblOpts/>
+      <Pk ClNs="id" nm="pkreestr_head"/>
+      <Cl au="1" df="" nm="id" nu="0">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="iin" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>БИН эмитента</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="org_name" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="200" sc="null" sg="1" un="0"/>
+        <Cm>Наименование эмитента</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="date_create" nu="0">
+        <DT arr="0" ds="DateTime" en="" id="700" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата формирования реестра</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="status" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Статус реестра NEW READY CLOSE</Cm>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis>
+        <StPr stA="core" stB="reestr_head"/>
+      </SchTrHis>
+    </Tbl>
+    <CustomTypes/>
+  </Sch>
+  <Sch Cm="standard public schema" nm="public">
+    <Tbl UsSo="1" nm="databasechangelog">
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Cl au="0" df="" nm="id" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="author" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="filename" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="dateexecuted" nu="0">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="orderexecuted" nu="0">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="exectype" nu="0">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="10" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="md5sum" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="35" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="description" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="comments" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="tag" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="liquibase" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="contexts" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="labels" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="deployment_id" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="10" sc="null" sg="1" un="0"/>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <Tbl UsSo="1" nm="databasechangeloglock">
+      <TblOpts>WITHOUT OIDS</TblOpts>
+      <Pk ClNs="id" nm="pk_databasechangeloglock"/>
+      <Cl au="0" df="" nm="id" nu="0">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="locked" nu="0">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="lockgranted" nu="1">
+        <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="lockedby" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="255" sc="null" sg="1" un="0"/>
+      </Cl>
+      <UniqueConstraints/>
+      <SchTrHis/>
+    </Tbl>
+    <CustomTypes/>
+  </Sch>
+  <Dgm nm="diagramA">
+    <RnCf ClkAct="true" FtSz="11" lkStgy="RightAngleStrategy" zm="1.0">
+      <VbCfg>
+        <Fg ky="Auto Number" vl="0"/>
+        <Fg ky="Check" vl="0"/>
+        <Fg ky="Comment" vl="0"/>
+        <Fg ky="Data Type" vl="1"/>
+        <Fg ky="Default" vl="0"/>
+        <Fg ky="ENUM Values" vl="0"/>
+        <Fg ky="Length" vl="1"/>
+        <Fg ky="Name" vl="1"/>
+        <Fg ky="Nullable" vl="0"/>
+        <Fg ky="Schema Name" vl="0"/>
+        <Fg ky="Signed" vl="0"/>
+      </VbCfg>
+    </RnCf>
+    <DiaProps>
+      <Show AllCols="1" FkCols="1" FkNms="1" PkCols="1"/>
+      <ErNotation>DbwErNotation</ErNotation>
+      <DbTableRectangleFill>HeaderFooterFill</DbTableRectangleFill>
+      <svg path=""/>
+    </DiaProps>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="answer" x="2150" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="attribute" x="2468" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="decision" x="1800" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="files" x="348" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="message" x="685" y="294"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="organisation" x="300" y="294"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="question" x="327" y="159"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="question_file" x="50" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="user" x="1072" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="user_info" x="720" y="468"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="user_roles" x="1417" y="211"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="voter" x="1447" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="voting" x="689" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="public" tbl="databasechangelog" x="2751" y="50"/>
+    <TbGl bkCl="ff6666ff" sch="public" tbl="databasechangeloglock" x="2468" y="274"/>
+    <TbGl bkCl="ff6666ff" sch="external" tbl="reestr_head" x="1785" y="256"/>
+    <TbGl bkCl="ff6666ff" sch="external" tbl="reestr" x="2110" y="272"/>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.answer.fk_answer_question" parentEdge="NORTH" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="487" x2="487" y1="159" y2="54"/>
+        <positionableLine lineRole="CHILD_LINE" x1="2150" x2="491" y1="50" y2="50"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.decision.fk_decision_answer" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="2150" x2="2030" y1="89" y2="89"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.decision.fk_decision_question" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="569" x2="1800" y1="163" y2="163"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.decision.fk_decision_voter" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="1680" x2="1800" y1="109" y2="109"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.files.fk_files_voting" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="689" x2="559" y1="89" y2="89"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.message.fk_message_message" parentEdge="NORTH" positioner="OneLineUserLinkPositioner">
+      <positionableLines/>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.message.fk_message_organisation" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="565" x2="685" y1="346" y2="346"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.message.fk_message_user" parentEdge="SOUTH" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="1128" x2="1128" y1="155" y2="290"/>
+        <positionableLine lineRole="CHILD_LINE" x1="942" x2="1124" y1="294" y2="294"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question.fk_question_voting" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="689" x2="569" y1="189" y2="189"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question_file.fk_question_file_files" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="348" x2="228" y1="83" y2="83"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question_file.fk_question_file_question" parentEdge="NORTH" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="407" x2="407" y1="159" y2="54"/>
+        <positionableLine lineRole="CHILD_LINE" x1="228" x2="403" y1="50" y2="50"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.user.user_user_info_fk" parentEdge="EAST" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="952" x2="1068" y1="540" y2="540"/>
+        <positionableLine lineRole="CHILD_LINE" x1="1072" x2="1072" y1="155" y2="536"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.user_roles.fk_user_roles_organisation" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="565" x2="1417" y1="305" y2="305"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.user_roles.fk_user_roles_user" parentEdge="SOUTH" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="1240" x2="1240" y1="155" y2="207"/>
+        <positionableLine lineRole="CHILD_LINE" x1="1417" x2="1244" y1="211" y2="211"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.voter.fk_voter_user" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="1297" x2="1447" y1="102" y2="102"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="core.voter.fk_voter_voting" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="932" x2="1447" y1="115" y2="115"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.voting.fk_voting_organisation" parentEdge="EAST" positioner="TwoLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="PARENT_LINE" x1="565" x2="685" y1="320" y2="320"/>
+        <positionableLine lineRole="CHILD_LINE" x1="689" x2="689" y1="220" y2="316"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="EAST" nm="core.voting.fk_voting_user" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="1072" x2="932" y1="102" y2="102"/>
+      </positionableLines>
+    </FkGl>
+    <FkGl bkCl="ff000000" childEdge="WEST" nm="external.reestr.fk_reestr_reestr_head" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
+      <positionableLines>
+        <positionableLine lineRole="SINGLE_LINE" x1="2008" x2="2110" y1="310" y2="310"/>
+      </positionableLines>
+    </FkGl>
+    <Notes/>
+    <Zones/>
+  </Dgm>
+  <RnmMgr NxRnmId="4">
+    <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr_head" SupCls="Schema" SupNme="core">
+      <Rnm id="1" nNm="id" oNm="Id"/>
+    </RnmCh>
+    <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr" SupCls="Schema" SupNme="core">
+      <Rnm id="2" nNm="id" oNm="Id"/>
+    </RnmCh>
+    <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr" SupCls="Schema" SupNme="core">
+      <Rnm id="3" nNm="firstname" oNm="first_name"/>
+    </RnmCh>
+  </RnmMgr>
+  <DbDocOptionMgr>
+    <BasicOptionMgr>
+      <Name>db.doc.option.mgr</Name>
+      <BoolOpt lbl="Diagrams" nm="doc.diagrams" on="1" spl="0"/>
+      <BoolOpt lbl="Foreign Keys" nm="doc.fks" on="1" spl="0"/>
+      <BoolOpt lbl="Indexes" nm="doc.indexes" on="1" spl="0"/>
+      <BoolOpt lbl="Overwrite CSS File" nm="doc.overwrite.css" on="1" spl="0"/>
+      <BoolOpt lbl="Procedures" nm="doc.procs" on="1" spl="0"/>
+      <BoolOpt lbl="Schemas" nm="doc.schemas" on="1" spl="0"/>
+      <BoolOpt lbl="Sequences" nm="doc.sequences" on="1" spl="0"/>
+      <BoolOpt lbl="Tables" nm="doc.tables" on="1" spl="0"/>
+      <BoolOpt lbl="Triggers" nm="doc.triggers" on="1" spl="0"/>
+      <BoolOpt lbl="Views" nm="doc.views" on="1" spl="0"/>
+    </BasicOptionMgr>
+  </DbDocOptionMgr>
+  <OpenEditors>
+    <OpenEditor ClsNm="Diagram" fqn="null.diagramA" selected="0"/>
+  </OpenEditors>
+  <TreePaths>
+    <TreePath/>
+    <TreePath>/Schemas (3)</TreePath>
+    <TreePath>/Schemas (3)/core</TreePath>
+    <TreePath>/Schemas (3)/core/Tables (13)</TreePath>
+    <TreePath>/Schemas (3)/external</TreePath>
+    <TreePath>/Schemas (3)/external/Tables (2)</TreePath>
+    <TreePath>/Schemas (3)/public</TreePath>
+    <TreePath>/Schemas (3)/public/Tables (2)</TreePath>
+  </TreePaths>
+</Db>

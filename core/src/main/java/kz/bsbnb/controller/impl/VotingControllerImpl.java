@@ -567,8 +567,133 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    @RequestMapping(value = "/report/{votingId}", method = RequestMethod.GET)
-    public SimpleResponse editVotingAnswer(@PathVariable Long questionId, @RequestBody @Valid ConfirmBean confirmBean) {
-        return null;
+    @RequestMapping(value = "/report/{votingId}", method = RequestMethod.POST)
+    public SimpleResponse reportVoting(@PathVariable Long votingId, @RequestBody @Valid ConfirmBean confirmBean) {
+        Voting voting = votingRepository.findOne(votingId);
+        RepVotingBean repVotingBeen = new RepVotingBean();
+
+        if (voting == null) {
+            return new SimpleResponse("Голосование не найдено").ERROR_CUSTOM();
+        } else if (voting.getStatus().equals("STARTED") || voting.getStatus().equals("CLOSED") || voting.getStatus().equals("STOPED")) {
+            repVotingBeen.setId(votingId);
+            repVotingBeen.setDateCreate(voting.getDateCreate());
+            repVotingBeen.setDateBegin(voting.getDateBegin());
+            repVotingBeen.setDateClose(voting.getDateClose());
+            repVotingBeen.setDateEnd(voting.getDateEnd());
+            repVotingBeen.setOrganisationId(voting.getOrganisationId().getId());
+            repVotingBeen.setOrganisationName(voting.getOrganisationId().getOrganisationName());
+            repVotingBeen.setStatus(voting.getStatus());
+            repVotingBeen.setSubject(voting.getSubject());
+            repVotingBeen.setVotingType(voting.getVotingType());
+            repVotingBeen.setRepQuestionBeen(new ArrayList<>());
+            for (Question question : voting.getQuestionSet()) {
+                RepQuestionBean repQuestionBean = new RepQuestionBean();
+                repQuestionBean.setId(question.getId());
+                repQuestionBean.setQuestion(question.getQuestion());
+                repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
+                for (Decision decision : question.getDecisionSet()) {
+                    RepAnswerBean repAnswerBean = null;
+                    boolean isFound = false;
+                    for (RepAnswerBean bean : repQuestionBean.getRepAnswerBeanList()) {
+                        if (bean.getId() == null && decision.getAnswerId() == null) {
+                            repAnswerBean = bean;
+                        } else if ((bean.getId() != null && decision.getAnswerId() != null) && bean.getId().equals(decision.getAnswerId().getId())) {
+                            repAnswerBean = bean;
+                        }
+                    }
+                    if (!isFound) {
+                        repAnswerBean = new RepAnswerBean();
+                        repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
+                        repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
+                        if (question.getQuestionType().equals("ORDINARY")) {
+                            repAnswerBean.setScore(1);
+                        } else {
+                            repAnswerBean.setScore(decision.getScore());
+                        }
+                        repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
+                    } else {
+                        if (question.getQuestionType().equals("ORDINARY")) {
+                            repAnswerBean.setScore(repAnswerBean.getScore() + 1);
+                        } else {
+                            repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
+                        }
+                    }
+                }
+                repVotingBeen.getRepQuestionBeen().add(repQuestionBean);
+            }
+            return new SimpleResponse(repVotingBeen).SUCCESS();
+        } else {
+            return new SimpleResponse("Голосование должно быть в статусе ").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/report/{votingId}/{questionId}", method = RequestMethod.POST)
+    public SimpleResponse reportVotingQuestion(@PathVariable Long votingId, @PathVariable Long questionId, @RequestBody @Valid ConfirmBean confirmBean) {
+        Question question = questionRepository.findOne(questionId);
+        if (question!=null) {
+            if (question.getVotingId().getId().equals(votingId)) {
+                if (question.getVotingId().getStatus().equals("STARTED")
+                        || question.getVotingId().getStatus().equals("CLOSED")
+                        || question.getVotingId().getStatus().equals("STOPED")) {
+                    List<RepVoterBean> repVoterBeens = new ArrayList<>();
+                    for (Decision decision:question.getDecisionSet()) {
+                        RepVoterBean bean = null;
+                        boolean isFound = false;
+                        for (RepVoterBean voterBean:repVoterBeens) {
+                            if (voterBean.getId().equals(decision.getVoterId().getId())) {
+                                bean = voterBean;
+                                isFound = true;
+                            }
+                        }
+                        if (!isFound) {
+                            bean = new RepVoterBean();
+                            bean.setId(decision.getVoterId().getId());
+                            bean.setUserId(decision.getVoterId().getUserId().getId());
+                            bean.setUserName(decision.getVoterId().getUserId().getUserInfoId().getLastName());
+                            bean.setDecisionBeanList(new ArrayList<>());
+                            repVoterBeens.add(bean);
+                        }
+                        RepDecisionBean repDecisionBean = new RepDecisionBean();
+                        repDecisionBean.setAnswerText(decision.getAnswerId()==null?"Комментарий":decision.getAnswerId().getAnswer());
+                        repDecisionBean.setComment(decision.getComments());
+                        repDecisionBean.setScore(decision.getScore());
+                        bean.getDecisionBeanList().add(repDecisionBean);
+                    }
+                    return new SimpleResponse(repVoterBeens).SUCCESS();
+                } else {
+                    return new SimpleResponse("Голосование должно быть в статусе ").ERROR_CUSTOM();
+                }
+            } else {
+                return new SimpleResponse("Вопрос в данном голосовании не найден ").ERROR_CUSTOM();
+            }
+        } else {
+            return new SimpleResponse("Вопрос не найден ").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/readyForOper/{userId}", method = RequestMethod.GET)
+    public List<VotingBean> getReadyForOperVotings(@PathVariable Long userId) {
+        User user = userRepository.findOne(userId);
+        List<VotingBean> result = new ArrayList<>();
+        if (user != null) {
+            for (UserRoles userRoles : user.getUserRolesSet()) {
+                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
+                        boolean isFound = false;
+                        for (VotingBean bean : result) {
+                            if (bean.getId().equals(voting.getId())) {
+                                isFound = true;
+                            }
+                        }
+                        if (!isFound) {
+                            result.add(userController.castToBean(voting, user));
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

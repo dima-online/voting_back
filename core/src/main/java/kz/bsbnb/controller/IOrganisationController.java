@@ -28,4 +28,6 @@ public interface IOrganisationController {
     SimpleResponse editOrganisation(RegOrgBean regOrgBean);
 
     SimpleResponse addRole(Long adminId, RegRoleBean regRoleBean);
+
+    SimpleResponse delRole(Long adminId, RegRoleBean regRoleBean);
 }

@@ -2,21 +2,26 @@ package kz.bsbnb.common.bean;
 
 import kz.bsbnb.common.consts.Role;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by ruslan on 17.11.16.
  */
 public class CoreUserBean {
 
     private Long id;
+    private List<Role> roles;
     private Role role;
     private String iin;
     private String email;
     private String phone;
     private String fullName;
-    private int shareCount;
+    private Integer shareCount;
     private Long organisationId;
 
     public CoreUserBean() {
+        this.roles = new ArrayList<>();
     }
 
     public Long getOrganisationId() {
@@ -35,9 +40,9 @@ public class CoreUserBean {
         this.phone = phone;
     }
 
-    public int getShareCount() {return shareCount;}
+    public Integer getShareCount() {return shareCount;}
 
-    public void setShareCount(int shareCount) {this.shareCount = shareCount;}
+    public void setShareCount(Integer shareCount) {this.shareCount = shareCount;}
 
     public String getIin() {return iin;}
 
@@ -51,12 +56,24 @@ public class CoreUserBean {
         this.id = id;
     }
 
-    public Role getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void delRole(Role role) {
+        this.roles.remove(role);
     }
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public String getEmail() {return email;}

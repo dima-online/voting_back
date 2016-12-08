@@ -225,22 +225,45 @@ public class OrganisationControllerImpl implements IOrganisationController {
         if (organisation != null) {
             for (UserRoles userRoles : organisation.getUserRolesSet()) {
                 if (!userRoles.getRole().equals(Role.ROLE_ADMIN)) {
-                    UserBean userBean = new UserBean();
-                    userBean.setRole(userRoles.getRole());
-                    userBean.setId(userRoles.getUserId().getId());
-                    userBean.setLogin(userRoles.getUserId().getUsername());
-                    userBean.setIin(userRoles.getUserId().getIin());
-                    if (userRoles.getUserId().getUserInfoId() != null) {
-                        userBean.setEmail(userRoles.getUserId().getUserInfoId().getEmail());
-                        String fName = userRoles.getUserId().getUserInfoId().getLastName() == null ? " " : userRoles.getUserId().getUserInfoId().getLastName();
-                        fName = fName + " " + (userRoles.getUserId().getUserInfoId().getFirstName() == null ? " " : userRoles.getUserId().getUserInfoId().getFirstName());
-                        fName = fName + " " + (userRoles.getUserId().getUserInfoId().getMiddleName() == null ? " " : userRoles.getUserId().getUserInfoId().getMiddleName());
-                        userBean.setFullName(fName.trim());
-                        userBean.setPhone(userRoles.getUserId().getUserInfoId().getPhone());
+                    UserBean userBean = null;
+                    boolean isFound = false;
+                    if (result.isEmpty()) {
+                        userBean = new UserBean();
+                        userBean.setShareCount(0);
+                    } else {
+                        for (UserBean bean:result) {
+                            if (bean.getId().equals(userRoles.getUserId().getId())) {
+                                userBean = bean;
+                                isFound = true;
+                            }
+                        }
+                        if (!isFound) {
+                            userBean = new UserBean();
+                            userBean.setShareCount(0);
+                        }
                     }
-                    userBean.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-                    userBean.setOrganisationId(organisation.getId());
-                    result.add(userBean);
+                    if (userRoles.getRole().equals(Role.ROLE_USER)) {
+                        userBean.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
+                    }
+                    userBean.setRole(userRoles.getRole());
+                    if (!userBean.getRoles().contains(userRoles.getRole())) {
+                        userBean.addRole(userRoles.getRole());
+                    }
+                    if (!isFound) {
+                        userBean.setId(userRoles.getUserId().getId());
+                        userBean.setLogin(userRoles.getUserId().getUsername());
+                        userBean.setIin(userRoles.getUserId().getIin());
+                        if (userRoles.getUserId().getUserInfoId() != null) {
+                            userBean.setEmail(userRoles.getUserId().getUserInfoId().getEmail());
+                            String fName = userRoles.getUserId().getUserInfoId().getLastName() == null ? " " : userRoles.getUserId().getUserInfoId().getLastName();
+                            fName = fName + " " + (userRoles.getUserId().getUserInfoId().getFirstName() == null ? " " : userRoles.getUserId().getUserInfoId().getFirstName());
+                            fName = fName + " " + (userRoles.getUserId().getUserInfoId().getMiddleName() == null ? " " : userRoles.getUserId().getUserInfoId().getMiddleName());
+                            userBean.setFullName(fName.trim());
+                            userBean.setPhone(userRoles.getUserId().getUserInfoId().getPhone());
+                        }
+                        userBean.setOrganisationId(organisation.getId());
+                        result.add(userBean);
+                    }
                 }
             }
         }
@@ -382,6 +405,57 @@ public class OrganisationControllerImpl implements IOrganisationController {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/delRole/{adminId}", method = RequestMethod.DELETE)
+    public SimpleResponse delRole(@PathVariable Long adminId, @RequestBody @Valid RegRoleBean regRoleBean) {
+        User admin = userRepository.findOne(adminId);
+        User user = userRepository.findOne(regRoleBean.getUserId());
+        Organisation org = organisationRepository.findOne(regRoleBean.getOrgId());
+        if (org==null) {
+            return new SimpleResponse("Организация не найдена").ERROR_CUSTOM();
+        } else {
+            if (user == null) {
+                return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
+            } else {
+                if (admin != null && confirmationService.check(regRoleBean.getConfirmBean())) {
+                    List<UserRoles> admins = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                    boolean isAdmin = false;
+                    for (UserRoles userRole : admins) {
+                        if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
+                            isAdmin = true;
+                        }
+                    }
+                    if (isAdmin) {
+                        if (regRoleBean.getRole().equals(Role.ROLE_USER.name())) {
+                            return new SimpleResponse("Вы не можете удалить акционеров").ERROR_CUSTOM();
+                        } else {
+                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                            boolean isUser = false;
+                            UserRoles userRole = null;
+                            for (UserRoles next : admins) {
+                                if (next.getRole().name().equals(regRoleBean.getRole())) {
+                                    isUser = true;
+                                    userRole = next;
+                                }
+                            }
+                            if (regRoleBean.getRole().equals(Role.ROLE_ADMIN.name())||regRoleBean.getRole().equals(Role.ROLE_OPER.name())) {
+                                if (isUser) {
+                                    userRoleRepository.delete(userRole);
+                                }
+                                return new SimpleResponse("Права удалены успешно").SUCCESS();
+                            } else {
+                                return new SimpleResponse("Нет таких прав").ERROR_CUSTOM();
+                            }
+                        }
+                    } else {
+                        return new SimpleResponse("У вас нет прав администратора").ERROR_CUSTOM();
+                    }
+                } else {
+                    return new SimpleResponse("Не найден админ или его действия не подтверждены").ERROR_CUSTOM();
+                }
+            }
+        }
+    }
 
     @Override
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)

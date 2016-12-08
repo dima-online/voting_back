@@ -2,17 +2,7 @@ package kz.bsbnb.common.external;
 
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,7 +17,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Reestr implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name = "external.reestr_id_seq", sequenceName = "external.reestr_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "external.reestr_id_seq")
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
@@ -51,7 +42,7 @@ public class Reestr implements Serializable {
     @Column(name = "share_type")
     private String shareType;
     @Size(max = 100)
-    @Column(name = "NIN")
+    @Column(name = "nin")
     private String nin;
     @Basic(optional = false)
     @NotNull
@@ -74,6 +65,10 @@ public class Reestr implements Serializable {
     @JoinColumn(name = "reestr_head_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private ReestrHead reestrHeadId;
+    @Basic(optional = false)
+    @Size(min = 1, max = 20)
+    @Column(name = "voter_iin")
+    private String voterIin;
 
     public Reestr() {
     }
@@ -88,6 +83,14 @@ public class Reestr implements Serializable {
         this.iin = iin;
         this.shareCount = shareCount;
         this.sharePercent = sharePercent;
+    }
+
+    public String getVoterIin() {
+        return voterIin;
+    }
+
+    public void setVoterIin(String voterIin) {
+        this.voterIin = voterIin;
     }
 
     public Long getId() {

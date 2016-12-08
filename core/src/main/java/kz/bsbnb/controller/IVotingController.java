@@ -45,14 +45,26 @@ public interface IVotingController {
     SimpleResponse createVoting(RegVotingBean votingBean);
 
     SimpleResponse startVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+
     SimpleResponse restartVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+
     SimpleResponse stopVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+
     SimpleResponse closeVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+
     SimpleResponse editVoting(RegVotingBean votingBean);
+
     SimpleResponse addVoter(Long userId, RegVoterBean regVoterBean);
+
     SimpleResponse delVoter(Long votingId, Long userId);
 
     SimpleResponse deleteVoting(Long votingId, Long userId, ConfirmBean confirmBean);
+
     SimpleResponse getVoting(Long votingId);
-    SimpleResponse editVotingAnswer(Long questionId, ConfirmBean confirmBean);
+
+    SimpleResponse reportVoting(Long votingId, ConfirmBean confirmBean);
+
+    List<VotingBean> getReadyForOperVotings(Long userId);
+
+    SimpleResponse reportVotingQuestion(Long votingId, Long questionId, ConfirmBean confirmBean);
 }

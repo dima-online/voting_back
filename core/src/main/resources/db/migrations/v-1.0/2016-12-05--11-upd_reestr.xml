@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Ruslan Beyganov" id="2016-12-05--11-upd_reestr" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            /******************** Update Table: user_roles ************************/
+
+            ALTER TABLE core.user_roles ADD share_percent FLOAT NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.user_roles.share_percent IS '% голосующих акции';
+
+            /******************** Update Table: reestr ************************/
+
+            ALTER TABLE external.reestr RENAME "NIN" TO nin;
+
+            ALTER TABLE external.reestr ADD voter_iin VARCHAR(20) NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN external.reestr.nin IS 'НИН';
+
+            COMMENT ON COLUMN external.reestr.voter_iin IS 'ИИН голосующего';
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>

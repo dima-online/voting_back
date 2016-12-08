@@ -71,11 +71,11 @@ public class MessageControllerImpl implements IMessageController {
 
     @Override
     @RequestMapping(value = "/newMessage/{threadId}", method = RequestMethod.POST)
-    public SimpleResponse createMessage(@PathVariable Long threadId, @RequestBody @Valid MessageBean message) {
+    public SimpleResponse createMessage(@PathVariable Long threadId, @RequestParam(defaultValue = "ROLE_USER") String  strRole, @RequestBody @Valid MessageBean message) {
         Message mess = new Message();
         mess.setBody(message.getBody());
         mess.setDateCreate(new Date());
-        mess.setFromUser(message.getFromUser() == null ? true : message.getFromUser());
+        mess.setFromUser(message.getFromUser() == null ? strRole.equals("ROLE_USER") : message.getFromUser());
         Message parent = messageRepository.findOne(threadId);
         if (parent == null) {
             return new SimpleResponse("Не найдено главное сообщение").ERROR_CUSTOM();
@@ -129,29 +129,29 @@ public class MessageControllerImpl implements IMessageController {
 
     @Override
     @RequestMapping(value = "/listThread/{userId}", method = RequestMethod.GET)
-    public List<ThreadBean> getAllMessages(@PathVariable Long userId) {
+    public List<ThreadBean> getAllMessages(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String  strRole) {
         User user = userRepository.findOne(userId);
         List<ThreadBean> result = new ArrayList<>();
-        if (user != null) {
-            List<Message> messages = messageRepository.findByUserId(user);
-            for (Message m : messages) {
-                if (m.getParentId() == null) {
-                    result.add(castToThreadBean(m));
-                }
-            }
-        }
+        Role role = Role.valueOf(strRole);
 
-        Role role = Role.ROLE_USER;
-        for (UserRoles userRole : user.getUserRolesSet()) {
-            Role temp = userRole.getRole();
-            if (role.compareTo(temp) > 0) {
-                role = temp;
-            }
-            if (temp.equals(Role.ROLE_OPER)) {
-                List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+        if (role.equals(Role.ROLE_USER)) {
+            if (user != null) {
+                List<Message> messages = messageRepository.findByUserId(user);
                 for (Message m : messages) {
                     if (m.getParentId() == null) {
                         result.add(castToThreadBean(m));
+                    }
+                }
+            }
+        } else {
+            for (UserRoles userRole : user.getUserRolesSet()) {
+                Role temp = userRole.getRole();
+                if (temp.equals(Role.ROLE_OPER)) {
+                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+                    for (Message m : messages) {
+                        if (m.getParentId() == null) {
+                            result.add(castToThreadBean(m));
+                        }
                     }
                 }
             }

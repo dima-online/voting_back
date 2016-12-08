@@ -13,11 +13,11 @@ public interface IMessageController {
 
     SimpleResponse createThread(ThreadBean message);
 
-    SimpleResponse createMessage(Long threadId, MessageBean message);
+    SimpleResponse createMessage(Long threadId, String strRole, MessageBean message);
 
     List<MessageBean> getMessages(Long threadId);
 
-    List<ThreadBean> getAllMessages(Long userId);
+    List<ThreadBean> getAllMessages(Long userId, String strRole);
 
     SimpleResponse readMessage(Long messageId);
 

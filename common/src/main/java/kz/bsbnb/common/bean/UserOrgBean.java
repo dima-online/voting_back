@@ -1,17 +1,22 @@
 package kz.bsbnb.common.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by ruslan on 17.11.16.
  */
 public class UserOrgBean {
     private Long userId;
     private Long organisationId;
+    private List<String> roles;
     private String role;
     private String organisationName;
     private Integer shareCount;
     private double sharePercent;
 
     public UserOrgBean() {
+        this.roles = new ArrayList<>();
     }
 
     public Long getUserId() {
@@ -30,12 +35,16 @@ public class UserOrgBean {
         this.organisationId = organisationId;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void addRole(String role) {
+        this.roles.add(role);
+    }
+
+    public void delRole(String role) {
+        this.roles.remove(role);
     }
 
     public String getOrganisationName() {
@@ -60,5 +69,13 @@ public class UserOrgBean {
 
     public void setSharePercent(double sharePercent) {
         this.sharePercent = sharePercent;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

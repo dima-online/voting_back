@@ -14,4 +14,5 @@
     <include file="2016-10-19--08-change_organisation.xml" relativeToChangelogFile="true"/>
     <include file="2016-11-20--09-add_attribute.xml" relativeToChangelogFile="true"/>
     <include file="2016-12-02--10-add_reestr.xml" relativeToChangelogFile="true"/>
+    <include file="2016-12-05--11-upd_reestr.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

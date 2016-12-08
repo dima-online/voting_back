@@ -43,6 +43,8 @@ public class UserRoles implements Serializable {
     private User userId;
     @Column(name = "share_count")
     private Integer shareCount;
+    @Column(name = "share_percent")
+    private Double sharePercent;
     @Column(name = "cannot_vote")
     private Integer cannotVote;
 
@@ -56,6 +58,14 @@ public class UserRoles implements Serializable {
     public UserRoles(Long id, Role role) {
         this.id = id;
         this.role = role;
+    }
+
+    public Double getSharePercent() {
+        return sharePercent;
+    }
+
+    public void setSharePercent(Double sharePercent) {
+        this.sharePercent = sharePercent;
     }
 
     public Long getId() {

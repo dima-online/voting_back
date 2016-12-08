@@ -1,6 +1,7 @@
 package kz.bsbnb.controller;
 
 import kz.bsbnb.common.bean.*;
+import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.util.SimpleResponse;
 
@@ -66,4 +67,6 @@ public interface IUserController {
     SimpleResponse verifyIIN(String iin);
 
     SimpleResponse remind(RegUserBean userBean);
+
+    Role getRole(User user, Organisation organisation);
 }
