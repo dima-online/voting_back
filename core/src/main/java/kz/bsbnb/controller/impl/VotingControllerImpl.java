@@ -213,8 +213,9 @@ public class VotingControllerImpl implements IVotingController {
         List<QuestionBean> result = new ArrayList<>();
         if (voting != null && user != null) {
             List<Question> question = questionRepository.findByVotingId(voting);
+            boolean notUser = !userController.getRole(user, voting.getOrganisationId()).equals(Role.ROLE_USER);
             for (Question q : question) {
-                QuestionBean bean = userController.castFromQuestion(q, user, false);
+                QuestionBean bean = userController.castFromQuestion(q, user, notUser);
                 result.add(bean);
             }
 
@@ -597,8 +598,10 @@ public class VotingControllerImpl implements IVotingController {
                     for (RepAnswerBean bean : repQuestionBean.getRepAnswerBeanList()) {
                         if (bean.getId() == null && decision.getAnswerId() == null) {
                             repAnswerBean = bean;
+                            isFound = true;
                         } else if ((bean.getId() != null && decision.getAnswerId() != null) && bean.getId().equals(decision.getAnswerId().getId())) {
                             repAnswerBean = bean;
+                            isFound = true;
                         }
                     }
                     if (!isFound) {
@@ -641,14 +644,15 @@ public class VotingControllerImpl implements IVotingController {
                         RepVoterBean bean = null;
                         boolean isFound = false;
                         for (RepVoterBean voterBean:repVoterBeens) {
-                            if (voterBean.getId().equals(decision.getVoterId().getId())) {
+                            if (voterBean.getVoterId().equals(decision.getVoterId().getId())) {
                                 bean = voterBean;
                                 isFound = true;
                             }
                         }
                         if (!isFound) {
                             bean = new RepVoterBean();
-                            bean.setId(decision.getVoterId().getId());
+                            bean.setVoterId(decision.getVoterId().getId());
+                            bean.setQuestionId(questionId);
                             bean.setUserId(decision.getVoterId().getUserId().getId());
                             bean.setUserName(decision.getVoterId().getUserId().getUserInfoId().getLastName());
                             bean.setDecisionBeanList(new ArrayList<>());

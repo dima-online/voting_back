@@ -80,7 +80,7 @@ public class DecisionControllerImpl implements IDecisionController {
             }
             result.setData("Решение отменено").SUCCESS();
         } else {
-            result.setData("Решение не надено").SUCCESS();
+            result.setData("Решение не надено").ERROR_CUSTOM();
         }
         return result;
     }

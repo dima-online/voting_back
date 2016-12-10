@@ -1,5 +1,7 @@
 package kz.bsbnb.common.external;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
@@ -41,7 +43,8 @@ public class ReestrHead implements Serializable {
     @Size(max = 20)
     @Column(name = "status")
     private String status;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "reestrHeadId")
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "reestrHeadId")
     private Set<Reestr> reestrSet;
 
     public ReestrHead() {

@@ -116,7 +116,7 @@ public class UserControllerImpl implements IUserController {
             if (userBeanList.isEmpty()) {
                 userBean = new UserOrgBean();
             } else {
-                for (UserOrgBean orgBean: userBeanList) {
+                for (UserOrgBean orgBean : userBeanList) {
                     if (orgBean.getOrganisationId().equals(userRoles.getOrgId().getId())) {
                         userBean = orgBean;
                         isFound = true;
@@ -158,7 +158,7 @@ public class UserControllerImpl implements IUserController {
                         user = new User();
                         user.setIin(userBean.getIin());
                         user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
-                        user.setPassword(userBean.getPassword());
+                        user.setPassword(pwd(userBean.getPassword()));
                         user.setStatus("NEW");
                         user = userRepository.save(user);
                         UserInfo userInfo = new UserInfo();
@@ -192,7 +192,37 @@ public class UserControllerImpl implements IUserController {
                 return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
             }
         } else {
-            return new SimpleResponse("Пользователь с этим ИИН уже существует").ERROR_CUSTOM();
+            if (user.getStatus().equals("AUTO")) {
+                PasswordUtil passwordValidator = new PasswordUtil();
+                if (passwordValidator.validate(userBean.getPassword())) {
+                    user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
+                    user.setPassword(pwd(userBean.getPassword()));
+                    user.setStatus("NEW");
+                    user = userRepository.save(user);
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.setStatus("NEW");
+                    userInfo.setEmail(userBean.getEmail());
+                    userInfo.setPhone(userBean.getPhone());
+                    userInfo.setFirstName(userBean.getFirstName());
+                    userInfo.setLastName(userBean.getLastName());
+                    if (userBean.getOrg() != null && userBean.getOrg()) {
+                        userInfo.setLastName(userBean.getFullName());
+                    }
+                    userInfo.setMiddleName(userBean.getMiddleName());
+                    userInfo.setIdn(userBean.getIin());
+                    userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
+                    userInfo = userInfoRepository.save(userInfo);
+                    user.setUserInfoId(userInfo);
+                    user = userRepository.save(user);
+                    userBean = castUser(user, userInfo);
+                    return new SimpleResponse(userBean).SUCCESS();
+                } else {
+                    return new SimpleResponse("Пароль должен быть от 8-14 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
+                }
+
+            } else {
+                return new SimpleResponse("Пользователь с этим ИИН уже существует").ERROR_CUSTOM();
+            }
         }
     }
 
@@ -206,7 +236,7 @@ public class UserControllerImpl implements IUserController {
                     if (user.getUserInfoId().getEmail().equals(userBean.getEmail())) {
                         List<String> rec = new ArrayList<>();
                         rec.add(userBean.getEmail());
-                        String pswd = StringUtil.RND(8,8);
+                        String pswd = StringUtil.RND(8, 8);
                         user.setPassword(pwd(pswd));
                         userRepository.save(user);
                         EmailUtil.send(rec, "ЕРЦБ Голосование", "Ваш новый временный пароль " + pswd);
@@ -483,7 +513,7 @@ public class UserControllerImpl implements IUserController {
                     if (o1.getNum() != null && o2.getNum() != null) {
                         return o1.getNum() - o2.getNum();
                     } else {
-                        return (int) (o1.getId() - o2.getId());
+                        return o1.getId().compareTo(o2.getId());
                     }
                 }
             });
@@ -577,11 +607,11 @@ public class UserControllerImpl implements IUserController {
             List<Answer> sortedList = new ArrayList<>(q.getAnswerSet());
             Collections.sort(sortedList, new Comparator<Answer>() {
                 public int compare(Answer a, Answer b) {
-                    return (int) (a.getId() - b.getId());
+                    return a.getId().compareTo(b.getId());
                 }
             });
 
-            result.setAnswerSet(new HashSet<Answer>(sortedList));
+            result.setAnswerSet(sortedList);
         }
         Set<Files> files = new HashSet<>();
         if (showPdf) {
@@ -592,7 +622,7 @@ public class UserControllerImpl implements IUserController {
             }
         }
         result.setQuestionFileSet(files);
-        Set<DecisionBean> beanSet = new HashSet();
+        List<DecisionBean> beanSet = new ArrayList<>();
         for (Decision decision : q.getDecisionSet()) {
             if (decision.getVoterId().getUserId().equals(user)) {
                 DecisionBean bean = getBeanFromDecision(decision);
@@ -663,7 +693,7 @@ public class UserControllerImpl implements IUserController {
             }
             result.setVoterSet(voterBeanSet);
         }
-        if (role.equals(Role.ROLE_ADMIN)||role.equals(Role.ROLE_OPER)) {
+        if (role.equals(Role.ROLE_ADMIN) || role.equals(Role.ROLE_OPER)) {
             Set<QuestionBean> questionBeanSet = new HashSet<>();
             List<Question> sortedList = new ArrayList<>(voting.getQuestionSet());
             Collections.sort(sortedList, new Comparator<Question>() {

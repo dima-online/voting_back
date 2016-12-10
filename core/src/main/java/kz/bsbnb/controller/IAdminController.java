@@ -22,5 +22,9 @@ public interface IAdminController {
 
     List<Files> getVotingFiles(Long votingId);
 
-    SimpleResponse getVotingFiles(Long votingId, Long questionId, Long filesId);
+    SimpleResponse addVotingFilesToQuestion(Long votingId, Long questionId, Long filesId);
+
+    SimpleResponse delVotingFilesFromQuestion(Long votingId, Long questionId, Long filesId);
+
+    SimpleResponse remveVotingFiles(Long votingId, Long filesId);
 }

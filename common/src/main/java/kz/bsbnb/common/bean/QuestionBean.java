@@ -3,6 +3,7 @@ package kz.bsbnb.common.bean;
 import kz.bsbnb.common.model.Answer;
 import kz.bsbnb.common.model.Files;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,8 +15,8 @@ public class QuestionBean {
     private String questionType;
     private Integer num;
     private String decision;
-    private Set<Answer> answerSet;
-    private Set<DecisionBean> decisionSet;
+    private List<Answer> answerSet;
+    private List<DecisionBean> decisionSet;
     private Long votingId;
     private Set<Files> questionFileSet;
     public QuestionBean() {
@@ -69,19 +70,19 @@ public class QuestionBean {
         this.decision = decision;
     }
 
-    public Set<Answer> getAnswerSet() {
+    public List<Answer> getAnswerSet() {
         return answerSet;
     }
 
-    public void setAnswerSet(Set<Answer> answerSet) {
+    public void setAnswerSet(List<Answer> answerSet) {
         this.answerSet = answerSet;
     }
 
-    public Set<DecisionBean> getDecisionSet() {
+    public List<DecisionBean> getDecisionSet() {
         return decisionSet;
     }
 
-    public void setDecisionSet(Set<DecisionBean> decisionSet) {
+    public void setDecisionSet(List<DecisionBean> decisionSet) {
         this.decisionSet = decisionSet;
     }
 

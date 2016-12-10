@@ -6,20 +6,29 @@ import java.util.List;
  * Created by ruslan on 08.12.16.
  */
 public class RepVoterBean {
-    private Long id;
+    private Long voterId;
     private Long userId;
+    private Long questionId;
     private String userName;
     private List<RepDecisionBean> decisionBeanList;
 
     public RepVoterBean() {
     }
 
-    public Long getId() {
-        return id;
+    public Long getVoterId() {
+        return voterId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setVoterId(Long voterId) {
+        this.voterId = voterId;
+    }
+
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
     }
 
     public Long getUserId() {

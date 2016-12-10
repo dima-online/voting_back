@@ -363,6 +363,10 @@
         <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
         <Cm>Признак возможности голосовать 0 - Может голосовать 1- неможет голосовать 2 - условный голос 3 - запрет на голосование</Cm>
       </Cl>
+      <Cl au="0" df="" nm="share_percent" nu="1">
+        <DT arr="0" ds="Float" en="" id="6" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>% голосующих акции</Cm>
+      </Cl>
       <Fk deAc="3" nm="fk_user_roles_organisation" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
         <CdTb mn="1" nm="user_roles" oe="0" sch="core" zr="1"/>
@@ -554,7 +558,7 @@
         <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
         <Cm>Тип ЦБ</Cm>
       </Cl>
-      <Cl au="0" df="" nm="NIN" nu="1">
+      <Cl au="0" df="" nm="nin" nu="1">
         <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
         <Cm>НИН</Cm>
       </Cl>
@@ -574,6 +578,10 @@
       </Cl>
       <Cl au="0" df="" nm="phone" nu="1">
         <DT arr="0" ds="VarChar" en="" id="12" ln="100" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="voter_iin" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>ИИН голосующего</Cm>
       </Cl>
       <Fk deAc="3" nm="fk_reestr_reestr_head" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="reestr_head" oe="1" sch="external" zr="0"/>
@@ -824,7 +832,7 @@
     <Notes/>
     <Zones/>
   </Dgm>
-  <RnmMgr NxRnmId="4">
+  <RnmMgr NxRnmId="5">
     <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr_head" SupCls="Schema" SupNme="core">
       <Rnm id="1" nNm="id" oNm="Id"/>
     </RnmCh>
@@ -833,6 +841,9 @@
     </RnmCh>
     <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr" SupCls="Schema" SupNme="core">
       <Rnm id="3" nNm="firstname" oNm="first_name"/>
+    </RnmCh>
+    <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr" SupCls="Schema" SupNme="external">
+      <Rnm id="4" nNm="nin" oNm="NIN"/>
     </RnmCh>
   </RnmMgr>
   <DbDocOptionMgr>

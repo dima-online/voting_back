@@ -189,15 +189,15 @@ public class AdminControllerImpl implements IAdminController {
 
     @Override
     @RequestMapping(value = "/addFile/{votingId}", method = RequestMethod.POST)
-    public SimpleResponse getVotingFiles(@PathVariable Long votingId, @RequestParam Long questionId, @RequestParam Long filesId) {
+    public SimpleResponse addVotingFilesToQuestion(@PathVariable Long votingId, @RequestParam Long questionId, @RequestParam Long filesId) {
         Voting voting = votingRepository.findOne(votingId);
         Question question = questionRepository.findOne(questionId);
-        if (question==null) {
+        if (question == null) {
             return new SimpleResponse("Вопрос не найден!").ERROR_CUSTOM();
         } else {
             if (question.getVotingId().equals(voting)) {
                 Files files = filesRepository.findOne(filesId);
-                if (files==null) {
+                if (files == null) {
                     return new SimpleResponse("Файл не найден!").ERROR_CUSTOM();
                 } else {
                     QuestionFile questionFile = questionFileRepository.findByFilesIdAndQuestionId(files, question);
@@ -215,7 +215,49 @@ public class AdminControllerImpl implements IAdminController {
         }
     }
 
+    @Override
+    @RequestMapping(value = "/delFile/{votingId}", method = RequestMethod.POST)
+    public SimpleResponse delVotingFilesFromQuestion(@PathVariable Long votingId, @RequestParam Long questionId, @RequestParam Long filesId) {
+        Voting voting = votingRepository.findOne(votingId);
+        Question question = questionRepository.findOne(questionId);
+        if (question == null) {
+            return new SimpleResponse("Вопрос не найден!").ERROR_CUSTOM();
+        } else {
+            if (question.getVotingId().equals(voting)) {
+                Files files = filesRepository.findOne(filesId);
+                if (files == null) {
+                    return new SimpleResponse("Файл не найден!").ERROR_CUSTOM();
+                } else {
+                    QuestionFile questionFile = questionFileRepository.findByFilesIdAndQuestionId(files, question);
+                    if (questionFile != null) {
+                        questionFileRepository.delete(questionFile);
+                    }
+                    return new SimpleResponse("Файл удален!").SUCCESS();
+                }
+            } else {
+                return new SimpleResponse("Вопрос не из данного голосования").ERROR_CUSTOM();
+            }
+        }
+    }
 
+    @Override
+    @RequestMapping(value = "/removeFile/{votingId}", method = RequestMethod.POST)
+    public SimpleResponse remveVotingFiles(@PathVariable Long votingId, @RequestParam Long filesId) {
+        Voting voting = votingRepository.findOne(votingId);
+        Files files = filesRepository.findOne(filesId);
+        if (files == null) {
+            return new SimpleResponse("Файл не найден!").ERROR_CUSTOM();
+        } else {
+            for (Question question : voting.getQuestionSet()) {
+                QuestionFile questionFile = questionFileRepository.findByFilesIdAndQuestionId(files, question);
+                if (questionFile != null) {
+                    questionFileRepository.delete(questionFile);
+                }
+            }
+            filesRepository.delete(files);
+            return new SimpleResponse("Файл удален!").SUCCESS();
+        }
+    }
 
     private Organisation castFromBean(OrgBean orgBean) {
         Organisation result = new Organisation();
