@@ -24,4 +24,6 @@ public interface IDecisionRepository extends PagingAndSortingRepository<Decision
     @Transactional
     @Query("delete from Decision d where d.id = ?1")
     void deleteByIds(Long id);
+
+    List<Decision> findByStatus(String created);
 }

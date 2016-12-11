@@ -20,8 +20,17 @@ public class RepVotingBean {
     private Long organisationId;
     private String organisationName;
     private List<RepQuestionBean> repQuestionBeen;
+    private Long lastReestrId;
 
     public RepVotingBean() {
+    }
+
+    public Long getLastReestrId() {
+        return lastReestrId;
+    }
+
+    public void setLastReestrId(Long lastReestrId) {
+        this.lastReestrId = lastReestrId;
     }
 
     public List<RepQuestionBean> getRepQuestionBeen() {

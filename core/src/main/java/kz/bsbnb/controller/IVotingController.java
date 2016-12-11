@@ -7,6 +7,7 @@ import kz.bsbnb.common.model.Question;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.util.SimpleResponse;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -24,9 +25,9 @@ public interface IVotingController {
 
     QuestionBean getVotingQuestion(Long votingId, Long qid);
 
-    SimpleResponse addVotingQuestions(Long votingId, Question question);
+    SimpleResponse addVotingQuestions(Long votingId, RegQuestionBean question);
 
-    SimpleResponse editVotingQuestions(Long votingId, Question question);
+    SimpleResponse editVotingQuestions(Long votingId, RegQuestionBean question);
 
     SimpleResponse deleteVotingQuestions(Long votingId, Question question);
 
@@ -67,4 +68,10 @@ public interface IVotingController {
     List<VotingBean> getReadyForOperVotings(Long userId);
 
     SimpleResponse reportVotingQuestion(Long votingId, Long questionId, ConfirmBean confirmBean);
+
+    void getVotingQuestions(Long votingId, HttpServletResponse response);
+
+    void checkVotingInBlockChain();
+
+    void checkDecisions();
 }

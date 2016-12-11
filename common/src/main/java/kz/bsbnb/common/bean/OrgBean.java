@@ -13,12 +13,21 @@ public class OrgBean {
     private String status;
     private List<VotingBean> votingSet;
     private Integer shareCount;
+    private Double sharePercent;
     private Integer allShareCount;
     private Integer userCount;
     private Integer votingCount;
     private Integer closedVotingCount;
 
     public OrgBean() {
+    }
+
+    public Double getSharePercent() {
+        return sharePercent;
+    }
+
+    public void setSharePercent(Double sharePercent) {
+        this.sharePercent = sharePercent;
     }
 
     public Integer getUserCount() {

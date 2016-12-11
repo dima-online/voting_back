@@ -76,6 +76,8 @@ public class ReestrControllerImpl implements IReestrController {
                     try {
                         if (CheckUtil.INN(reestr.getIin())&&CheckUtil.INN(reestr.getVoterIin())) {
                             reestrRepository.save(reestr);
+                        } else {
+                            error++;
                         }
                     } catch (Exception e) {
                         error++;
@@ -109,13 +111,30 @@ public class ReestrControllerImpl implements IReestrController {
     }
 
     @Override
-    @RequestMapping(value = "/head/{iin}", method = RequestMethod.GET)
+    @RequestMapping(value = "/headByIIN/{iin}", method = RequestMethod.GET)
     public SimpleResponse getHeadList(@PathVariable String iin) {
         List<ReestrHead> reestrHeads = reestrHeadRepository.findByIin(iin);
         if (!reestrHeads.isEmpty()) {
             return new SimpleResponse(reestrHeads).SUCCESS();
         } else {
             return new SimpleResponse("Записи не найдены").ERROR_CUSTOM();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/headByVotingId/{votingId}", method = RequestMethod.GET)
+    public SimpleResponse getHeadList(@PathVariable Long votingId) {
+        Voting voting = votingRepository.findOne(votingId);
+        if (voting!=null) {
+            String iin = voting.getOrganisationId().getOrganisationNum();
+            List<ReestrHead> reestrHeads = reestrHeadRepository.findByIin(iin);
+            if (!reestrHeads.isEmpty()) {
+                return new SimpleResponse(reestrHeads).SUCCESS();
+            } else {
+                return new SimpleResponse("Записи не найдены").ERROR_CUSTOM();
+            }
+        } else {
+            return new SimpleResponse("Голосование не найдено").ERROR_CUSTOM();
         }
     }
 
@@ -174,7 +193,12 @@ public class ReestrControllerImpl implements IReestrController {
                                 }
                             }
                             //Удаляем голосующих
-                            voterRepository.delete(voting.getVoterSet());
+                            for (Voter voter:voting.getVoterSet()) {
+                                voterRepository.deleteByIds(voter.getId());
+                            }
+                            voting.setLastChanged(reestrHead.getDateCreate());
+                            voting.setLastReestrId(reestrHeadId);
+                            voting = votingRepository.save(voting);
 
                             List<Voter> newVoter = new ArrayList<>();
                             for (Reestr reestr : reestrHead.getReestrSet()) {
@@ -208,7 +232,6 @@ public class ReestrControllerImpl implements IReestrController {
                                 }
 
                             }
-                            voting.setLastChanged(reestrHead.getDateCreate());
                             return new SimpleResponse("Данные успешно обработаны").SUCCESS();
                         } else {
                             return new SimpleResponse("Реестр не готов").ERROR_CUSTOM();

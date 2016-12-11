@@ -15,11 +15,21 @@ public class QuestionBean {
     private String questionType;
     private Integer num;
     private String decision;
+    private List<TotalDecision> decisionOS;
     private List<Answer> answerSet;
     private List<DecisionBean> decisionSet;
     private Long votingId;
     private Set<Files> questionFileSet;
+
     public QuestionBean() {
+    }
+
+    public List<TotalDecision> getDecisionOS() {
+        return decisionOS;
+    }
+
+    public void setDecisionOS(List<TotalDecision> decisionOS) {
+        this.decisionOS = decisionOS;
     }
 
     public Set<Files> getQuestionFileSet() {

@@ -472,6 +472,10 @@
       <Cl au="0" df="" nm="organisation_id" nu="0">
         <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
       </Cl>
+      <Cl au="0" df="" nm="last_reestr_id" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>ID последнего загруженного реестра</Cm>
+      </Cl>
       <Fk deAc="3" nm="fk_voting_organisation" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
         <CdTb mn="1" nm="voting" oe="0" sch="core" zr="1"/>
@@ -816,7 +820,7 @@
     <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.voting.fk_voting_organisation" parentEdge="EAST" positioner="TwoLineUserLinkPositioner">
       <positionableLines>
         <positionableLine lineRole="PARENT_LINE" x1="565" x2="685" y1="320" y2="320"/>
-        <positionableLine lineRole="CHILD_LINE" x1="689" x2="689" y1="220" y2="316"/>
+        <positionableLine lineRole="CHILD_LINE" x1="689" x2="689" y1="233" y2="316"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.voting.fk_voting_user" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
@@ -862,7 +866,7 @@
     </BasicOptionMgr>
   </DbDocOptionMgr>
   <OpenEditors>
-    <OpenEditor ClsNm="Diagram" fqn="null.diagramA" selected="0"/>
+    <OpenEditor ClsNm="Diagram" fqn="null.diagramA" selected="1"/>
   </OpenEditors>
   <TreePaths>
     <TreePath/>

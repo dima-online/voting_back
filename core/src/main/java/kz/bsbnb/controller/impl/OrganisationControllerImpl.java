@@ -443,7 +443,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                             List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(admin, org);
                             boolean isUser = false;
                             UserRoles userRole = null;
-                            for (UserRoles next : admins) {
+                            for (UserRoles next : users) {
                                 if (next.getRole().name().equals(regRoleBean.getRole())) {
                                     isUser = true;
                                     userRole = next;
@@ -451,7 +451,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                             }
                             if (regRoleBean.getRole().equals(Role.ROLE_ADMIN.name()) || regRoleBean.getRole().equals(Role.ROLE_OPER.name())) {
                                 if (isUser) {
-                                    userRoleRepository.delete(userRole);
+                                    userRoleRepository.deleteByIds(userRole.getId());
                                 }
                                 return new SimpleResponse("Права удалены успешно").SUCCESS();
                             } else {

@@ -23,8 +23,17 @@ public class VotingBean {
     private Long organisationId;
     private String organisationName;
     private Integer questionCount;
+    private Long lastReestrId;
 
     public VotingBean() {
+    }
+
+    public Long getLastReestrId() {
+        return lastReestrId;
+    }
+
+    public void setLastReestrId(Long lastReestrId) {
+        this.lastReestrId = lastReestrId;
     }
 
     public String getOrganisationName() {

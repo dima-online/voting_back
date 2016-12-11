@@ -12,6 +12,7 @@ public class BlockChainProperties {
     private String url;
     private String server;
     private String chainCodeName;
+    private String status;
 
     public String getChainCodeName() {
         return chainCodeName;
@@ -35,5 +36,13 @@ public class BlockChainProperties {
 
     public void setServer(String server) {
         this.server = server;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

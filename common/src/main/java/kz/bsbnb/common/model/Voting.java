@@ -77,6 +77,8 @@ public class Voting implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "votingId", fetch = FetchType.EAGER)
     private Set<Voter> voterSet;
+    @Column(name = "last_reestr_id")
+    private Long lastReestrId;
 
     public Voting() {
     }
@@ -99,6 +101,14 @@ public class Voting implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getLastReestrId() {
+        return lastReestrId;
+    }
+
+    public void setLastReestrId(Long lastReestrId) {
+        this.lastReestrId = lastReestrId;
     }
 
     public String getVotingType() {

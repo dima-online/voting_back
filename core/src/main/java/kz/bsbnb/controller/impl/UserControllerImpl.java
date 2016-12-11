@@ -132,7 +132,7 @@ public class UserControllerImpl implements IUserController {
                     userRoles.setShareCount(1);
                 }
                 userBean.setShareCount(userRoles.getShareCount());
-                userBean.setSharePercent(100.0 * userRoles.getShareCount() / (userRoles.getOrgId() == null || userRoles.getOrgId().getAllShareCount() == null ? userRoles.getShareCount() : userRoles.getOrgId().getAllShareCount()));
+                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
             }
             if (!isFound) {
                 userBean.setUserId(userRoles.getUserId().getId());
@@ -179,7 +179,7 @@ public class UserControllerImpl implements IUserController {
                         userBean = castUser(user, userInfo);
                         return new SimpleResponse(userBean).SUCCESS();
                     } else {
-                        return new SimpleResponse("Пароль должен быть от 8-14 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
+                        return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
                     }
                 } else {
                     return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
@@ -217,7 +217,7 @@ public class UserControllerImpl implements IUserController {
                     userBean = castUser(user, userInfo);
                     return new SimpleResponse(userBean).SUCCESS();
                 } else {
-                    return new SimpleResponse("Пароль должен быть от 8-14 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
+                    return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
                 }
 
             } else {
@@ -402,6 +402,7 @@ public class UserControllerImpl implements IUserController {
             }
         }
         bean.setShareCount(userRole == null || userRole.getShareCount() == null ? 0 : userRole.getShareCount());
+        bean.setSharePercent(userRole == null || userRole.getSharePercent() == null ? 0.0 : userRole.getSharePercent());
         return bean;
     }
 
@@ -599,6 +600,13 @@ public class UserControllerImpl implements IUserController {
         QuestionBean result = new QuestionBean();
         result.setId(q.getId());
         result.setDecision(q.getDecision());
+        if (q.getDecision()!=null) {
+            try {
+                result.setDecisionOS((List<TotalDecision>) JsonUtil.fromJson(q.getDecision(), List.class));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         result.setNum(q.getNum());
         result.setQuestion(q.getQuestion());
         result.setQuestionType(q.getQuestionType());
@@ -674,6 +682,7 @@ public class UserControllerImpl implements IUserController {
         result.setDateCreate(voting.getDateCreate());
         result.setDateEnd(voting.getDateEnd());
         result.setId(voting.getId());
+        result.setLastReestrId(voting.getLastReestrId());
         result.setLastChanged(voting.getLastChanged());
         result.setQuestionCount(voting.getQuestionSet().size());
         result.setStatus(voting.getStatus());
@@ -862,6 +871,7 @@ public class UserControllerImpl implements IUserController {
             return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
         }
     }
+
 
 
 }

@@ -42,6 +42,8 @@ public class Decision implements Serializable {
     private Voter voterId;
     @Column(name = "comments")
     private String comments;
+    @Column(name = "status")
+    private String status;
 
     public Decision() {
     }
@@ -53,6 +55,14 @@ public class Decision implements Serializable {
     public Decision(Long id, Date dateCreate) {
         this.id = id;
         this.dateCreate = dateCreate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getId() {

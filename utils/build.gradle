@@ -16,6 +16,10 @@ dependencies {
     compile files('libs/kalkancrypt_xmldsig-0.1.jar')
     compile files('libs/xmlsec-1.4.4.jar')
     compile files('libs/commons-logging-1.1.1.jar')
+    compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.docx:1.0.6')
+    compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.document:1.0.6')
+    compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker:1.0.6')
+
 }
 
 bootRepackage.enabled = false

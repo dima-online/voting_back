@@ -2,6 +2,7 @@ package kz.bsbnb.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.bsbnb.common.bean.DecisionBean;
+import kz.bsbnb.common.bean.TotalDecision;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IDecisionController;
 import kz.bsbnb.controller.IVotingController;
@@ -320,39 +321,6 @@ public class DecisionControllerImpl implements IDecisionController {
     }
 
 
-    class TotalDecision {
-
-        private String answerText;
-        private Integer answerScore;
-        private Integer answerCount;
-
-        public TotalDecision() {
-        }
-
-        public String getAnswerText() {
-            return answerText;
-        }
-
-        public void setAnswerText(String answerText) {
-            this.answerText = answerText;
-        }
-
-        public Integer getAnswerScore() {
-            return answerScore;
-        }
-
-        public void setAnswerScore(Integer answerScore) {
-            this.answerScore = answerScore;
-        }
-
-        public Integer getAnswerCount() {
-            return answerCount;
-        }
-
-        public void setAnswerCount(Integer answerCount) {
-            this.answerCount = answerCount;
-        }
-    }
 
     class CheckDecision {
         private String errorText;

@@ -19,4 +19,6 @@ public interface IVotingRepository extends PagingAndSortingRepository<Voting, Lo
 
     @Query(value = "SELECT v from Voting v where v.id in (select vo.votingId from Voter vo where vo.userId=?1)")
     Page<Voting> findByUser(User user, Pageable pageable);
+
+    List<Voting> findByStatus(String aNew);
 }

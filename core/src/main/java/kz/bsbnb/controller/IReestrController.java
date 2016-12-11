@@ -19,4 +19,6 @@ public interface IReestrController {
     SimpleResponse getHeadList(String iin);
 
     SimpleResponse getList(Long reestrHeadId, Long votingId);
+
+    SimpleResponse getHeadList(Long votingId);
 }
