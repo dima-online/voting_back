@@ -23,4 +23,6 @@ public interface IUserRoleRepository extends PagingAndSortingRepository<UserRole
     @Transactional
     @Query("delete from UserRoles d where d.id = ?1")
     void deleteByIds(Long id);
+
+    List<UserRoles> findByUserId(User user);
 }

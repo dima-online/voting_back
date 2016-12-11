@@ -43,6 +43,10 @@ public class UserOrgBean {
         this.roles.add(role);
     }
 
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
     public void delRole(String role) {
         this.roles.remove(role);
     }

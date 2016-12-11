@@ -306,7 +306,7 @@ public class VotingControllerImpl implements IVotingController {
                 User user = userRepository.findOne(userId);
 //                voting.setStatus("STARTED");
                 voting.setDateBegin(new Date());
-                voting.setStatus("NEW");
+                voting.setStatus("STARTED");
                 voting.setDateClose(null);
                 voting = votingRepository.save(voting);
                 return new SimpleResponse(userController.castToBean(voting, user));

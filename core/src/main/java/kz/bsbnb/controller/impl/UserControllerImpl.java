@@ -37,7 +37,7 @@ public class UserControllerImpl implements IUserController {
     @Autowired
     private IOrganisationRepository organisationRepository;
     @Autowired
-    private UserProcessor userProcessor;
+    private IUserRoleRepository userRoleRepository;
     @Autowired
     private IVotingRepository votingRepository;
     @Autowired
@@ -110,7 +110,8 @@ public class UserControllerImpl implements IUserController {
         }
         userData.setIin(user.getIin());
         List<UserOrgBean> userBeanList = new ArrayList<>();
-        for (UserRoles userRoles : user.getUserRolesSet()) {
+        List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
+        for (UserRoles userRoles : userRolesList) {
             UserOrgBean userBean = null;
             boolean isFound = false;
             if (userBeanList.isEmpty()) {
@@ -132,7 +133,7 @@ public class UserControllerImpl implements IUserController {
                     userRoles.setShareCount(1);
                 }
                 userBean.setShareCount(userRoles.getShareCount());
-                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
+                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent()*100);
             }
             if (!isFound) {
                 userBean.setUserId(userRoles.getUserId().getId());

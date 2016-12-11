@@ -71,6 +71,22 @@ public class OrganisationControllerImpl implements IOrganisationController {
     }
 
     @Override
+    @RequestMapping(value = "/regData/{operId}", method = RequestMethod.GET)
+    public List<RegOrgBean> getRegOrganisationByOperId(@PathVariable Long operId) {
+        User user = userRepository.findOne(operId);
+        List<RegOrgBean> result = new ArrayList<>();
+        List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
+        for (UserRoles userRoles:userRolesList) {
+            if (userRoles.getRole().equals(Role.ROLE_OPER)) {
+                RegOrgBean regOrgBean = castToBean(userRoles.getOrgId());
+                result.add(regOrgBean);
+            }
+        }
+        return result;
+    }
+
+
+    @Override
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public SimpleResponse newOrganisation(@RequestBody @Valid Organisation organisation) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(organisation.getOrganisationNum());
@@ -384,9 +400,9 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         if (regRoleBean.getRole().equals(Role.ROLE_USER.name())) {
                             return new SimpleResponse("Вы не можете добавлять акционеров").ERROR_CUSTOM();
                         } else {
-                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(user, org);
                             boolean isUser = false;
-                            for (UserRoles userRole : admins) {
+                            for (UserRoles userRole : users) {
                                 if (userRole.getRole().name().equals(regRoleBean.getRole())) {
                                     isUser = true;
                                 }
@@ -398,6 +414,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                                     userRoles.setOrgId(org);
                                     userRoles.setRole(Role.valueOf(regRoleBean.getRole()));
                                     userRoles.setShareCount(0);
+                                    userRoles.setSharePercent(0.0);
                                     userRoles.setUserId(user);
                                     userRoleRepository.save(userRoles);
                                 }
@@ -440,7 +457,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         if (regRoleBean.getRole().equals(Role.ROLE_USER.name())) {
                             return new SimpleResponse("Вы не можете удалить акционеров").ERROR_CUSTOM();
                         } else {
-                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(user, org);
                             boolean isUser = false;
                             UserRoles userRole = null;
                             for (UserRoles next : users) {
@@ -450,7 +467,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                                 }
                             }
                             if (regRoleBean.getRole().equals(Role.ROLE_ADMIN.name()) || regRoleBean.getRole().equals(Role.ROLE_OPER.name())) {
-                                if (isUser) {
+                                if (userRole!=null) {
                                     userRoleRepository.deleteByIds(userRole.getId());
                                 }
                                 return new SimpleResponse("Права удалены успешно").SUCCESS();
