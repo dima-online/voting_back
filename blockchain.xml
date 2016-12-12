@@ -86,6 +86,10 @@
         <DT arr="0" ds="VarChar" en="" id="12" ln="2000" sc="null" sg="1" un="0"/>
         <Cm>Другой ответ</Cm>
       </Cl>
+      <Cl au="0" df="NEW" nm="status" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
+        <Cm>Статус решения NEW CREATED READY</Cm>
+      </Cl>
       <Fk deAc="3" nm="fk_decision_answer" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="answer" oe="1" sch="core" zr="1"/>
         <CdTb mn="1" nm="decision" oe="0" sch="core" zr="1"/>
@@ -866,7 +870,7 @@
     </BasicOptionMgr>
   </DbDocOptionMgr>
   <OpenEditors>
-    <OpenEditor ClsNm="Diagram" fqn="null.diagramA" selected="1"/>
+    <OpenEditor ClsNm="Diagram" fqn="null.diagramA" selected="0"/>
   </OpenEditors>
   <TreePaths>
     <TreePath/>

@@ -11,6 +11,7 @@ import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.QuestionType;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
+import kz.bsbnb.controller.IDecisionController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.repository.*;
@@ -98,12 +99,23 @@ public class VotingControllerImpl implements IVotingController {
     @Override
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public SimpleResponse createVoting(@RequestBody @Valid RegVotingBean votingBean) {
-        //TODO Проверка полей
         User user = userRepository.findOne(votingBean.getUserId());
         Voting voting = castFromBean(votingBean, user);
-        voting = votingRepository.save(voting);
-        RegVotingBean result = castToBean(voting);
-        return new SimpleResponse(result).SUCCESS();
+        if (voting.getDateBegin()!=null) {
+            if (voting.getDateEnd()!=null) {
+                if (voting.getDateEnd().after(voting.getDateBegin())) {
+                    voting = votingRepository.save(voting);
+                    RegVotingBean result = castToBean(voting);
+                    return new SimpleResponse(result).SUCCESS();
+                } else {
+                    return new SimpleResponse("Дата окончания голосования должна быть позже даты начала голосования").ERROR_CUSTOM();
+                }
+            } else {
+                return new SimpleResponse("Дата окончания голосования не может быть пустым").ERROR_CUSTOM();
+            }
+        } else {
+            return new SimpleResponse("Дата начала голосования не может быть пустым").ERROR_CUSTOM();
+        }
     }
 
     @Override
@@ -651,33 +663,42 @@ public class VotingControllerImpl implements IVotingController {
                 repQuestionBean.setId(question.getId());
                 repQuestionBean.setQuestion(question.getQuestion());
                 repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
+                for (Answer answer : question.getAnswerSet()) {
+                    RepAnswerBean repAnswerBean = new RepAnswerBean();
+                    repAnswerBean.setId(answer.getId());
+                    repAnswerBean.setScore(0);
+                    repAnswerBean.setAnswerText(answer.getAnswer());
+                    repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
+                }
                 for (Decision decision : question.getDecisionSet()) {
-                    RepAnswerBean repAnswerBean = null;
-                    boolean isFound = false;
-                    for (RepAnswerBean bean : repQuestionBean.getRepAnswerBeanList()) {
-                        if (bean.getId() == null && decision.getAnswerId() == null) {
-                            repAnswerBean = bean;
-                            isFound = true;
-                        } else if ((bean.getId() != null && decision.getAnswerId() != null) && bean.getId().equals(decision.getAnswerId().getId())) {
-                            repAnswerBean = bean;
-                            isFound = true;
+                    if (!decision.getStatus().equals("KILLED")) {
+                        RepAnswerBean repAnswerBean = null;
+                        boolean isFound = false;
+                        for (RepAnswerBean bean : repQuestionBean.getRepAnswerBeanList()) {
+                            if (bean.getId() == null && decision.getAnswerId() == null) {
+                                repAnswerBean = bean;
+                                isFound = true;
+                            } else if ((bean.getId() != null && decision.getAnswerId() != null) && bean.getId().equals(decision.getAnswerId().getId())) {
+                                repAnswerBean = bean;
+                                isFound = true;
+                            }
                         }
-                    }
-                    if (!isFound) {
-                        repAnswerBean = new RepAnswerBean();
-                        repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
-                        repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
-                        if (question.getQuestionType().equals("ORDINARY")) {
-                            repAnswerBean.setScore(1);
+                        if (!isFound) {
+                            repAnswerBean = new RepAnswerBean();
+                            repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
+                            repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
+                            if (question.getQuestionType().equals("ORDINARY")) {
+                                repAnswerBean.setScore(1);
+                            } else {
+                                repAnswerBean.setScore(decision.getScore());
+                            }
+                            repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
                         } else {
-                            repAnswerBean.setScore(decision.getScore());
-                        }
-                        repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
-                    } else {
-                        if (question.getQuestionType().equals("ORDINARY")) {
-                            repAnswerBean.setScore(repAnswerBean.getScore() + 1);
-                        } else {
-                            repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
+                            if (question.getQuestionType().equals("ORDINARY")) {
+                                repAnswerBean.setScore(repAnswerBean.getScore() + 1);
+                            } else {
+                                repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
+                            }
                         }
                     }
                 }
@@ -700,28 +721,32 @@ public class VotingControllerImpl implements IVotingController {
                         || question.getVotingId().getStatus().equals("STOPED")) {
                     List<RepVoterBean> repVoterBeens = new ArrayList<>();
                     for (Decision decision : question.getDecisionSet()) {
-                        RepVoterBean bean = null;
-                        boolean isFound = false;
-                        for (RepVoterBean voterBean : repVoterBeens) {
-                            if (voterBean.getVoterId().equals(decision.getVoterId().getId())) {
-                                bean = voterBean;
-                                isFound = true;
+                        if (!decision.getStatus().equals("KILLED")) {
+                            RepVoterBean bean = null;
+                            boolean isFound = false;
+                            for (RepVoterBean voterBean : repVoterBeens) {
+                                if (voterBean.getVoterId().equals(decision.getVoterId().getId())) {
+                                    bean = voterBean;
+                                    isFound = true;
+                                }
                             }
+                            if (!isFound) {
+                                bean = new RepVoterBean();
+                                bean.setVoterId(decision.getVoterId().getId());
+                                bean.setQuestionId(questionId);
+                                bean.setUserId(decision.getVoterId().getUserId().getId());
+                                bean.setUserName(userController.getFullName(decision.getVoterId().getUserId().getUserInfoId()));
+                                bean.setDecisionDate(decision.getDateCreate());
+                                bean.setDecisionBeanList(new ArrayList<>());
+                                repVoterBeens.add(bean);
+                            }
+                            RepDecisionBean repDecisionBean = new RepDecisionBean();
+                            repDecisionBean.setAnswer(decision.getAnswerId() != null);
+                            repDecisionBean.setAnswerText(decision.getAnswerId() == null ? "Комментарий" : decision.getAnswerId().getAnswer());
+                            repDecisionBean.setComment(decision.getComments());
+                            repDecisionBean.setScore(decision.getScore());
+                            bean.getDecisionBeanList().add(repDecisionBean);
                         }
-                        if (!isFound) {
-                            bean = new RepVoterBean();
-                            bean.setVoterId(decision.getVoterId().getId());
-                            bean.setQuestionId(questionId);
-                            bean.setUserId(decision.getVoterId().getUserId().getId());
-                            bean.setUserName(decision.getVoterId().getUserId().getUserInfoId().getLastName());
-                            bean.setDecisionBeanList(new ArrayList<>());
-                            repVoterBeens.add(bean);
-                        }
-                        RepDecisionBean repDecisionBean = new RepDecisionBean();
-                        repDecisionBean.setAnswerText(decision.getAnswerId() == null ? "Комментарий" : decision.getAnswerId().getAnswer());
-                        repDecisionBean.setComment(decision.getComments());
-                        repDecisionBean.setScore(decision.getScore());
-                        bean.getDecisionBeanList().add(repDecisionBean);
                     }
                     return new SimpleResponse(repVoterBeens).SUCCESS();
                 } else {
@@ -893,6 +918,16 @@ public class VotingControllerImpl implements IVotingController {
                 }
             }
         }
+
+        List<Voting> startedVotings = votingRepository.findByStatus("STARTED");
+        for (Voting voting : startedVotings) {
+            if (voting.getDateEnd().before(new Date())) {
+                voting.setStatus("STOPED");
+                voting.setStatus("CLOSED");
+                voting.setDateClose(new Date());
+                votingRepository.save(voting);
+            }
+        }
     }
 
     @Override
@@ -947,6 +982,8 @@ public class VotingControllerImpl implements IVotingController {
 
                 }
             } else {
+                decision.setStatus("READY");
+                decisionRepository.save(decision);
                 System.out.println("Решение с ID (" + decision.getId() + ") не содержит ответа. Коментарий " + decision.getComments());
             }
         }
@@ -972,8 +1009,28 @@ public class VotingControllerImpl implements IVotingController {
 
         }
 
-        decisionList = decisionRepository.findByStatus("CREATED");
-        //TODO прверка через AnswerInfo
+        if (blockchainProperties.getStatus().equals("ACTIVE")) {
+            decisionList = decisionRepository.findByStatus("CREATED");
+            for (Decision decision : decisionList) {
+                Long voteId=decision.getVoterId().getVotingId().getId();
+                Long userId=decision.getVoterId().getUserId().getId();
+                String ques = String.valueOf(decision.getQuestionId().getId());
+                Object o = votingQuery.getAnswerInfo(voteId, userId, ques);
+                if (o instanceof HLMessage) {
+                    HLMessage m = (HLMessage) o;
+                    if (m.getError() != null) {
+                        System.out.println("При проверке решения с ID " + decision.getId() + " произошла ошибка " + m.getError().getMessage());
+                    } else if (m.getResult() != null) {
+                        System.out.println("Проверка решения с ID " + decision.getId() + " Завершилась статусом " + m.getResult().getStatus());
+                        decision.setStatus("READY");
+                        decisionRepository.save(decision);
+                        updateQuestionDecisions(decision.getQuestionId().getId());
+                    }
+                } else {
+                    System.out.println("o=" + o.toString());
+                }
+            }
+        }
 
     }
 
@@ -1004,5 +1061,32 @@ public class VotingControllerImpl implements IVotingController {
             }
         }
         return result;
+    }
+
+    @Override
+    public void updateQuestionDecisions(Long questionId) {
+        Question question = questionRepository.findOne(questionId);
+        List<TotalDecision> tds = new ArrayList<>();
+        for (Answer answer : question.getAnswerSet()) {
+            TotalDecision td = new TotalDecision();
+            td.setAnswerText(answer.getAnswer());
+            td.setAnswerCount(0);
+            td.setAnswerScore(0);
+            List<Decision> decs = decisionRepository.findByQuestionId(question);
+            for (Decision decision : decs) {
+                if (decision.getStatus().equals("READY") && decision.getAnswerId() != null && decision.getAnswerId().equals(answer)) {
+                    td.setAnswerCount(td.getAnswerCount() + 1);
+                    td.setAnswerScore(td.getAnswerScore() + decision.getScore());
+                }
+            }
+            tds.add(td);
+        }
+        try {
+            question.setDecision(JsonUtil.toJson(tds));
+        } catch (JsonProcessingException e) {
+
+            e.printStackTrace();
+        }
+        questionRepository.save(question);
     }
 }

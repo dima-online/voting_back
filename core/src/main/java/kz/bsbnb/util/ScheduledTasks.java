@@ -24,19 +24,28 @@ public class ScheduledTasks {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
     private boolean canCheckVoting = true;
+    private boolean checkDecisions = true;
 
     @Scheduled(fixedRate = 30000)
     public void reportCurrentTime() {
         log.info("The time is now {}", dateFormat.format(new Date()));
         if (canCheckVoting) {
-            log.info("checkVotingInBlockChain {}", dateFormat.format(new Date()));
             setCanCheckVoting(false);
             votingController.checkVotingInBlockChain();
             setCanCheckVoting(true);
+        }
+        if (checkDecisions) {
+            setCheckDecisions(false);
+            votingController.checkDecisions();
+            setCheckDecisions(true);
         }
     }
 
     public void setCanCheckVoting(boolean canCheckVoting) {
         this.canCheckVoting = canCheckVoting;
+    }
+
+    public void setCheckDecisions(boolean checkDecisions) {
+        this.checkDecisions = checkDecisions;
     }
 }

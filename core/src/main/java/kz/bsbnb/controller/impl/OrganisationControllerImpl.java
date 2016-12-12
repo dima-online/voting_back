@@ -76,7 +76,22 @@ public class OrganisationControllerImpl implements IOrganisationController {
         User user = userRepository.findOne(operId);
         List<RegOrgBean> result = new ArrayList<>();
         List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
-        for (UserRoles userRoles:userRolesList) {
+        for (UserRoles userRoles : userRolesList) {
+            if (userRoles.getRole().equals(Role.ROLE_OPER)) {
+                RegOrgBean regOrgBean = castToBean(userRoles.getOrgId());
+                result.add(regOrgBean);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/regData1/{operId}", method = RequestMethod.GET)
+    public List<RegOrgBean> getRegOrganisationByOperId1(@PathVariable Long operId) {
+        User user = userRepository.findOne(operId);
+        List<RegOrgBean> result = new ArrayList<>();
+//        List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
+        for (UserRoles userRoles : user.getUserRolesSet()) {
             if (userRoles.getRole().equals(Role.ROLE_OPER)) {
                 RegOrgBean regOrgBean = castToBean(userRoles.getOrgId());
                 result.add(regOrgBean);
@@ -96,7 +111,50 @@ public class OrganisationControllerImpl implements IOrganisationController {
         } else {
             try {
                 if (CheckUtil.INN(organisation.getOrganisationNum())) {
+                    organisation.setStatus("CAN_VOTE");
                     Organisation org = organisationRepository.save(organisation);
+//                    List<User> admins = new ArrayList<>();
+//                    List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
+//                    for (UserRoles userRole : roles) {
+//                        admins.add(userRole.getUserId());
+//                    }
+//            User user = userRepository.findOne(1L);
+//                    if (!admins.isEmpty()) {
+//                        for (User user : admins) {
+//                            UserRoles userRoles = new UserRoles();
+//                            userRoles.setOrgId(org);
+//                            userRoles.setUserId(user);
+//                            userRoles.setRole(Role.ROLE_ADMIN);
+//                            userRoles.setShareCount(0);
+//                            userRoles.setCannotVote(1);
+//                            userRoleRepository.save(userRoles);
+//                        }
+//                    }
+                    return new SimpleResponse(org).SUCCESS();
+                } else {
+                    return new SimpleResponse("Неверный БИН").ERROR_CUSTOM();
+                }
+            } catch (Exception e) {
+                return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+            }
+        }
+    }
+
+
+    @Override
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    public SimpleResponse newOrganisation(@RequestBody @Valid RegOrgBean regOrgBean) {
+        Organisation oldOrg = organisationRepository.findByOrganisationNum(regOrgBean.getOrganisationNum());
+        if (oldOrg != null) {
+            return new SimpleResponse("Эмитент с таким БИН уже существует").ERROR_CUSTOM();
+        } else {
+            try {
+                if (CheckUtil.INN(regOrgBean.getOrganisationNum())) {
+                    Organisation org = castFromBean(regOrgBean);
+                    org = organisationRepository.save(org);
+                    List<Attribute> attributes = getAttrFromBean(regOrgBean);
+                    attributeProcessor.merge("ORG", org.getId(), attributes);
+
                     List<User> admins = new ArrayList<>();
                     List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
                     for (UserRoles userRole : roles) {
@@ -114,52 +172,21 @@ public class OrganisationControllerImpl implements IOrganisationController {
                             userRoleRepository.save(userRoles);
                         }
                     }
-                    return new SimpleResponse(org).SUCCESS();
+                    RegOrgBean result = castToBean(org);
+                    return new SimpleResponse(result).SUCCESS();
                 } else {
-                    return new SimpleResponse("Неверный БИН").ERROR_CUSTOM();
+                    return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
                 }
-            } catch (Exception e) {
+            } catch (CheckUtil.INNLenException e) {
                 return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+            } catch (CheckUtil.INNNotValidChar innNotValidChar) {
+                return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
+            } catch (CheckUtil.INNControlSum10 innControlSum10) {
+                return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
             }
         }
     }
 
-
-
-    @Override
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public SimpleResponse newOrganisation(@RequestBody @Valid RegOrgBean regOrgBean) {
-        Organisation oldOrg = organisationRepository.findByOrganisationNum(regOrgBean.getOrganisationNum());
-        if (oldOrg != null) {
-            return new SimpleResponse("Эмитент с таким БИН уже существует").ERROR_CUSTOM();
-        } else {
-            Organisation org = castFromBean(regOrgBean);
-            org = organisationRepository.save(org);
-            List<Attribute> attributes = getAttrFromBean(regOrgBean);
-            attributeProcessor.merge("ORG", org.getId(), attributes);
-
-            List<User> admins = new ArrayList<>();
-            List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
-            for (UserRoles userRole : roles) {
-                admins.add(userRole.getUserId());
-            }
-//            User user = userRepository.findOne(1L);
-            if (!admins.isEmpty()) {
-                for (User user : admins) {
-                    UserRoles userRoles = new UserRoles();
-                    userRoles.setOrgId(org);
-                    userRoles.setUserId(user);
-                    userRoles.setRole(Role.ROLE_ADMIN);
-                    userRoles.setShareCount(0);
-                    userRoles.setCannotVote(1);
-                    userRoleRepository.save(userRoles);
-                }
-            }
-            RegOrgBean result = castToBean(org);
-
-            return new SimpleResponse(result).SUCCESS();
-        }
-    }
 
     @Override
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
@@ -389,7 +416,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
             } else {
                 if (admin != null && confirmationService.check(regRoleBean.getConfirmBean())) {
-                    List<UserRoles> admins = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                    List<UserRoles> admins = userRoleRepository.findByUserId(admin);
                     boolean isAdmin = false;
                     for (UserRoles userRole : admins) {
                         if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
@@ -446,7 +473,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
             } else {
                 if (admin != null && confirmationService.check(regRoleBean.getConfirmBean())) {
-                    List<UserRoles> admins = userRoleRepository.findByUserIdAndOrgId(admin, org);
+                    List<UserRoles> admins = userRoleRepository.findByUserId(admin);
                     boolean isAdmin = false;
                     for (UserRoles userRole : admins) {
                         if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
@@ -467,7 +494,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                                 }
                             }
                             if (regRoleBean.getRole().equals(Role.ROLE_ADMIN.name()) || regRoleBean.getRole().equals(Role.ROLE_OPER.name())) {
-                                if (userRole!=null) {
+                                if (userRole != null) {
                                     userRoleRepository.deleteByIds(userRole.getId());
                                 }
                                 return new SimpleResponse("Права удалены успешно").SUCCESS();

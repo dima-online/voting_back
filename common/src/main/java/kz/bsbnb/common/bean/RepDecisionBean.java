@@ -8,7 +8,16 @@ public class RepDecisionBean {
     private String answerText;
     private String comment;
     private Integer score;
+    private Boolean isAnswer;
     public RepDecisionBean() {
+    }
+
+    public Boolean getAnswer() {
+        return isAnswer;
+    }
+
+    public void setAnswer(Boolean answer) {
+        isAnswer = answer;
     }
 
     public String getAnswerText() {

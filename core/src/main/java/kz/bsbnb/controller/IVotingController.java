@@ -74,4 +74,6 @@ public interface IVotingController {
     void checkVotingInBlockChain();
 
     void checkDecisions();
+
+    void updateQuestionDecisions(Long questionId);
 }

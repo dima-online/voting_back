@@ -51,7 +51,7 @@ public class UserControllerImpl implements IUserController {
 
     //функция для криптовки паролей
     public static String pwd(String password) {
-        return password;
+        return StringUtil.md5(password);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class UserControllerImpl implements IUserController {
                     userRoles.setShareCount(1);
                 }
                 userBean.setShareCount(userRoles.getShareCount());
-                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent()*100);
+                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
             }
             if (!isFound) {
                 userBean.setUserId(userRoles.getUserId().getId());
@@ -146,6 +146,13 @@ public class UserControllerImpl implements IUserController {
         return new SimpleResponse(userData).SUCCESS();
     }
 
+    @Override
+    public String getFullName(UserInfo userInfo) {
+        String fName = userInfo.getLastName() == null ? " " : userInfo.getLastName();
+        fName = fName + " " + (userInfo.getFirstName() == null ? " " : userInfo.getFirstName());
+        fName = fName + " " + (userInfo.getMiddleName() == null ? " " : userInfo.getMiddleName());
+        return fName.trim();
+    }
 
     @Override
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
@@ -280,9 +287,14 @@ public class UserControllerImpl implements IUserController {
             return new SimpleResponse("Пользователь с этим ID не существует").ERROR_NOT_FOUND();
         } else {
             if (pwd(user.getOldPassword()).equals(localUser.getPassword())) {
-                localUser.setPassword(pwd(user.getPassword()));
-                localUser = userRepository.save(localUser);
-                return new SimpleResponse(localUser).SUCCESS();
+                PasswordUtil passwordValidator = new PasswordUtil();
+                if (passwordValidator.validate(user.getPassword())) {
+                    localUser.setPassword(pwd(user.getPassword()));
+                    localUser = userRepository.save(localUser);
+                    return new SimpleResponse(localUser).SUCCESS();
+                } else {
+                    return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
+                }
             } else {
                 return new SimpleResponse("Старый пароль не совпадает").ERROR_CUSTOM();
             }

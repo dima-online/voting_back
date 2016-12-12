@@ -40,7 +40,7 @@ public class DecisionControllerImpl implements IDecisionController {
 
 
     @Override
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+//    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public SimpleResponse regDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
@@ -59,13 +59,14 @@ public class DecisionControllerImpl implements IDecisionController {
             } else if (!oldDecitions.isEmpty()) {
                 return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
             } else {
+                dec.setStatus("NEW");
                 dec = decisionRepository.save(dec);
                 result.setData(dec).SUCCESS();
             }
         } else {
             result.setData("Не возможно сохранить ваше решение").ERROR_CUSTOM();
         }
-        updateQuestionDecisions(bean.getQuestionId());
+        votingController.updateQuestionDecisions(bean.getQuestionId());
         return result;
     }
 
@@ -77,43 +78,20 @@ public class DecisionControllerImpl implements IDecisionController {
         List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
         if (!oldDecitions.isEmpty()) {
             for (Decision decision : oldDecitions) {
-                decisionRepository.deleteByIds(decision.getId());
+                decision.setStatus("KILLED");
+                decisionRepository.save(decision);
+//                decisionRepository.deleteByIds(decision.getId());
             }
+            votingController.updateQuestionDecisions(dec.getQuestionId().getId());
             result.setData("Решение отменено").SUCCESS();
         } else {
-            result.setData("Решение не надено").ERROR_CUSTOM();
+            result.setData("Решение не найдено").ERROR_CUSTOM();
         }
         return result;
     }
 
-    private void updateQuestionDecisions(Long questionId) {
-        Question question = questionRepository.findOne(questionId);
-        List<TotalDecision> tds = new ArrayList<>();
-        for (Answer answer : question.getAnswerSet()) {
-            TotalDecision td = new TotalDecision();
-            td.setAnswerText(answer.getAnswer());
-            td.setAnswerCount(0);
-            td.setAnswerScore(0);
-            List<Decision> decs = decisionRepository.findByQuestionId(question);
-            for (Decision decision : decs) {
-                if (decision.getAnswerId() != null && decision.getAnswerId().equals(answer)) {
-                    td.setAnswerCount(td.getAnswerCount() + 1);
-                    td.setAnswerScore(td.getAnswerScore() + decision.getScore());
-                }
-            }
-            tds.add(td);
-        }
-        try {
-            question.setDecision(JsonUtil.toJson(tds));
-        } catch (JsonProcessingException e) {
-
-            e.printStackTrace();
-        }
-        questionRepository.save(question);
-    }
-
     @Override
-    @RequestMapping(value = "/newList", method = RequestMethod.POST)
+//    @RequestMapping(value = "/newList", method = RequestMethod.POST)
     public SimpleResponse regDecision(@RequestBody @Valid List<DecisionBean> beans) {
         SimpleResponse result = new SimpleResponse();
         List<Decision> oldDecisions = new ArrayList<>();
@@ -151,6 +129,7 @@ public class DecisionControllerImpl implements IDecisionController {
 //                    }
                     return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
+                    dec.setStatus("NEW");
                     dec = decisionRepository.save(dec);
                     decisions.add(dec);
                 }
@@ -165,7 +144,9 @@ public class DecisionControllerImpl implements IDecisionController {
         } else {
             result.setData(decisions).SUCCESS();
         }
-        updateQuestionDecisions(beans.get(0).getQuestionId());
+        if (!beans.isEmpty()) {
+            votingController.updateQuestionDecisions(beans.get(0).getQuestionId());
+        }
         return result;
     }
 
@@ -195,6 +176,7 @@ public class DecisionControllerImpl implements IDecisionController {
                     CheckDecision check = new CheckDecision(false);
                     Object obj = checkAndSave(bean, dec, check);
                     if (check.isHasError()) {
+                        System.out.println(obj);
                         result.setData(obj).ERROR_CUSTOM();
                     } else {
                         result.setData(obj).SUCCESS();
@@ -204,7 +186,7 @@ public class DecisionControllerImpl implements IDecisionController {
         } else {
             result.setData("Не возможно сохранить ваше решение").ERROR_CUSTOM();
         }
-        updateQuestionDecisions(bean.getQuestionId());
+        votingController.updateQuestionDecisions(bean.getQuestionId());
         return result;
     }
 
@@ -231,6 +213,7 @@ public class DecisionControllerImpl implements IDecisionController {
             User user = userRepository.findOne(bean.getUserId());
             if (user!=null&&user.getIin().equals(result.getIin())) {
                 if (bUserId&&bQuestionId&&bAnswerId) {
+                    dec.setStatus("NEW");
                     dec = decisionRepository.save(dec);
                     return dec;
                 } else {
@@ -291,6 +274,7 @@ public class DecisionControllerImpl implements IDecisionController {
                         Object obj = checkAndSave(bean, dec, check);
                         decisions.add(obj);
                     } else {
+                        dec.setStatus("NEW");
                         dec = decisionRepository.save(dec);
                         decisions.add(dec);
                     }
@@ -302,11 +286,14 @@ public class DecisionControllerImpl implements IDecisionController {
             }
         }
         if (check.isHasError()) {
+            System.out.println(str);
             result.setData(str).ERROR_CUSTOM();
         } else {
             result.setData(decisions).SUCCESS();
         }
-        updateQuestionDecisions(beans.get(0).getQuestionId());
+        if (!beans.isEmpty()) {
+            votingController.updateQuestionDecisions(beans.get(0).getQuestionId());
+        }
         return result;
     }
 

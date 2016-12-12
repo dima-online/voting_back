@@ -149,13 +149,11 @@ public class ReestrControllerImpl implements IReestrController {
                     if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                         if (reestrHead.getStatus().equals("READY")) {
                             //удаляем старых акционеров
-                            List<UserRoles> delRoles = new ArrayList<>();
                             for (UserRoles roles : voting.getOrganisationId().getUserRolesSet()) {
                                 if (roles.getRole().equals(Role.ROLE_USER)) {
-                                    delRoles.add(roles);
+                                    userRoleRepository.deleteByIds(roles.getId());
                                 }
                             }
-                            userRoleRepository.delete(delRoles);
                             //Добавляем новых акционеров
                             List<UserRoles> newRoles = new ArrayList<>();
                             for (Reestr reestr : reestrHead.getReestrSet()) {

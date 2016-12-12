@@ -69,4 +69,6 @@ public interface IUserController {
     SimpleResponse remind(RegUserBean userBean);
 
     Role getRole(User user, Organisation organisation);
+
+    String getFullName(UserInfo userInfo);
 }

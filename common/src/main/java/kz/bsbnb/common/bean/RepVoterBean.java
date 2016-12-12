@@ -1,5 +1,6 @@
 package kz.bsbnb.common.bean;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,9 +11,18 @@ public class RepVoterBean {
     private Long userId;
     private Long questionId;
     private String userName;
+    private Date decisionDate;
     private List<RepDecisionBean> decisionBeanList;
 
     public RepVoterBean() {
+    }
+
+    public Date getDecisionDate() {
+        return decisionDate;
+    }
+
+    public void setDecisionDate(Date decisionDate) {
+        this.decisionDate = decisionDate;
     }
 
     public Long getVoterId() {

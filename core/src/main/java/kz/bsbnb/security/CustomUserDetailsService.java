@@ -2,6 +2,7 @@ package kz.bsbnb.security;
 
 import kz.bsbnb.common.model.User;
 import kz.bsbnb.repository.IUserRepository;
+import kz.bsbnb.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
