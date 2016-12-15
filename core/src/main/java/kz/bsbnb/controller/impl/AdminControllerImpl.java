@@ -1,14 +1,17 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.OrgBean;
+import kz.bsbnb.common.bean.RegOrgBean;
 import kz.bsbnb.common.bean.ValueBean;
 import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.consts.FileConst;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IAdminController;
+import kz.bsbnb.controller.IOrganisationController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.repository.*;
+import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.SimpleResponse;
 import kz.bsbnb.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,54 +44,84 @@ public class AdminControllerImpl implements IAdminController {
     @Autowired
     private IVotingRepository votingRepository;
     @Autowired
-    private IUserRoleRepository userRoleRepository;
+    private IOrganisationController organisationController;
     @Autowired
     private IOrganisationRepository organisationRepository;
 
     @Override
     @RequestMapping(value = "/newOrg/{userId}", method = RequestMethod.POST)
-    public SimpleResponse newOrg(@PathVariable Long userId, @RequestBody @Valid OrgBean orgBean) {
+    public SimpleResponse newOrg(@PathVariable Long userId, @RequestBody @Valid RegOrgBean orgBean) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(orgBean.getOrganisationNum());
 
         if (oldOrg != null) {
-            return new SimpleResponse("Эмитент с таким номером существует").ERROR_CUSTOM();
+            return new SimpleResponse("Эмитент с таким БИН существует").ERROR_CUSTOM();
         } else {
-            Organisation org = castFromBean(orgBean);
-
             User user = userRepository.findOne(userId);
             if (user != null) {
-                org = organisationRepository.save(org);
-                UserRoles userRoles = new UserRoles();
-                userRoles.setOrgId(org);
-                userRoles.setUserId(user);
-                userRoles.setRole(Role.ROLE_ADMIN);
-                userRoles.setShareCount(0);
-                userRoles.setCannotVote(1);
-                userRoleRepository.save(userRoles);
+                boolean isAdmin = false;
+                for (UserRoles userRole : user.getUserRolesSet()) {
+                    if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
+                        isAdmin = true;
+                    }
+                }
+                if (isAdmin) {
+                    try {
+                        if ((CheckUtil.INN(orgBean.getOrganisationNum()))) {
+                            return organisationController.newOrganisation(orgBean);
+                        } else {
+                            return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
+                        }
+                    } catch (CheckUtil.INNLenException e) {
+                        return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+                    } catch (CheckUtil.INNNotValidChar innNotValidChar) {
+                        return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
+                    } catch (CheckUtil.INNControlSum10 innControlSum10) {
+                        return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
+                    }
+
+                } else {
+                    return new SimpleResponse("У Вас нет прав заводить организацию").ERROR_CUSTOM();
+                }
             } else {
                 return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
             }
-            return new SimpleResponse(org).SUCCESS();
         }
     }
 
     @Override
     @RequestMapping(value = "/editOrg/{userId}", method = RequestMethod.POST)
-    public SimpleResponse editOrg(@PathVariable Long userId, @RequestBody @Valid OrgBean orgBean) {
+    public SimpleResponse editOrg(@PathVariable Long userId, @RequestBody @Valid RegOrgBean orgBean) {
 
-        Organisation org = organisationRepository.findOne(orgBean.getId());
+        User user = userRepository.findOne(userId);
+        if (user != null) {
+            boolean isAdmin = false;
+            for (UserRoles userRole : user.getUserRolesSet()) {
+                if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
+                    isAdmin = true;
+                }
+            }
+            if (isAdmin) {
+                try {
+                    if ((CheckUtil.INN(orgBean.getOrganisationNum()))) {
+                        return organisationController.editOrganisation(orgBean);
+                    } else {
+                        return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
+                    }
+                } catch (CheckUtil.INNLenException e) {
+                    return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+                } catch (CheckUtil.INNNotValidChar innNotValidChar) {
+                    return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
+                } catch (CheckUtil.INNControlSum10 innControlSum10) {
+                    return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
+                }
 
-        if (org == null) {
-            return new SimpleResponse("Организация с таким id не найдена").ERROR_CUSTOM();
+            } else {
+                return new SimpleResponse("У Вас нет прав заводить организацию").ERROR_CUSTOM();
+            }
         } else {
-            org.setStatus(orgBean.getStatus());
-            org.setOrganisationNum(orgBean.getOrganisationNum());
-            org.setOrganisationName(orgBean.getOrganisationName());
-            org.setExternalId(orgBean.getExternalId());
-            org.setAllShareCount(orgBean.getAllShareCount());
-            org = organisationRepository.save(org);
-            return new SimpleResponse(org).SUCCESS();
+            return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
         }
+
     }
 
 
@@ -152,7 +185,6 @@ public class AdminControllerImpl implements IAdminController {
         String guid = StringUtil.SHA(fileName).substring(0, 7);
         Date now = new Date();
         String name = now.getTime() + guid + votingId;
-        System.out.println("name=" + name);
         Voting voting = votingRepository.findOne(votingId);
         if (!file.isEmpty()) {
             if (voting != null) {
@@ -164,7 +196,7 @@ public class AdminControllerImpl implements IAdminController {
                     stream.close();
                     Files files = new Files();
                     files.setFileName(fileName + "." + fileExt);
-                    files.setFilePath(name);
+                    files.setFilePath(name + "-" + fileExt);
                     files.setVotingId(voting);
                     filesRepository.save(files);
                     return "Вы успешно загрузили " + fileName + " в " + FileConst.DIR + name + "." + fileExt + " !";

@@ -1,5 +1,6 @@
 package kz.bsbnb.util;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,22 +9,21 @@ import java.util.Map;
  */
 public class WordUtil {
 
-    public static void fill() {
+    public static void fill(Map<String, String> map, Long votingId) {
         String docxPath = "/opt/voting/test/test.docx";
 //        String dotxPath = "/opt/voting/test/test.dotx";
 
         String filePath = docxPath;
+        Date now = new Date();
+        String fileName = now.getTime() +votingId+ ".docx";
 
         ReportVariables reportVariables = new ReportVariables();
 
         try {
             reportVariables.scanForVariables(filePath);
 
-            Map<String, String> map = new HashMap<>();
-            map.put("test", "Hello World");
-
             ReplaceVariables replaceVariables = new ReplaceVariables(map);
-            replaceVariables.readAndReplaceDocFile(filePath);
+            replaceVariables.readAndReplaceDocFile(filePath, fileName);
 
         } catch (Exception ex) {
             ex.printStackTrace();

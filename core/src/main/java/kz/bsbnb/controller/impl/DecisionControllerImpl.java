@@ -40,7 +40,7 @@ public class DecisionControllerImpl implements IDecisionController {
 
 
     @Override
-//    @RequestMapping(value = "/new", method = RequestMethod.POST)
+    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public SimpleResponse regDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
@@ -91,7 +91,7 @@ public class DecisionControllerImpl implements IDecisionController {
     }
 
     @Override
-//    @RequestMapping(value = "/newList", method = RequestMethod.POST)
+    @RequestMapping(value = "/newList", method = RequestMethod.POST)
     public SimpleResponse regDecision(@RequestBody @Valid List<DecisionBean> beans) {
         SimpleResponse result = new SimpleResponse();
         List<Decision> oldDecisions = new ArrayList<>();
@@ -170,7 +170,7 @@ public class DecisionControllerImpl implements IDecisionController {
             } else if (!oldDecitions.isEmpty()) {
                 return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
             } else {
-                if (dec.getAnswerId()==null&&dec.getComments()==null) {
+                if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() == null && dec.getComments() == null) {
                     result.setData("Ваше решение - пустое").ERROR_CUSTOM();
                 } else {
                     CheckDecision check = new CheckDecision(false);
@@ -179,7 +179,9 @@ public class DecisionControllerImpl implements IDecisionController {
                         System.out.println(obj);
                         result.setData(obj).ERROR_CUSTOM();
                     } else {
-                        result.setData(obj).SUCCESS();
+                        dec = (Decision) obj;
+                        decisionRepository.save(dec);
+                        result.setData(dec).SUCCESS();
                     }
                 }
             }
@@ -191,30 +193,30 @@ public class DecisionControllerImpl implements IDecisionController {
     }
 
     private Object checkAndSave(DecisionBean bean, Decision dec, CheckDecision check) {
-        String strUserId = CryptUtil.getValue(bean.getConfirm().getXmlBody(),"userId");
-        String strQuestionId = CryptUtil.getValue(bean.getConfirm().getXmlBody(),"questionId");
-        String strAnswerId = CryptUtil.getValue(bean.getConfirm().getXmlBody(),"answerId");
+        String strUserId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "userId");
+        String strQuestionId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "questionId");
+        String strAnswerId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "answerId");
         CryptUtil.VerifyIIN result = CryptUtil.verifyXml(bean.getConfirm().getXmlBody());
         boolean bUserId = false, bQuestionId = false, bAnswerId = false;
         if (result.isVerify()) {
-            if (strUserId!=null&&!strUserId.equals("")&&String.valueOf(bean.getUserId()).equals(strUserId)) {
-                bUserId=true;
+            if (strUserId != null && !strUserId.equals("") && String.valueOf(bean.getUserId()).equals(strUserId)) {
+                bUserId = true;
             }
-            if (strQuestionId!=null&&!strQuestionId.equals("")&&String.valueOf(bean.getQuestionId()).equals(strQuestionId)) {
+            if (strQuestionId != null && !strQuestionId.equals("") && String.valueOf(bean.getQuestionId()).equals(strQuestionId)) {
                 bQuestionId = true;
             }
-            if (bean.getAnswerId()!=null&&!bean.getAnswerId().equals("")) {
+            if (bean.getAnswerId() != null && !bean.getAnswerId().equals("")) {
                 if (strAnswerId != null && !strAnswerId.equals("") && String.valueOf(bean.getAnswerId()).equals(strAnswerId)) {
-                    bAnswerId=true;
+                    bAnswerId = true;
                 }
             } else {
-                bAnswerId=true;
+                bAnswerId = true;
             }
             User user = userRepository.findOne(bean.getUserId());
-            if (user!=null&&user.getIin().equals(result.getIin())) {
-                if (bUserId&&bQuestionId&&bAnswerId) {
+            if (user != null && user.getIin().equals(result.getIin())) {
+                if (bUserId && bQuestionId && bAnswerId) {
                     dec.setStatus("NEW");
-                    dec = decisionRepository.save(dec);
+//                    dec = decisionRepository.save(dec);
                     return dec;
                 } else {
                     check.setHasError(true);
@@ -270,13 +272,17 @@ public class DecisionControllerImpl implements IDecisionController {
                     return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
 
-                    if (dec.getAnswerId()!=null) {
+                    if (dec.getAnswerId() != null) {
                         Object obj = checkAndSave(bean, dec, check);
+                        if (check.isHasError()) {
+                            str = (String) obj;
+                        }
                         decisions.add(obj);
                     } else {
-                        dec.setStatus("NEW");
-                        dec = decisionRepository.save(dec);
-                        decisions.add(dec);
+                        if (!check.isHasError()) {
+                            dec.setStatus("NEW");
+                            decisions.add(dec);
+                        }
                     }
                 }
             } else {
@@ -286,12 +292,15 @@ public class DecisionControllerImpl implements IDecisionController {
             }
         }
         if (check.isHasError()) {
-            System.out.println(str);
+            System.out.println("DecisionController error ="+str);
             result.setData(str).ERROR_CUSTOM();
         } else {
+            for (Object obj:decisions) {
+                decisionRepository.save((Decision) obj);
+            }
             result.setData(decisions).SUCCESS();
         }
-        if (!beans.isEmpty()) {
+        if (!beans.isEmpty()&&!check.isHasError()) {
             votingController.updateQuestionDecisions(beans.get(0).getQuestionId());
         }
         return result;
@@ -306,7 +315,6 @@ public class DecisionControllerImpl implements IDecisionController {
         }
         return result;
     }
-
 
 
     class CheckDecision {

@@ -1,6 +1,7 @@
 package kz.bsbnb.controller;
 
 import kz.bsbnb.common.bean.OrgBean;
+import kz.bsbnb.common.bean.RegOrgBean;
 import kz.bsbnb.common.bean.ValueBean;
 import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Files;
@@ -10,9 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IAdminController {
-    SimpleResponse newOrg(Long userId, OrgBean orgBean);
+    SimpleResponse newOrg(Long userId, RegOrgBean orgBean);
 
-    SimpleResponse editOrg(Long userId, OrgBean orgBean);
+    SimpleResponse editOrg(Long userId, RegOrgBean orgBean);
 
     List<ValueBean> newOrg(Long userId);
 

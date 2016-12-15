@@ -12,7 +12,7 @@
 
             /******************** Update Table: organisation ************************/
 
-            ALTER TABLE core.organisation ADD all_share_count INTEGER NULL;
+            ALTER TABLE core.organisation ADD all_share_count BIGINT NULL;
 
             /* Add Comments */
             COMMENT ON COLUMN core.organisation.all_share_count IS 'Общее количество акции';

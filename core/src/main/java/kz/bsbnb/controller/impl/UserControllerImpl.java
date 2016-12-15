@@ -116,6 +116,8 @@ public class UserControllerImpl implements IUserController {
             boolean isFound = false;
             if (userBeanList.isEmpty()) {
                 userBean = new UserOrgBean();
+                userBean.setShareCount(0);
+                userBean.setSharePercent(0.0);
             } else {
                 for (UserOrgBean orgBean : userBeanList) {
                     if (orgBean.getOrganisationId().equals(userRoles.getOrgId().getId())) {
@@ -123,6 +125,8 @@ public class UserControllerImpl implements IUserController {
                         isFound = true;
                     } else {
                         userBean = new UserOrgBean();
+                        userBean.setShareCount(0);
+                        userBean.setSharePercent(0.0);
                     }
                 }
             }
@@ -132,7 +136,7 @@ public class UserControllerImpl implements IUserController {
                 if (userRoles.getShareCount() == null || userRoles.getShareCount() == 0) {
                     userRoles.setShareCount(1);
                 }
-                userBean.setShareCount(userRoles.getShareCount());
+                userBean.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
                 userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
             }
             if (!isFound) {
@@ -229,7 +233,7 @@ public class UserControllerImpl implements IUserController {
                 }
 
             } else {
-                return new SimpleResponse("Пользователь с этим ИИН уже существует").ERROR_CUSTOM();
+                return new SimpleResponse("Пользователь с таким ИИН уже существует").ERROR_CUSTOM();
             }
         }
     }
@@ -241,7 +245,7 @@ public class UserControllerImpl implements IUserController {
         if (user != null) {
             if (user.getUserInfoId().getEmail() != null) {
                 if (userBean.getEmail() != null) {
-                    if (user.getUserInfoId().getEmail().equals(userBean.getEmail())) {
+                    if (user.getUserInfoId().getEmail().toUpperCase().equals(userBean.getEmail().toUpperCase())) {
                         List<String> rec = new ArrayList<>();
                         rec.add(userBean.getEmail());
                         String pswd = StringUtil.RND(8, 8);
@@ -259,7 +263,7 @@ public class UserControllerImpl implements IUserController {
                 return new SimpleResponse("Пользователь вносил свои данные по email").ERROR_CUSTOM();
             }
         } else {
-            return new SimpleResponse("Пользователь с этим ИИН не существует").ERROR_CUSTOM();
+            return new SimpleResponse("Пользователь с таким ИИН не существует").ERROR_CUSTOM();
         }
     }
 
@@ -269,9 +273,11 @@ public class UserControllerImpl implements IUserController {
         User localUser = userRepository.findByIin(user.getIin());
         System.out.println("user" + user.toString());
         if (localUser == null) {
-            return new SimpleResponse("no user with such userName").ERROR_NOT_FOUND();
+            return new SimpleResponse("Не найден пользователь с таким ИИН").ERROR_NOT_FOUND();
+        } else if (localUser.getStatus().equals("AUTO")) {
+            return new SimpleResponse("Пройдите, пожалуйста, регистрацию").ERROR_NOT_FOUND();
         }
-        if (localUser.getPassword().equals(user.getPassword())) {
+        if (user.getPassword() != null && localUser.getPassword().equals(user.getPassword())) {
             UserBean userBean = castUser(localUser);
             return new SimpleResponse(userBean).SUCCESS();
         } else {
@@ -353,7 +359,7 @@ public class UserControllerImpl implements IUserController {
             userBean = castUser(user, userInfo);
             return new SimpleResponse(userBean).SUCCESS();
         } else {
-            return new SimpleResponse("Пользователь с этим ИИН не существует").ERROR_CUSTOM();
+            return new SimpleResponse("Пользователь с таким ИИН не существует").ERROR_CUSTOM();
         }
     }
 
@@ -613,7 +619,7 @@ public class UserControllerImpl implements IUserController {
         QuestionBean result = new QuestionBean();
         result.setId(q.getId());
         result.setDecision(q.getDecision());
-        if (q.getDecision()!=null) {
+        if (q.getDecision() != null) {
             try {
                 result.setDecisionOS((List<TotalDecision>) JsonUtil.fromJson(q.getDecision(), List.class));
             } catch (IOException e) {
@@ -703,7 +709,7 @@ public class UserControllerImpl implements IUserController {
         result.setVotingType(voting.getVotingType());
         result.setOrganisationId(voting.getOrganisationId().getId());
         result.setOrganisationName(voting.getOrganisationId().getOrganisationName());
-        Role role = getRole(user, voting.getOrganisationId());
+        Role role = getRole(user);
         boolean canReadPdf = false;
         if (role.equals(Role.ROLE_ADMIN)) {
             Set<VoterBean> voterBeanSet = new HashSet<>();
@@ -745,6 +751,18 @@ public class UserControllerImpl implements IUserController {
                 if (result.compareTo(temp) > 0) {
                     result = temp;
                 }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public Role getRole(User user) {
+        Role result = Role.ROLE_USER;
+        for (UserRoles userRoles : user.getUserRolesSet()) {
+            Role temp = userRoles.getRole();
+            if (result.compareTo(temp) > 0) {
+                result = temp;
             }
         }
         return result;
@@ -793,13 +811,20 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/questionfile/{filePath}", method = RequestMethod.GET)
     public void getVotingQuestions(@PathVariable String filePath,
                                    HttpServletResponse response) {
-        File file = new File("/opt/voting/files/" + filePath + ".pdf");
+        String fileName;
+        if (filePath.contains("-")) {
+            fileName = "/opt/voting/files/" + filePath.replace("-",".");
+        } else {
+            fileName = "/opt/voting/files/" + filePath + ".pdf";
+        }
+        System.out.println("fileName="+fileName);
+        File file = new File(fileName);
         if (file.exists() && !file.isDirectory()) {
             try {
                 // get your file as InputStream
                 // do something
 
-                InputStream is = new FileInputStream("/opt/voting/files/" + filePath + ".pdf");
+                InputStream is = new FileInputStream(fileName);
                 // copy it to response's OutputStream
                 org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
                 response.flushBuffer();
@@ -884,7 +909,6 @@ public class UserControllerImpl implements IUserController {
             return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
         }
     }
-
 
 
 }

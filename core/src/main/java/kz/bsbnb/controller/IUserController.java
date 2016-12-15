@@ -70,5 +70,7 @@ public interface IUserController {
 
     Role getRole(User user, Organisation organisation);
 
+    Role getRole(User user);
+
     String getFullName(UserInfo userInfo);
 }

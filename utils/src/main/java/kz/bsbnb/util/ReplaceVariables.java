@@ -23,9 +23,9 @@ public class ReplaceVariables {
         this.map = map;
     }
 
-    public File readAndReplaceDocFile(String filePath) throws FileNotFoundException, XDocReportException, IOException {
+    public File readAndReplaceDocFile(String filePath, String fileName) throws FileNotFoundException, XDocReportException, IOException {
         File file = new File(filePath);
-        this.fileName = file.getName();
+        this.fileName = fileName;
 
         InputStream in = new FileInputStream(file);
 

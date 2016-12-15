@@ -86,23 +86,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
     }
 
     @Override
-    @RequestMapping(value = "/regData1/{operId}", method = RequestMethod.GET)
-    public List<RegOrgBean> getRegOrganisationByOperId1(@PathVariable Long operId) {
-        User user = userRepository.findOne(operId);
-        List<RegOrgBean> result = new ArrayList<>();
-//        List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
-        for (UserRoles userRoles : user.getUserRolesSet()) {
-            if (userRoles.getRole().equals(Role.ROLE_OPER)) {
-                RegOrgBean regOrgBean = castToBean(userRoles.getOrgId());
-                result.add(regOrgBean);
-            }
-        }
-        return result;
-    }
-
-
-    @Override
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+//    @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public SimpleResponse newOrganisation(@RequestBody @Valid Organisation organisation) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(organisation.getOrganisationNum());
 
@@ -142,54 +126,43 @@ public class OrganisationControllerImpl implements IOrganisationController {
 
 
     @Override
-    @RequestMapping(value = "/new", method = RequestMethod.POST)
+//    @RequestMapping(value = "/new", method = RequestMethod.POST)
     public SimpleResponse newOrganisation(@RequestBody @Valid RegOrgBean regOrgBean) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(regOrgBean.getOrganisationNum());
         if (oldOrg != null) {
             return new SimpleResponse("Эмитент с таким БИН уже существует").ERROR_CUSTOM();
         } else {
-            try {
-                if (CheckUtil.INN(regOrgBean.getOrganisationNum())) {
                     Organisation org = castFromBean(regOrgBean);
+                    org.setStatus("CAN_VOTE");
                     org = organisationRepository.save(org);
                     List<Attribute> attributes = getAttrFromBean(regOrgBean);
                     attributeProcessor.merge("ORG", org.getId(), attributes);
 
-                    List<User> admins = new ArrayList<>();
-                    List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
-                    for (UserRoles userRole : roles) {
-                        admins.add(userRole.getUserId());
-                    }
+//                    List<User> admins = new ArrayList<>();
+//                    List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
+//                    for (UserRoles userRole : roles) {
+//                        admins.add(userRole.getUserId());
+//                    }
 //            User user = userRepository.findOne(1L);
-                    if (!admins.isEmpty()) {
-                        for (User user : admins) {
-                            UserRoles userRoles = new UserRoles();
-                            userRoles.setOrgId(org);
-                            userRoles.setUserId(user);
-                            userRoles.setRole(Role.ROLE_ADMIN);
-                            userRoles.setShareCount(0);
-                            userRoles.setCannotVote(1);
-                            userRoleRepository.save(userRoles);
-                        }
-                    }
+//                    if (!admins.isEmpty()) {
+//                        for (User user : admins) {
+//                            UserRoles userRoles = new UserRoles();
+//                            userRoles.setOrgId(org);
+//                            userRoles.setUserId(user);
+//                            userRoles.setRole(Role.ROLE_ADMIN);
+//                            userRoles.setShareCount(0);
+//                            userRoles.setCannotVote(1);
+//                            userRoleRepository.save(userRoles);
+//                        }
+//                    }
                     RegOrgBean result = castToBean(org);
                     return new SimpleResponse(result).SUCCESS();
-                } else {
-                    return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
-                }
-            } catch (CheckUtil.INNLenException e) {
-                return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
-            } catch (CheckUtil.INNNotValidChar innNotValidChar) {
-                return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
-            } catch (CheckUtil.INNControlSum10 innControlSum10) {
-                return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
-            }
         }
     }
 
 
     @Override
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+//    @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public SimpleResponse editOrganisation(@RequestBody @Valid RegOrgBean regOrgBean) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(regOrgBean.getOrganisationNum());
         if (oldOrg == null) {
@@ -228,6 +201,27 @@ public class OrganisationControllerImpl implements IOrganisationController {
         result.setExternalId(org.getExternalId());
         result.setAllShareCount(org.getAllShareCount());
         result.setId(org.getId());
+        Integer cnt = 0;
+        if (org.getUserRolesSet()!=null) {
+            for (UserRoles roles : org.getUserRolesSet()) {
+                if (roles.getRole().equals(Role.ROLE_USER)) {
+                    cnt++;
+                }
+            }
+        }
+        result.setUserCount(cnt);
+        result.setVotingCount(0);
+        cnt = 0;
+        if (org.getVotingSet()!=null) {
+            result.setVotingCount(org.getVotingSet().size());
+            for (Voting voting : org.getVotingSet()) {
+                if (voting.getDateClose() != null) {
+                    cnt++;
+                }
+            }
+        }
+        result.setClosedVotingCount(cnt);
+        result.setStatus(org.getStatus());
         List<Attribute> attrs = attributeRepository.findByObjectAndObjectId("ORG", org.getId());
         result.setPhone(attributeProcessor.getValue(attrs, "PHONE"));
         result.setAddress(attributeProcessor.getValue(attrs, "ADDRESS"));

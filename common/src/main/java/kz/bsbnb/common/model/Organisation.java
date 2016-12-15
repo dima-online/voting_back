@@ -51,7 +51,7 @@ public class Organisation implements Serializable {
     private Set<Message> messageSet;
     @Basic(optional = false)
     @Column(name = "all_share_count")
-    private Integer allShareCount;
+    private Long allShareCount;
 
     public Organisation() {
     }
@@ -128,11 +128,11 @@ public class Organisation implements Serializable {
         this.messageSet = messageSet;
     }
 
-    public Integer getAllShareCount() {
+    public Long getAllShareCount() {
         return allShareCount;
     }
 
-    public void setAllShareCount(Integer allShareCount) {
+    public void setAllShareCount(Long allShareCount) {
         this.allShareCount = allShareCount;
     }
 

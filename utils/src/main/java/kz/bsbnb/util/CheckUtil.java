@@ -23,7 +23,7 @@ public class CheckUtil {
      public static class INNLenException extends RIException {
 
         public INNLenException(int len) {
-            super("Ваш ИИН/БИН неправильный и содержит " + len + " чисел");
+            super("ИИН/БИН должен содержать 12 цифр");
         }
     }
 

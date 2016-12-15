@@ -18,6 +18,7 @@ import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
+import kz.bsbnb.util.StringUtil;
 import kz.bsbnb.util.WordUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -101,8 +103,8 @@ public class VotingControllerImpl implements IVotingController {
     public SimpleResponse createVoting(@RequestBody @Valid RegVotingBean votingBean) {
         User user = userRepository.findOne(votingBean.getUserId());
         Voting voting = castFromBean(votingBean, user);
-        if (voting.getDateBegin()!=null) {
-            if (voting.getDateEnd()!=null) {
+        if (voting.getDateBegin() != null) {
+            if (voting.getDateEnd() != null) {
                 if (voting.getDateEnd().after(voting.getDateBegin())) {
                     voting = votingRepository.save(voting);
                     RegVotingBean result = castToBean(voting);
@@ -231,6 +233,7 @@ public class VotingControllerImpl implements IVotingController {
         }
     }
 
+
     @Override
     @RequestMapping(value = "/q/{votingId}/{qid}", method = RequestMethod.GET)
     public QuestionBean getVotingQuestion(@PathVariable Long votingId, @PathVariable Long qid) {
@@ -273,7 +276,7 @@ public class VotingControllerImpl implements IVotingController {
             User user = userRepository.findOne(userId);
 //            voting.setStatus("STARTED");
             voting.setDateBegin(new Date());
-            voting.setStatus("NEW");
+            voting.setStatus("TO_BLOCKCHAIN");
             voting = votingRepository.save(voting);
             return new SimpleResponse(userController.castToBean(voting, user));
         } else {
@@ -339,6 +342,8 @@ public class VotingControllerImpl implements IVotingController {
             } else {
                 User user = userRepository.findOne(userId);
                 voting.setStatus("STOPED");
+                voting.setDateClose(new Date());
+                voting.setStatus("CLOSED");
                 voting = votingRepository.save(voting);
                 return new SimpleResponse(userController.castToBean(voting, user));
             }
@@ -459,7 +464,9 @@ public class VotingControllerImpl implements IVotingController {
 
     private void deleteVotingAnswers(Question question) {
         List<Answer> answers = answerRepository.findByQuestionId(question);
-        answerRepository.delete(answers);
+        for (Answer answer : answers) {
+            answerRepository.deleteByIds(answer.getId());
+        }
     }
 
     @Override
@@ -744,6 +751,7 @@ public class VotingControllerImpl implements IVotingController {
                             repDecisionBean.setAnswer(decision.getAnswerId() != null);
                             repDecisionBean.setAnswerText(decision.getAnswerId() == null ? "Комментарий" : decision.getAnswerId().getAnswer());
                             repDecisionBean.setComment(decision.getComments());
+                            repDecisionBean.setStatus(decision.getStatus());
                             repDecisionBean.setScore(decision.getScore());
                             bean.getDecisionBeanList().add(repDecisionBean);
                         }
@@ -768,17 +776,17 @@ public class VotingControllerImpl implements IVotingController {
         if (user != null) {
             for (UserRoles userRoles : user.getUserRolesSet()) {
                 for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
-                        boolean isFound = false;
-                        for (VotingBean bean : result) {
-                            if (bean.getId().equals(voting.getId())) {
-                                isFound = true;
-                            }
-                        }
-                        if (!isFound) {
-                            result.add(userController.castToBean(voting, user));
+//                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
+                    boolean isFound = false;
+                    for (VotingBean bean : result) {
+                        if (bean.getId().equals(voting.getId())) {
+                            isFound = true;
                         }
                     }
+                    if (!isFound) {
+                        result.add(userController.castToBean(voting, user));
+                    }
+//                    }
                 }
             }
         }
@@ -790,35 +798,76 @@ public class VotingControllerImpl implements IVotingController {
     public void getVotingQuestions(@PathVariable Long votingId,
                                    HttpServletResponse response) {
 
-        WordUtil.fill();
-        File file = new File("/opt/voting/files/test.docx");
-        if (file.exists() && !file.isDirectory()) {
-            try {
-                // get your file as InputStream
-                // do something
-
-                InputStream is = new FileInputStream("/opt/voting/files/test.docx");
-                // copy it to response's OutputStream
-                org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-                response.flushBuffer();
-            } catch (IOException ex) {
-                throw new RuntimeException("IOError writing file to output stream");
+        Voting voting = votingRepository.findOne(votingId);
+        if (voting != null && voting.getDateClose() != null) {
+            Map<String, String> map = new HashMap<>();
+            map.put("organization_name", voting.getOrganisationId().getOrganisationName());
+            SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
+            map.put("voting_endDate", dt.format(voting.getDateClose()) + " года");
+            String str = "";
+            for (Question question : voting.getQuestionSet()) {
+                str = str + "\nФормулировка решения, поставленного на голосование:\n";
+                str = str + "\"" + question.getQuestion() + "\".\n";
+                str = str + "Итоги голосования:\n";
+                if (question.getDecision() != null) {
+                    try {
+                        System.out.println("question.getDecision()=" + question.getDecision());
+                        List<Object> list = (List<Object>) JsonUtil.fromJson(question.getDecision(), List.class);
+                        for (Object totalDecision : list) {
+                            System.out.println(totalDecision);
+                            try {
+                                TotalDecision decision = (TotalDecision) totalDecision;
+                                str = str + "\"" + decision.getAnswerText() + "\"\t–\t" + decision.getAnswerCount() + "\n";
+                            } catch (Exception e) {
+                                str = str + "\n";
+                            }
+                        }
+                        str = str + "Решение принято\n\n";
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    str = str + "Голосов нет\n";
+                }
             }
-        } else {
-            try {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e) {
-                throw new RuntimeException("IOError writing file to output stream");
-            }
 
+            map.put("decision_text", str);
+
+
+            WordUtil.fill(map, votingId);
+            File file = new File("/opt/voting/files/test.docx");
+            if (file.exists() && !file.isDirectory()) {
+                try {
+                    // get your file as InputStream
+                    // do something
+
+                    InputStream is = new FileInputStream("/opt/voting/files/test.docx");
+                    // copy it to response's OutputStream
+                    org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+                    response.flushBuffer();
+                } catch (IOException ex) {
+                    throw new RuntimeException("IOError writing file to output stream");
+                }
+            } else {
+                try {
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                } catch (IOException e) {
+                    throw new RuntimeException("IOError writing file to output stream");
+                }
+
+            }
         }
     }
 
     @Override
     public void checkVotingInBlockChain() {
+        List<Voting> toVotings = votingRepository.findByStatus("TO_BLOCKCHAIN");
         List<Voting> newVotings = votingRepository.findByStatus("NEW");
+        for (Voting voting:toVotings) {
+            newVotings.add(voting);
+        }
         for (Voting voting : newVotings) {
-            if (voting.getDateBegin().before(new Date())) {
+            if (voting.getDateBegin() != null && voting.getDateBegin().before(new Date())) {
                 System.out.println("Голосование с ID " + voting.getId() + " с датой начала " + voting.getDateBegin());
                 if (voting.getLastReestrId() != null) {
                     System.out.println("Имеет ссылку на реестр (" + voting.getLastReestrId() + ")");
@@ -920,6 +969,14 @@ public class VotingControllerImpl implements IVotingController {
         }
 
         List<Voting> startedVotings = votingRepository.findByStatus("STARTED");
+        for (Voting voting : newVotings) {
+            if (voting.getDateEnd().before(new Date())) {
+                voting.setStatus("STOPED");
+                voting.setStatus("CLOSED");
+                voting.setDateClose(new Date());
+                votingRepository.save(voting);
+            }
+        }
         for (Voting voting : startedVotings) {
             if (voting.getDateEnd().before(new Date())) {
                 voting.setStatus("STOPED");
@@ -961,12 +1018,12 @@ public class VotingControllerImpl implements IVotingController {
                 } else {
                     AccQuestion tempQuestion = null;
                     for (AccQuestion accQuestion : accQuestions) {
-                        if (accQuestion.getId().equals(String.valueOf(decision.getQuestionId().getId()))&&accQuestion.getUserId().equals(decision.getVoterId().getUserId().getId())) {
+                        if (accQuestion.getId().equals(String.valueOf(decision.getQuestionId().getId())) && accQuestion.getUserId().equals(decision.getVoterId().getUserId().getId())) {
                             tempQuestion = accQuestion;
                             break;
                         }
                     }
-                    if (tempQuestion==null) {
+                    if (tempQuestion == null) {
                         tempQuestion = new AccQuestion();
                         tempQuestion.setId(String.valueOf(decision.getQuestionId().getId()));
                         tempQuestion.setUserId(decision.getVoterId().getUserId().getId());
@@ -997,7 +1054,7 @@ public class VotingControllerImpl implements IVotingController {
                     System.out.println("Решение для вопроса с ID " + accQuestion.getId() + " вернуло ошибку " + m.getError().getMessage());
                 } else if (m.getResult() != null) {
                     System.out.println("Решение для вопроса с ID " + accQuestion.getId() + " Завершилась статусом " + m.getResult().getStatus());
-                    for (AccAnswer accAnswer:accQuestion.getAccAnswerList()) {
+                    for (AccAnswer accAnswer : accQuestion.getAccAnswerList()) {
                         accAnswer.getDecisionValue().setStatus("CREATED");
                         decisionRepository.save(accAnswer.getDecisionValue());
                     }
@@ -1012,8 +1069,8 @@ public class VotingControllerImpl implements IVotingController {
         if (blockchainProperties.getStatus().equals("ACTIVE")) {
             decisionList = decisionRepository.findByStatus("CREATED");
             for (Decision decision : decisionList) {
-                Long voteId=decision.getVoterId().getVotingId().getId();
-                Long userId=decision.getVoterId().getUserId().getId();
+                Long voteId = decision.getVoterId().getVotingId().getId();
+                Long userId = decision.getVoterId().getUserId().getId();
                 String ques = String.valueOf(decision.getQuestionId().getId());
                 Object o = votingQuery.getAnswerInfo(voteId, userId, ques);
                 if (o instanceof HLMessage) {
@@ -1037,15 +1094,15 @@ public class VotingControllerImpl implements IVotingController {
     private String getAccumText(AccQuestion accQuestion) {
         String result = "";
         //{"123":[{"12":150},{"13":210}]}
-        for (AccAnswer accAnswer:accQuestion.getAccAnswerList()) {
-            String str = "{\""+accAnswer.getStrValue()+"\":"+accAnswer.getLongValue()+"}";
+        for (AccAnswer accAnswer : accQuestion.getAccAnswerList()) {
+            String str = "{\"" + accAnswer.getStrValue() + "\":" + accAnswer.getLongValue() + "}";
             if ("".equals(result)) {
                 result = str;
             } else {
-                result = result +"," +str;
+                result = result + "," + str;
             }
         }
-        result = "{\"" + accQuestion.getId()+"\":[" + result + "]}";
+        result = "{\"" + accQuestion.getId() + "\":[" + result + "]}";
         return result;
     }
 
@@ -1057,7 +1114,7 @@ public class VotingControllerImpl implements IVotingController {
             if ("".equals(result)) {
                 result = str;
             } else {
-                result = result + " " +str;
+                result = result + " " + str;
             }
         }
         return result;
@@ -1067,7 +1124,14 @@ public class VotingControllerImpl implements IVotingController {
     public void updateQuestionDecisions(Long questionId) {
         Question question = questionRepository.findOne(questionId);
         List<TotalDecision> tds = new ArrayList<>();
-        for (Answer answer : question.getAnswerSet()) {
+        List<Answer> answers = new ArrayList<>(question.getAnswerSet());
+        Collections.sort(answers, new Comparator<Answer>() {
+            @Override
+            public int compare(Answer o1, Answer o2) {
+                return o1.getId().compareTo(o2.getId());
+            }
+        });
+        for (Answer answer : answers) {
             TotalDecision td = new TotalDecision();
             td.setAnswerText(answer.getAnswer());
             td.setAnswerCount(0);

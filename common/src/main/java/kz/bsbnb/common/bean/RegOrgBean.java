@@ -10,12 +10,39 @@ public class RegOrgBean {
     private String organisationNum; //БИН
     private String externalId;
     private String status;
-    private Integer allShareCount;
+    private Long allShareCount;
+    private Integer userCount;
+    private Integer votingCount;
+    private Integer closedVotingCount;
     private String address;
     private String email;
     private String phone;
 
     public RegOrgBean() {
+    }
+
+    public Integer getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
+    }
+
+    public Integer getVotingCount() {
+        return votingCount;
+    }
+
+    public void setVotingCount(Integer votingCount) {
+        this.votingCount = votingCount;
+    }
+
+    public Integer getClosedVotingCount() {
+        return closedVotingCount;
+    }
+
+    public void setClosedVotingCount(Integer closedVotingCount) {
+        this.closedVotingCount = closedVotingCount;
     }
 
     public Long getId() {
@@ -58,11 +85,11 @@ public class RegOrgBean {
         this.status = status;
     }
 
-    public Integer getAllShareCount() {
+    public Long getAllShareCount() {
         return allShareCount;
     }
 
-    public void setAllShareCount(Integer allShareCount) {
+    public void setAllShareCount(Long allShareCount) {
         this.allShareCount = allShareCount;
     }
 

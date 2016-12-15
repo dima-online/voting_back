@@ -214,7 +214,7 @@
         <Cm>Статусы организации NEW APPrOVED CAN_VOTE CANNOT_VOTE</Cm>
       </Cl>
       <Cl au="0" df="" nm="all_share_count" nu="1">
-        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
         <Cm>Общее количество акции</Cm>
       </Cl>
       <UniqueConstraints/>

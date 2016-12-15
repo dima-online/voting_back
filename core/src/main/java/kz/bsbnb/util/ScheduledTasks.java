@@ -31,12 +31,20 @@ public class ScheduledTasks {
         log.info("The time is now {}", dateFormat.format(new Date()));
         if (canCheckVoting) {
             setCanCheckVoting(false);
-            votingController.checkVotingInBlockChain();
+            try {
+                votingController.checkVotingInBlockChain();
+            } catch (Exception e) {
+                setCanCheckVoting(true);
+            }
             setCanCheckVoting(true);
         }
         if (checkDecisions) {
+        try {
             setCheckDecisions(false);
             votingController.checkDecisions();
+        } catch (Exception e) {
+            setCheckDecisions(true);
+        }
             setCheckDecisions(true);
         }
     }

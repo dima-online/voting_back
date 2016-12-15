@@ -32,5 +32,4 @@ public interface IOrganisationController {
     SimpleResponse delRole(Long adminId, RegRoleBean regRoleBean);
 
     List<RegOrgBean> getRegOrganisationByOperId(Long operId);
-    List<RegOrgBean> getRegOrganisationByOperId1(Long operId);
 }

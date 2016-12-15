@@ -386,7 +386,9 @@ public class MessageControllerImpl implements IMessageController {
         }
         if (message.getUserId() != null) {
             result.setUserId(message.getUserId().getId());
-            result.setUserName(message.getUserId().getUserInfoId().getLastName());
+            if (message.getUserId().getUserInfoId()!=null) {
+                result.setUserName(userController.getFullName(message.getUserId().getUserInfoId()));
+            }
         }
         return result;
     }

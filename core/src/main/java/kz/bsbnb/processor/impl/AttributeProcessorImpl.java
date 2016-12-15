@@ -23,6 +23,9 @@ public class AttributeProcessorImpl implements AttributeProcessor {
         List<Attribute> attr = attributeRepository.findByObjectAndObjectId(object,objectId);
         List<Attribute> result = new ArrayList<>();
         for (Attribute attribute:list) {
+            if ("".equals(attribute.getValue())||attribute.getValue()==null) {
+                attribute.setValue(" ");
+            }
             boolean isFound = false;
             for (Attribute next:attr) {
                 if (attribute.getTypeValue().equals(next.getTypeValue())) {

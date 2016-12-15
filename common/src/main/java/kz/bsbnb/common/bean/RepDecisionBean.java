@@ -7,9 +7,18 @@ public class RepDecisionBean {
 
     private String answerText;
     private String comment;
+    private String status;
     private Integer score;
     private Boolean isAnswer;
     public RepDecisionBean() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Boolean getAnswer() {

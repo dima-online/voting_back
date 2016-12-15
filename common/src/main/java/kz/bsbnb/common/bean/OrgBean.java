@@ -14,7 +14,7 @@ public class OrgBean {
     private List<VotingBean> votingSet;
     private Integer shareCount;
     private Double sharePercent;
-    private Integer allShareCount;
+    private Long allShareCount;
     private Integer userCount;
     private Integer votingCount;
     private Integer closedVotingCount;
@@ -106,11 +106,11 @@ public class OrgBean {
         this.votingSet = votingSet;
     }
 
-    public Integer getAllShareCount() {
+    public Long getAllShareCount() {
         return allShareCount==null?0:allShareCount;
     }
 
-    public void setAllShareCount(Integer allShareCount) {
+    public void setAllShareCount(Long allShareCount) {
         this.allShareCount = allShareCount;
     }
 }

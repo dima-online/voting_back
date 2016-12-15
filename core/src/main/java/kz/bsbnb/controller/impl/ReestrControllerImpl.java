@@ -67,19 +67,23 @@ public class ReestrControllerImpl implements IReestrController {
         if (reestrHead != null) {
             if (!list.isEmpty()) {
                 //Удаляем старые значения
-                reestrRepository.delete(reestrHead.getReestrSet());
+                for (Reestr reestr : reestrHead.getReestrSet()) {
+                    reestrRepository.deleteByIds(reestr.getId());
+                }
                 int total = list.size();
                 int error = 0;
                 int allShare = 0;
                 for (Reestr reestr : list) {
-                    reestr.setReestrHeadId(reestrHead);
                     try {
                         if (CheckUtil.INN(reestr.getIin())&&CheckUtil.INN(reestr.getVoterIin())) {
+                            reestr.setReestrHeadId(reestrHead);
                             reestrRepository.save(reestr);
                         } else {
+                            System.out.println("Error in fill reestr =" + reestr.getVoterIin() + " не прошел проверку");
                             error++;
                         }
                     } catch (Exception e) {
+                        System.out.println("Error in fill reestr =" + e.getMessage());
                         error++;
                     }
                     allShare = allShare + reestr.getShareCount();
