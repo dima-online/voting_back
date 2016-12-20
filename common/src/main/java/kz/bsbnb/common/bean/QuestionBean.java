@@ -6,9 +6,6 @@ import kz.bsbnb.common.model.Files;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created by ruslan on 31.10.16.
- */
 public class QuestionBean {
     private Long id;
     private String question;
@@ -20,8 +17,17 @@ public class QuestionBean {
     private List<DecisionBean> decisionSet;
     private Long votingId;
     private Set<Files> questionFileSet;
+    private String decisionStatus;
 
     public QuestionBean() {
+    }
+
+    public String getDecisionStatus() {
+        return decisionStatus;
+    }
+
+    public void setDecisionStatus(String decisionStatus) {
+        this.decisionStatus = decisionStatus;
     }
 
     public List<TotalDecision> getDecisionOS() {

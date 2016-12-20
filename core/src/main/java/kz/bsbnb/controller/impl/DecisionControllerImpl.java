@@ -3,8 +3,10 @@ package kz.bsbnb.controller.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.bsbnb.common.bean.DecisionBean;
 import kz.bsbnb.common.bean.TotalDecision;
+import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IDecisionController;
+import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.repository.IDecisionRepository;
 import kz.bsbnb.repository.IQuestionRepository;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,6 +40,8 @@ public class DecisionControllerImpl implements IDecisionController {
     IUserRepository userRepository;
     @Autowired
     IVotingController votingController;
+    @Autowired
+    IUserController userController;
 
 
     @Override
@@ -44,24 +49,26 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse regDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
-        List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
-        if (dec.getQuestionId() == null) {
-            result.setData("Вопрос не найден").ERROR_CUSTOM();
-        } else if (dec.getVoterId() == null) {
-            result.setData("Голосующий не найден").ERROR_CUSTOM();
-        } else if (dec.getVoterId().getShareCount() < bean.getScore()) {
-            result.setData("Очки больше доступного").ERROR_CUSTOM();
-        } else if (bean.getScore() < 0) {
-            result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
-        } else if (dec != null) {
-            if (dec.getVoterId().getDateVoting() != null) {
-                return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-            } else if (!oldDecitions.isEmpty()) {
-                return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
+        if (dec != null) {
+            List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            if (dec.getQuestionId() == null) {
+                result.setData("Вопрос не найден").ERROR_CUSTOM();
+            } else if (dec.getVoterId() == null) {
+                result.setData("Голосующий не найден").ERROR_CUSTOM();
+            } else if (dec.getVoterId().getShareCount() < bean.getScore()) {
+                result.setData("Очки больше доступного").ERROR_CUSTOM();
+            } else if (bean.getScore() < 0) {
+                result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
             } else {
-                dec.setStatus("NEW");
-                dec = decisionRepository.save(dec);
-                result.setData(dec).SUCCESS();
+                if (dec.getVoterId().getDateVoting() != null) {
+                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
+                } else if (!oldDecitions.isEmpty()) {
+                    return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
+                } else {
+                    dec.setStatus("NEW");
+                    dec = decisionRepository.save(dec);
+                    result.setData(dec).SUCCESS();
+                }
             }
         } else {
             result.setData("Не возможно сохранить ваше решение").ERROR_CUSTOM();
@@ -75,17 +82,43 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse delDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
-        List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
-        if (!oldDecitions.isEmpty()) {
-            for (Decision decision : oldDecitions) {
-                decision.setStatus("KILLED");
-                decisionRepository.save(decision);
+        if (bean.getConfirm() != null && bean.getConfirm().getUserId() != null) {
+            User admin = userRepository.findOne(bean.getConfirm().getUserId());
+            Role role = userController.getRole(admin);
+            if (role.equals(Role.ROLE_ADMIN)) {
+                List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+                if (!oldDecitions.isEmpty()) {
+                    boolean isFound = false;
+                    for (Decision decision : oldDecitions) {
+                        if (bean.getComments() != null && !"".equals(bean.getComments())) {
+                            if (decision.getAnswerId() == null) {
+                                decision.setComments(bean.getComments());
+                                isFound = true;
+                            }
+                        }
+                        decision.setStatus("KILLED");
+                        decisionRepository.save(decision);
 //                decisionRepository.deleteByIds(decision.getId());
+                    }
+                    if (bean.getComments() != null && !"".equals(bean.getComments()) && !isFound) {
+                        Decision decision = new Decision();
+                        decision.setComments(bean.getComments());
+                        decision.setStatus("KILLED");
+                        decision.setDateCreate(new Date());
+                        decision.setQuestionId(dec.getQuestionId());
+                        decision.setVoterId(dec.getVoterId());
+                        decisionRepository.save(decision);
+                    }
+                    votingController.updateQuestionDecisions(dec.getQuestionId().getId());
+                    result.setData("Решение отменено").SUCCESS();
+                } else {
+                    result.setData("Решение не найдено").ERROR_CUSTOM();
+                }
+            } else {
+                result.setData("У ваас нет прав отменять решение").ERROR_CUSTOM();
             }
-            votingController.updateQuestionDecisions(dec.getQuestionId().getId());
-            result.setData("Решение отменено").SUCCESS();
         } else {
-            result.setData("Решение не найдено").ERROR_CUSTOM();
+            result.setData("Введите данные администратора").ERROR_CUSTOM();
         }
         return result;
     }
@@ -104,34 +137,36 @@ public class DecisionControllerImpl implements IDecisionController {
         boolean hasError = false;
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
-            if (dec.getQuestionId() == null) {
-                decisions.add("Вопрос не найден");
-                str = "Вопрос не найден";
-                hasError = true;
-            } else if (dec.getVoterId() == null) {
-                decisions.add("Голосующий не найден");
-                str = "Голосующий не найден";
-                hasError = true;
-            } else if (dec.getVoterId().getShareCount() < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
-                decisions.add("Очки больше доступного");
-                str = "Очки больше доступного";
-                hasError = true;
-            } else if (bean.getScore() < 0) {
-                decisions.add("Очки не могут быть отрицательными");
-                str = "Очки не могут быть отрицательными";
-                hasError = true;
-            } else if (dec != null) {
-                if (dec.getVoterId().getDateVoting() != null) {
-                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                } else if (!oldDecisions.isEmpty()) {
+            if (dec != null) {
+                if (dec.getQuestionId() == null) {
+                    decisions.add("Вопрос не найден");
+                    str = "Вопрос не найден";
+                    hasError = true;
+                } else if (dec.getVoterId() == null) {
+                    decisions.add("Голосующий не найден");
+                    str = "Голосующий не найден";
+                    hasError = true;
+                } else if (dec.getVoterId().getShareCount() < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                    decisions.add("Очки больше доступного");
+                    str = "Очки больше доступного";
+                    hasError = true;
+                } else if (bean.getScore() < 0) {
+                    decisions.add("Очки не могут быть отрицательными");
+                    str = "Очки не могут быть отрицательными";
+                    hasError = true;
+                } else {
+                    if (dec.getVoterId().getDateVoting() != null) {
+                        return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
+                    } else if (!oldDecisions.isEmpty()) {
 //                    for (Decision decision : oldDecisions) {
 //                        decisionRepository.deleteByIds(decision.getId());
 //                    }
-                    return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
-                } else {
-                    dec.setStatus("NEW");
-                    dec = decisionRepository.save(dec);
-                    decisions.add(dec);
+                        return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
+                    } else {
+                        dec.setStatus("NEW");
+                        dec = decisionRepository.save(dec);
+                        decisions.add(dec);
+                    }
                 }
             } else {
                 decisions.add("Не возможно сохранить ваше решение для (" + bean.toString() + ")");
@@ -155,33 +190,35 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse regCheckDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
-        List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
-        if (dec.getQuestionId() == null) {
-            result.setData("Вопрос не найден").ERROR_CUSTOM();
-        } else if (dec.getVoterId() == null) {
-            result.setData("Голосующий не найден").ERROR_CUSTOM();
-        } else if (dec.getVoterId().getShareCount() < bean.getScore()) {
-            result.setData("Очки больше доступного").ERROR_CUSTOM();
-        } else if (bean.getScore() < 0) {
-            result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
-        } else if (dec != null) {
-            if (dec.getVoterId().getDateVoting() != null) {
-                return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-            } else if (!oldDecitions.isEmpty()) {
-                return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
+        if (dec != null) {
+            List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            if (dec.getQuestionId() == null) {
+                result.setData("Вопрос не найден").ERROR_CUSTOM();
+            } else if (dec.getVoterId() == null) {
+                result.setData("Голосующий не найден").ERROR_CUSTOM();
+            } else if (dec.getVoterId().getShareCount() < bean.getScore()) {
+                result.setData("Очки больше доступного").ERROR_CUSTOM();
+            } else if (bean.getScore() < 0) {
+                result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
             } else {
-                if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() == null && dec.getComments() == null) {
-                    result.setData("Ваше решение - пустое").ERROR_CUSTOM();
+                if (dec.getVoterId().getDateVoting() != null) {
+                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
+                } else if (!oldDecitions.isEmpty()) {
+                    return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
-                    CheckDecision check = new CheckDecision(false);
-                    Object obj = checkAndSave(bean, dec, check);
-                    if (check.isHasError()) {
-                        System.out.println(obj);
-                        result.setData(obj).ERROR_CUSTOM();
+                    if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() == null && dec.getComments() == null) {
+                        result.setData("Ваше решение - пустое").ERROR_CUSTOM();
                     } else {
-                        dec = (Decision) obj;
-                        decisionRepository.save(dec);
-                        result.setData(dec).SUCCESS();
+                        CheckDecision check = new CheckDecision(false);
+                        Object obj = checkAndSave(bean, dec, check);
+                        if (check.isHasError()) {
+                            System.out.println(obj);
+                            result.setData(obj).ERROR_CUSTOM();
+                        } else {
+                            dec = (Decision) obj;
+                            decisionRepository.save(dec);
+                            result.setData(dec).SUCCESS();
+                        }
                     }
                 }
             }
@@ -205,7 +242,7 @@ public class DecisionControllerImpl implements IDecisionController {
             if (strQuestionId != null && !strQuestionId.equals("") && String.valueOf(bean.getQuestionId()).equals(strQuestionId)) {
                 bQuestionId = true;
             }
-            if (bean.getAnswerId() != null && !bean.getAnswerId().equals("")) {
+            if (bean.getAnswerId() != null) {
                 if (strAnswerId != null && !strAnswerId.equals("") && String.valueOf(bean.getAnswerId()).equals(strAnswerId)) {
                     bAnswerId = true;
                 }
@@ -246,61 +283,66 @@ public class DecisionControllerImpl implements IDecisionController {
         CheckDecision check = new CheckDecision(false);
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
-            if (dec.getQuestionId() == null) {
-                decisions.add("Вопрос не найден");
-                str = "Вопрос не найден";
-                check.setHasError(true);
-            } else if (dec.getVoterId() == null) {
-                decisions.add("Голосующий не найден");
-                str = "Голосующий не найден";
-                check.setHasError(true);
-            } else if (dec.getVoterId().getShareCount() < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
-                decisions.add("Очки больше доступного");
-                str = "Очки больше доступного";
-                check.setHasError(true);
-            } else if (bean.getScore() < 0) {
-                decisions.add("Очки не могут быть отрицательными");
-                str = "Очки не могут быть отрицательными";
-                check.setHasError(true);
-            } else if (dec != null) {
-                if (dec.getVoterId().getDateVoting() != null) {
-                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                } else if (!oldDecisions.isEmpty()) {
+//          System.out.println("bean=[" + "{answer=" + bean.getAnswerId() + "}{id=" + bean.getId() + "}{question=" + bean.getQuestionId() + "}{user=" + bean.getUserId() + "}{score=" + bean.getScore() + "}]");
+            if (dec != null) {
+                if (!check.isHasError()) {
+                    if (dec.getQuestionId() == null) {
+                        decisions.add("Вопрос не найден");
+                        str = "Вопрос не найден";
+                        check.setHasError(true);
+                    } else if (dec.getVoterId() == null) {
+                        decisions.add("Голосующий не найден");
+                        str = "Голосующий не найден";
+                        check.setHasError(true);
+                    } else if (dec.getVoterId().getShareCount() < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                        decisions.add("Очки больше доступного");
+                        str = "Очки больше доступного";
+                        check.setHasError(true);
+                    } else if (bean.getScore() < 0) {
+                        decisions.add("Очки не могут быть отрицательными");
+                        str = "Очки не могут быть отрицательными";
+                        check.setHasError(true);
+                    } else {
+                        if (dec.getVoterId().getDateVoting() != null) {
+                            return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
+                        } else if (!oldDecisions.isEmpty()) {
 //                    for (Decision decision : oldDecisions) {
 //                        decisionRepository.deleteByIds(decision.getId());
 //                    }
-                    return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
-                } else {
+                            return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
+                        } else {
 
-                    if (dec.getAnswerId() != null) {
-                        Object obj = checkAndSave(bean, dec, check);
-                        if (check.isHasError()) {
-                            str = (String) obj;
-                        }
-                        decisions.add(obj);
-                    } else {
-                        if (!check.isHasError()) {
-                            dec.setStatus("NEW");
-                            decisions.add(dec);
+                            if (dec.getAnswerId() != null) {
+                                Object obj = checkAndSave(bean, dec, check);
+                                if (check.isHasError()) {
+                                    str = (String) obj;
+                                }
+                                decisions.add(obj);
+                            } else {
+                                if (!check.isHasError()) {
+                                    dec.setStatus("NEW");
+                                    decisions.add(dec);
+                                }
+                            }
                         }
                     }
+                } else {
+                    decisions.add("Не возможно сохранить ваше решение для (" + bean.toString() + ")");
+                    str = "Не возможно сохранить ваше решение для (" + bean.toString() + ")";
+                    check.setHasError(true);
                 }
-            } else {
-                decisions.add("Не возможно сохранить ваше решение для (" + bean.toString() + ")");
-                str = "Не возможно сохранить ваше решение для (" + bean.toString() + ")";
-                check.setHasError(true);
             }
         }
         if (check.isHasError()) {
-            System.out.println("DecisionController error ="+str);
+            System.out.println("DecisionController error =" + str);
             result.setData(str).ERROR_CUSTOM();
         } else {
-            for (Object obj:decisions) {
+            for (Object obj : decisions) {
                 decisionRepository.save((Decision) obj);
             }
             result.setData(decisions).SUCCESS();
         }
-        if (!beans.isEmpty()&&!check.isHasError()) {
+        if (!beans.isEmpty() && !check.isHasError()) {
             votingController.updateQuestionDecisions(beans.get(0).getQuestionId());
         }
         return result;

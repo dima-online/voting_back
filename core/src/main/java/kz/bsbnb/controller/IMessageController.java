@@ -6,9 +6,6 @@ import kz.bsbnb.util.SimpleResponse;
 
 import java.util.List;
 
-/**
- * Created by Ruslan on 21.10.2016.
- */
 public interface IMessageController {
 
     SimpleResponse createThread(ThreadBean message);
@@ -24,4 +21,6 @@ public interface IMessageController {
     SimpleResponse deleteMessage(Long messageId);
 
     List<MessageBean> getUserMessages(Long threadId, Long userId);
+
+    Integer getUnreadMessagesCount(Long userId, String strRole);
 }

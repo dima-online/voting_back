@@ -93,9 +93,8 @@ public class VotingControllerImpl implements IVotingController {
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "20") int count) {
         User user = userRepository.findOne(userId);
-        List<Voting> voting = StreamSupport.stream(votingRepository.findByUser(user, new PageRequest(page, count)).spliterator(), false)
+        return StreamSupport.stream(votingRepository.findByUser(user, new PageRequest(page, count)).spliterator(), false)
                 .collect(Collectors.toList());
-        return voting;
     }
 
     @Override
@@ -377,30 +376,29 @@ public class VotingControllerImpl implements IVotingController {
     @RequestMapping(value = "/addq/{votingId}", method = RequestMethod.POST)
     public SimpleResponse addVotingQuestions(@PathVariable Long votingId, @RequestBody @Valid RegQuestionBean question) {
         Voting voting = votingRepository.findOne(votingId);
-        if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
-            if (voting == null) {
-                return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
-            } else {
-                Question result = new Question();
-                result.setQuestion(question.getQuestion());
-                result.setQuestionType(question.getQuestionType());
-                result.setVotingId(voting);
-                result.setNum(question.getNum());
-                result = questionRepository.save(result);
-                for (Long fileId : question.getFilesId()) {
-                    Files file = filesRepository.findOne(fileId);
-                    if (file != null) {
-                        QuestionFile questionFile = new QuestionFile();
-                        questionFile.setQuestionId(result);
-                        questionFile.setFilesId(file);
-                        questionFileRepository.save(questionFile);
-                    }
+        if (voting == null) {
+            return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
+        } else if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
+
+            Question result = new Question();
+            result.setQuestion(question.getQuestion());
+            result.setQuestionType(question.getQuestionType());
+            result.setVotingId(voting);
+            result.setNum(question.getNum());
+            result = questionRepository.save(result);
+            for (Long fileId : question.getFilesId()) {
+                Files file = filesRepository.findOne(fileId);
+                if (file != null) {
+                    QuestionFile questionFile = new QuestionFile();
+                    questionFile.setQuestionId(result);
+                    questionFile.setFilesId(file);
+                    questionFileRepository.save(questionFile);
                 }
-                if (question.getQuestionType().equals(QuestionType.ORDINARY.name())) {
-                    addOrdinaryAnswer(result);
-                }
-                return new SimpleResponse(result).SUCCESS();
             }
+            if (question.getQuestionType().equals(QuestionType.ORDINARY.name())) {
+                addOrdinaryAnswer(result);
+            }
+            return new SimpleResponse(result).SUCCESS();
         } else {
             return new SimpleResponse("Голосование в ненадлежайшем статусе").ERROR_CUSTOM();
         }
@@ -410,10 +408,9 @@ public class VotingControllerImpl implements IVotingController {
     @RequestMapping(value = "/editq/{votingId}", method = RequestMethod.POST)
     public SimpleResponse editVotingQuestions(@PathVariable Long votingId, @RequestBody @Valid RegQuestionBean question) {
         Voting voting = votingRepository.findOne(votingId);
-        if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
-            if (voting == null) {
-                return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
-            } else {
+        if (voting == null) {
+            return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
+        } else if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                 Question ques = questionRepository.findOne(question.getId());
                 ques.setQuestion(question.getQuestion());
                 ques.setVotingId(voting);
@@ -432,7 +429,6 @@ public class VotingControllerImpl implements IVotingController {
                     }
                 }
                 return new SimpleResponse(ques).SUCCESS();
-            }
         } else {
             return new SimpleResponse("Голосование в ненадлежайшем статусе").ERROR_CUSTOM();
         }
@@ -523,8 +519,7 @@ public class VotingControllerImpl implements IVotingController {
         Voting voting = votingRepository.findOne(votingId);
         User user = userRepository.findOne(userId);
         Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
-        VoterBean result = userController.castToBean(voting, voter);
-        return result;
+        return userController.castToBean(voting, voter);
     }
 
     @Override
@@ -612,6 +607,7 @@ public class VotingControllerImpl implements IVotingController {
 
     @Override
     public Decision getDecisionFromBean(DecisionBean bean) {
+
         Decision result = new Decision();
         Question question = questionRepository.findOne(bean.getQuestionId());
         Answer answer = null;
@@ -728,7 +724,8 @@ public class VotingControllerImpl implements IVotingController {
                         || question.getVotingId().getStatus().equals("STOPED")) {
                     List<RepVoterBean> repVoterBeens = new ArrayList<>();
                     for (Decision decision : question.getDecisionSet()) {
-                        if (!decision.getStatus().equals("KILLED")) {
+//                        if (!decision.getStatus().equals("KILLED"))
+                        {
                             RepVoterBean bean = null;
                             boolean isFound = false;
                             for (RepVoterBean voterBean : repVoterBeens) {
@@ -863,7 +860,7 @@ public class VotingControllerImpl implements IVotingController {
     public void checkVotingInBlockChain() {
         List<Voting> toVotings = votingRepository.findByStatus("TO_BLOCKCHAIN");
         List<Voting> newVotings = votingRepository.findByStatus("NEW");
-        for (Voting voting:toVotings) {
+        for (Voting voting : toVotings) {
             newVotings.add(voting);
         }
         for (Voting voting : newVotings) {

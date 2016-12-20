@@ -3,9 +3,6 @@ package kz.bsbnb.common.bean;
 import java.util.Date;
 import java.util.Set;
 
-/**
- * Created by ruslan on 07.11.16.
- */
 public class VotingBean {
 
     private Long id;
@@ -24,8 +21,17 @@ public class VotingBean {
     private String organisationName;
     private Integer questionCount;
     private Long lastReestrId;
+    private Integer shareCount;
 
     public VotingBean() {
+    }
+
+    public Integer getShareCount() {
+        return shareCount;
+    }
+
+    public void setShareCount(Integer shareCount) {
+        this.shareCount = shareCount;
     }
 
     public Long getLastReestrId() {

@@ -14,5 +14,7 @@ public interface IMessageRepository extends PagingAndSortingRepository<Message, 
 
     List<Message> findByUserId(User user);
 
+    List<Message> findByUserIdAndFromUser(User user, boolean fromUser);
+
     List<Message> findByOrganisationId(Organisation organisationId);
 }

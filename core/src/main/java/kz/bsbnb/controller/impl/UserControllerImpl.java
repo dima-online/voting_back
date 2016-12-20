@@ -50,7 +50,7 @@ public class UserControllerImpl implements IUserController {
     private IQuestionRepository questionRepository;
 
     //функция для криптовки паролей
-    public static String pwd(String password) {
+    private static String pwd(String password) {
         return StringUtil.md5(password);
     }
 
@@ -271,7 +271,7 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public SimpleResponse checkUser(@RequestBody @Valid User user) {
         User localUser = userRepository.findByIin(user.getIin());
-        System.out.println("user" + user.toString());
+        System.out.println("login user -> " + user.getIin());
         if (localUser == null) {
             return new SimpleResponse("Не найден пользователь с таким ИИН").ERROR_NOT_FOUND();
         } else if (localUser.getStatus().equals("AUTO")) {
@@ -580,7 +580,7 @@ public class UserControllerImpl implements IUserController {
         return userBean;
     }
 
-    public RegUserBean castUser(User user, UserInfo userInfo) {
+    private RegUserBean castUser(User user, UserInfo userInfo) {
 
         RegUserBean userBean = new RegUserBean();
         userBean.setId(user.getId());
@@ -654,12 +654,10 @@ public class UserControllerImpl implements IUserController {
             if (decision.getVoterId().getUserId().equals(user)) {
                 DecisionBean bean = getBeanFromDecision(decision);
                 beanSet.add(bean);
+                result.setDecisionStatus(decision.getStatus());
             }
         }
         result.setDecisionSet(beanSet);
-        for (Answer answer : q.getAnswerSet()) {
-
-        }
         return result;
     }
 
@@ -711,6 +709,12 @@ public class UserControllerImpl implements IUserController {
         result.setOrganisationName(voting.getOrganisationId().getOrganisationName());
         Role role = getRole(user);
         boolean canReadPdf = false;
+        Voter vot = voterRepository.findByVotingIdAndUserId(voting, user);
+        if (vot!=null) {
+            result.setShareCount(vot.getShareCount());
+        } else {
+            result.setShareCount(0);
+        }
         if (role.equals(Role.ROLE_ADMIN)) {
             Set<VoterBean> voterBeanSet = new HashSet<>();
             for (Voter voter : voting.getVoterSet()) {
@@ -780,7 +784,7 @@ public class UserControllerImpl implements IUserController {
         return result;
     }
 
-    public Integer getVotingAllScore(Long votingId) {
+    private Integer getVotingAllScore(Long votingId) {
         Integer result = 0;
         Voting voting = votingRepository.findOne(votingId);
         for (Voter voter : voting.getVoterSet()) {
@@ -813,11 +817,11 @@ public class UserControllerImpl implements IUserController {
                                    HttpServletResponse response) {
         String fileName;
         if (filePath.contains("-")) {
-            fileName = "/opt/voting/files/" + filePath.replace("-",".");
+            fileName = "/opt/voting/files/" + filePath.replace("-", ".");
         } else {
             fileName = "/opt/voting/files/" + filePath + ".pdf";
         }
-        System.out.println("fileName="+fileName);
+        System.out.println("fileName=" + fileName);
         File file = new File(fileName);
         if (file.exists() && !file.isDirectory()) {
             try {
@@ -866,7 +870,7 @@ public class UserControllerImpl implements IUserController {
                 System.out.println("strQuestionId compared successfully!");
                 bQuestionId = true;
             }
-            if (bean.getAnswerId() != null && !bean.getAnswerId().equals("")) {
+            if (bean.getAnswerId() != null) {
                 if (strAnswerId != null && !strAnswerId.equals("") && String.valueOf(bean.getAnswerId()).equals(strAnswerId)) {
                     System.out.println("strAnswerId compared successfully!");
                     bAnswerId = true;

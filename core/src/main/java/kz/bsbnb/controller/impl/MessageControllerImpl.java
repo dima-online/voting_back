@@ -54,7 +54,7 @@ public class MessageControllerImpl implements IMessageController {
         }
         mess.setOrganisationId(organisation);
         mess.setSubject(message.getSubject());
-        User user = null;
+        User user;
         if (message.getUserId() != null) {
             user = userRepository.findOne(message.getUserId());
         } else {
@@ -71,7 +71,7 @@ public class MessageControllerImpl implements IMessageController {
 
     @Override
     @RequestMapping(value = "/newMessage/{threadId}", method = RequestMethod.POST)
-    public SimpleResponse createMessage(@PathVariable Long threadId, @RequestParam(defaultValue = "ROLE_USER") String  strRole, @RequestBody @Valid MessageBean message) {
+    public SimpleResponse createMessage(@PathVariable Long threadId, @RequestParam(defaultValue = "ROLE_USER") String strRole, @RequestBody @Valid MessageBean message) {
         Message mess = new Message();
         mess.setBody(message.getBody());
         mess.setDateCreate(new Date());
@@ -81,7 +81,7 @@ public class MessageControllerImpl implements IMessageController {
             return new SimpleResponse("Не найдено главное сообщение").ERROR_CUSTOM();
         }
         mess.setParentId(parent);
-        Organisation organisation = null;
+        Organisation organisation;
         if (message.getOrganisationId() != null) {
             organisation = organisationRepository.findOne(message.getOrganisationId());
         } else {
@@ -89,7 +89,7 @@ public class MessageControllerImpl implements IMessageController {
         }
         mess.setOrganisationId(organisation);
         mess.setSubject(message.getSubject() == null ? parent.getSubject() : message.getSubject());
-        User user = null;
+        User user;
         if (message.getUserId() != null) {
             user = userRepository.findOne(message.getUserId());
         } else {
@@ -103,33 +103,10 @@ public class MessageControllerImpl implements IMessageController {
         return new SimpleResponse(castToBean(mess)).SUCCESS();
     }
 
-    /**
-     * @param userId
-     * @param type   FROM_USER_READ FROM_USER_UNREAD TO_USER_READ TO_USER_UNREAD
-     * @return
-     */
-    //@Override
-    //@RequestMapping(value = "/list/{type}/{userId}", method = RequestMethod.GET)
-    public List<MessageBean> getMessages(@PathVariable Long userId, @PathVariable String type) {
-        User user = userRepository.findOne(userId);
-        List<MessageBean> result = new ArrayList<>();
-        if (user != null) {
-            List<Message> messages = messageRepository.findByUserId(user);
-            for (Message m : messages) {
-                if ((type.equals("FROM_USER_READ") && m.getFromUser() && m.getDateRead() != null)
-                        || (type.equals("FROM_USER_UNREAD") && !m.getFromUser() && m.getDateRead() == null)
-                        || (type.equals("TO_USER_READ") && m.getFromUser() && m.getDateRead() != null)
-                        || (type.equals("TO_USER_UNREAD") && !m.getFromUser() && m.getDateRead() == null)) {
-                    result.add(castToBean(m));
-                }
-            }
-        }
-        return result;
-    }
 
     @Override
     @RequestMapping(value = "/listThread/{userId}", method = RequestMethod.GET)
-    public List<ThreadBean> getAllMessages(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String  strRole) {
+    public List<ThreadBean> getAllMessages(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String strRole) {
         User user = userRepository.findOne(userId);
         List<ThreadBean> result = new ArrayList<>();
         Role role = Role.valueOf(strRole);
@@ -139,7 +116,26 @@ public class MessageControllerImpl implements IMessageController {
                 List<Message> messages = messageRepository.findByUserId(user);
                 for (Message m : messages) {
                     if (m.getParentId() == null) {
-                        result.add(castToThreadBean(m));
+                        ThreadBean t = castToThreadBean(m);
+                        List<Message> subMessage = new ArrayList<>(m.getMessageSet());
+                        Collections.sort(subMessage, new Comparator<Message>() {
+                            @Override
+                            public int compare(Message o1, Message o2) {
+                                return o2.getDateCreate().compareTo(o1.getDateCreate());
+                            }
+                        });
+                        if (!subMessage.isEmpty()) {
+                            t.setBody(subMessage.get(0).getBody());
+                            t.setDateCreate(subMessage.get(0).getDateCreate());
+                            if (subMessage.get(0).getFromUser()) {
+                                t.setDateRead(t.getDateRead() == null ? t.getDateCreate() : t.getDateRead());
+                            }
+                        } else {
+                            if (t.getFromUser()) {
+                                t.setDateRead(t.getDateRead() == null ? t.getDateCreate() : t.getDateRead());
+                            }
+                        }
+                        result.add(t);
                     }
                 }
             }
@@ -150,7 +146,22 @@ public class MessageControllerImpl implements IMessageController {
                     List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
                     for (Message m : messages) {
                         if (m.getParentId() == null) {
-                            result.add(castToThreadBean(m));
+                            ThreadBean t = castToThreadBean(m);
+                            List<Message> subMessage = new ArrayList<>(m.getMessageSet());
+                            Collections.sort(subMessage, new Comparator<Message>() {
+                                @Override
+                                public int compare(Message o1, Message o2) {
+                                    return o2.getDateCreate().compareTo(o1.getDateCreate());
+                                }
+                            });
+                            if (!subMessage.isEmpty()) {
+                                t.setBody(subMessage.get(0).getBody());
+                                t.setDateCreate(subMessage.get(0).getDateCreate());
+                                if (!subMessage.get(0).getFromUser()) {
+                                    t.setDateRead(t.getDateRead() == null ? t.getDateCreate() : t.getDateRead());
+                                }
+                            }
+                            result.add(t);
                         }
                     }
                 }
@@ -161,7 +172,22 @@ public class MessageControllerImpl implements IMessageController {
             List<Message> messages = (List<Message>) messageRepository.findAll();
             for (Message m : messages) {
                 if (m.getParentId() == null) {
-                    result.add(castToThreadBean(m));
+                    ThreadBean t = castToThreadBean(m);
+                    List<Message> subMessage = new ArrayList<>(m.getMessageSet());
+                    Collections.sort(subMessage, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message o1, Message o2) {
+                            return o2.getDateCreate().compareTo(o1.getDateCreate());
+                        }
+                    });
+                    if (!subMessage.isEmpty()) {
+                        t.setBody(subMessage.get(0).getBody());
+                        t.setDateCreate(subMessage.get(0).getDateCreate());
+                        if (!subMessage.get(0).getFromUser()) {
+                            t.setDateRead(t.getDateRead() == null ? t.getDateCreate() : t.getDateRead());
+                        }
+                    }
+                    result.add(t);
                 }
             }
         }
@@ -198,15 +224,55 @@ public class MessageControllerImpl implements IMessageController {
     }
 
     @Override
+    @RequestMapping(value = "/unReadCount/{userId}", method = RequestMethod.GET)
+    public Integer getUnreadMessagesCount(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String strRole) {
+        User user = userRepository.findOne(userId);
+        Integer result = 0;
+        Role role = Role.valueOf(strRole);
+
+        if (role.equals(Role.ROLE_USER)) {
+            if (user != null) {
+                List<Message> messages = messageRepository.findByUserIdAndFromUser(user, false);
+                for (Message m : messages) {
+                    if (m.getParentId() != null && m.getDateRead() == null) {
+                        result++;
+                    }
+                }
+            }
+        } else {
+            for (UserRoles userRole : user.getUserRolesSet()) {
+                Role temp = userRole.getRole();
+                if (temp.equals(Role.ROLE_OPER)) {
+                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+                    for (Message m : messages) {
+                        if (m.getParentId() != null && m.getDateRead() == null && m.getFromUser()) {
+                            result++;
+                        }
+                    }
+                }
+            }
+        }
+        if (role.equals(Role.ROLE_ADMIN)) {
+            List<Message> messages = messageRepository.findByOrganisationId(null);
+            for (Message m : messages) {
+                if (m.getParentId() != null && m.getDateRead() == null && m.getFromUser()) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     @RequestMapping(value = "/listMessage/{threadId}/{userId}", method = RequestMethod.GET)
     public List<MessageBean> getUserMessages(@PathVariable Long threadId, @PathVariable Long userId) {
         Message message = messageRepository.findOne(threadId);
         User user = userRepository.findOne(userId);
         Role role = getUserRole(user);
         List<MessageBean> result = new ArrayList<>();
-        if (role.equals(Role.ROLE_USER)) {
-            if (message.getUserId().equals(user)) {
-                if (message != null) {
+        if (message != null) {
+            if (role.equals(Role.ROLE_USER)) {
+                if (message.getUserId().equals(user)) {
                     Message temp = message;
                     for (Message m : message.getMessageSet()) {
                         if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -224,18 +290,16 @@ public class MessageControllerImpl implements IMessageController {
                     for (Message m : message.getMessageSet()) {
                         result.add(castToBean(m));
                     }
-                }
 
-            } else {
-                return result;
-            }
-        } else if (role.equals(Role.ROLE_OPER)) {
-            if (message.getOrganisationId()==null && !message.getUserId().equals(user)) {
-                return result;
-            } else {
-                if (message.getOrganisationId()!=null) {
-                    if (message.getUserId().equals(user)) {
-                        if (message != null) {
+                } else {
+                    return result;
+                }
+            } else if (role.equals(Role.ROLE_OPER)) {
+                if (message.getOrganisationId() == null && !message.getUserId().equals(user)) {
+                    return result;
+                } else {
+                    if (message.getOrganisationId() != null) {
+                        if (message.getUserId().equals(user)) {
                             Message temp = message;
                             for (Message m : message.getMessageSet()) {
                                 if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -253,18 +317,16 @@ public class MessageControllerImpl implements IMessageController {
                             for (Message m : message.getMessageSet()) {
                                 result.add(castToBean(m));
                             }
-                        }
 
-                    } else {
-                        List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, message.getOrganisationId());
-                        boolean isOper = false;
-                        for (UserRoles userRole : userRoles) {
-                            if (userRole.getRole().equals(role)) {
-                                isOper = true;
+                        } else {
+                            List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, message.getOrganisationId());
+                            boolean isOper = false;
+                            for (UserRoles userRole : userRoles) {
+                                if (userRole.getRole().equals(role)) {
+                                    isOper = true;
+                                }
                             }
-                        }
-                        if (isOper) {
-                            if (message != null) {
+                            if (isOper) {
                                 Message temp = message;
                                 for (Message m : message.getMessageSet()) {
                                     if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -282,13 +344,11 @@ public class MessageControllerImpl implements IMessageController {
                                 for (Message m : message.getMessageSet()) {
                                     result.add(castToBean(m));
                                 }
+                            } else {
+                                return result;
                             }
-                        } else {
-                            return result;
                         }
-                    }
-                } else {
-                    if (message != null) {
+                    } else {
                         Message temp = message;
                         for (Message m : message.getMessageSet()) {
                             if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -308,16 +368,14 @@ public class MessageControllerImpl implements IMessageController {
                         }
                     }
                 }
-            }
-        } else {
-            if (message != null) {
+            } else {
                 Message temp = message;
                 for (Message m : message.getMessageSet()) {
                     if (m.getDateCreate().after(temp.getDateCreate())) {
                         temp = m;
                     }
                 }
-                if (temp.getDateRead() == null && temp.getFromUser() && message.getOrganisationId()==null) {
+                if (temp.getDateRead() == null && temp.getFromUser() && message.getOrganisationId() == null) {
                     message.setDateRead(new Date());
                     temp.setDateRead(new Date());
                     messageRepository.save(temp);
@@ -330,7 +388,6 @@ public class MessageControllerImpl implements IMessageController {
                 }
             }
         }
-
         Collections.sort(result, new Comparator<MessageBean>() {
 
             @Override
@@ -386,7 +443,7 @@ public class MessageControllerImpl implements IMessageController {
         }
         if (message.getUserId() != null) {
             result.setUserId(message.getUserId().getId());
-            if (message.getUserId().getUserInfoId()!=null) {
+            if (message.getUserId().getUserInfoId() != null) {
                 result.setUserName(userController.getFullName(message.getUserId().getUserInfoId()));
             }
         }
@@ -414,8 +471,8 @@ public class MessageControllerImpl implements IMessageController {
 
     @Override
     @RequestMapping(value = "/delete/{threadId}", method = RequestMethod.DELETE)
-    public SimpleResponse deleteMessage(Long messageId) {
-        Message message = messageRepository.findOne(messageId);
+    public SimpleResponse deleteMessage(@PathVariable Long threadId) {
+        Message message = messageRepository.findOne(threadId);
         if (message == null) {
             return new SimpleResponse("Сообщения на сервере отсутствует").ERROR_CUSTOM();
         } else {
