@@ -18,8 +18,17 @@ public class QuestionBean {
     private Long votingId;
     private Set<Files> questionFileSet;
     private String decisionStatus;
+    private Integer maxCount;
 
     public QuestionBean() {
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
     }
 
     public String getDecisionStatus() {

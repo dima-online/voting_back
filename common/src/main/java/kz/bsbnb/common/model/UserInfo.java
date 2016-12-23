@@ -53,7 +53,7 @@ public class UserInfo implements Serializable {
     @Column(name = "status")
     private String status;
     @JsonIgnore
-    @OneToMany(mappedBy = "userInfoId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userInfoId", fetch = FetchType.LAZY)
     private Set<User> userSet;
     @Column(name = "is_org")
     private Boolean isOrg;

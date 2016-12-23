@@ -37,7 +37,7 @@ public class Files implements Serializable {
     private String filePath;
     @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting votingId;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "filesId", fetch = FetchType.EAGER)

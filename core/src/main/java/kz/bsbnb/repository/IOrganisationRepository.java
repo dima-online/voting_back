@@ -16,4 +16,10 @@ public interface IOrganisationRepository extends PagingAndSortingRepository<Orga
 
     @Query(value = "SELECT o from Organisation o where o.status = 'CAN_VOTE'")
     List<Organisation> getAllVoteOrg();
+
+    @Query(value = "SELECT o from Organisation o where o.status = 'CAN_VOTE' and o.id in (select v.organisationId from Voting v where v.dateClose is null)")
+    List<Organisation> getWorkVoteOrg();
+
+    @Query(value = "SELECT o from Organisation o where o.status = 'CAN_VOTE' and o.id in (select v.organisationId from Voting v where v.dateClose is not null)")
+    List<Organisation> getOldVoteOrg();
 }

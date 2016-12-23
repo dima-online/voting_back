@@ -383,6 +383,7 @@ public class VotingControllerImpl implements IVotingController {
             Question result = new Question();
             result.setQuestion(question.getQuestion());
             result.setQuestionType(question.getQuestionType());
+            result.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
             result.setVotingId(voting);
             result.setNum(question.getNum());
             result = questionRepository.save(result);
@@ -411,24 +412,25 @@ public class VotingControllerImpl implements IVotingController {
         if (voting == null) {
             return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
         } else if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
-                Question ques = questionRepository.findOne(question.getId());
-                ques.setQuestion(question.getQuestion());
-                ques.setVotingId(voting);
-                ques.setNum(question.getNum());
-                ques = questionRepository.save(ques);
-                for (QuestionFile file : ques.getQuestionFileSet()) {
-                    questionFileRepository.deleteByIds(file.getId());
+            Question ques = questionRepository.findOne(question.getId());
+            ques.setQuestion(question.getQuestion());
+            ques.setMaxCount(question.getMaxCount() == null ? ques.getMaxCount() : question.getMaxCount());
+            ques.setVotingId(voting);
+            ques.setNum(question.getNum());
+            ques = questionRepository.save(ques);
+            for (QuestionFile file : ques.getQuestionFileSet()) {
+                questionFileRepository.deleteByIds(file.getId());
+            }
+            for (Long fileId : question.getFilesId()) {
+                Files file = filesRepository.findOne(fileId);
+                if (file != null) {
+                    QuestionFile questionFile = new QuestionFile();
+                    questionFile.setQuestionId(ques);
+                    questionFile.setFilesId(file);
+                    questionFileRepository.save(questionFile);
                 }
-                for (Long fileId : question.getFilesId()) {
-                    Files file = filesRepository.findOne(fileId);
-                    if (file != null) {
-                        QuestionFile questionFile = new QuestionFile();
-                        questionFile.setQuestionId(ques);
-                        questionFile.setFilesId(file);
-                        questionFileRepository.save(questionFile);
-                    }
-                }
-                return new SimpleResponse(ques).SUCCESS();
+            }
+            return new SimpleResponse(ques).SUCCESS();
         } else {
             return new SimpleResponse("Голосование в ненадлежайшем статусе").ERROR_CUSTOM();
         }
@@ -446,7 +448,7 @@ public class VotingControllerImpl implements IVotingController {
             if (ques != null && ques.getVotingId().equals(voting)) {
                 if (ques.getDecisionSet() == null || ques.getDecisionSet().isEmpty()) {
                     deleteVotingAnswers(question);
-                    questionRepository.delete(ques);
+                    questionRepository.deleteByIds(ques.getId());
                 } else {
                     return new SimpleResponse("По данному вопросу уже есть решения. Удаление не возможно").ERROR_CUSTOM();
                 }
@@ -665,6 +667,7 @@ public class VotingControllerImpl implements IVotingController {
                 RepQuestionBean repQuestionBean = new RepQuestionBean();
                 repQuestionBean.setId(question.getId());
                 repQuestionBean.setQuestion(question.getQuestion());
+                repQuestionBean.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
                 repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
                 for (Answer answer : question.getAnswerSet()) {
                     RepAnswerBean repAnswerBean = new RepAnswerBean();
@@ -772,7 +775,8 @@ public class VotingControllerImpl implements IVotingController {
         List<VotingBean> result = new ArrayList<>();
         if (user != null) {
             for (UserRoles userRoles : user.getUserRolesSet()) {
-                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
+                List<Voting> vots = votingRepository.getByOrganisationId(userRoles.getOrgId());
+                for (Voting voting : vots) {
 //                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                     boolean isFound = false;
                     for (VotingBean bean : result) {
@@ -1136,7 +1140,7 @@ public class VotingControllerImpl implements IVotingController {
             List<Decision> decs = decisionRepository.findByQuestionId(question);
             for (Decision decision : decs) {
                 if (decision.getStatus().equals("READY") && decision.getAnswerId() != null && decision.getAnswerId().equals(answer)) {
-                    td.setAnswerCount(td.getAnswerCount() + 1);
+                    td.setAnswerCount(td.getAnswerCount() + decision.getVoterId().getShareCount());
                     td.setAnswerScore(td.getAnswerScore() + decision.getScore());
                 }
             }

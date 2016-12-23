@@ -165,7 +165,8 @@ public class AdminControllerImpl implements IAdminController {
         if (user != null) {
             List<Voting> votings = new ArrayList<>();
             if (organisation != null) {
-                for (Voting voting : organisation.getVotingSet()) {
+                List<Voting> vots = votingRepository.getByOrganisationId(organisation);
+                for (Voting voting : vots) {
                     votings.add(voting);
                 }
             } else {

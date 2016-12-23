@@ -52,7 +52,7 @@ public class Voter implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User userId;
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting votingId;
     @Column(name = "date_voting")
     @Temporal(TemporalType.TIMESTAMP)

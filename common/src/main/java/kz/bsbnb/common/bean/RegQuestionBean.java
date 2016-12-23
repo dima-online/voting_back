@@ -12,8 +12,17 @@ public class RegQuestionBean {
     private String questionType;
     private Integer num;
     private List<Long> filesId;
+    private Integer maxCount;
 
     public RegQuestionBean() {
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
     }
 
     public Long getId() {

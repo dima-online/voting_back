@@ -245,6 +245,10 @@
         <DT arr="0" ds="VarChar" en="" id="12" ln="20" sc="null" sg="1" un="0"/>
         <Cm>Тип вопроса ORDINARY CUMULATIVE </Cm>
       </Cl>
+      <Cl au="0" df="" nm="max_count" nu="1">
+        <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Максимальное количество избираемых</Cm>
+      </Cl>
       <Fk deAc="3" nm="fk_question_voting" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="voting" oe="1" sch="core" zr="0"/>
         <CdTb mn="1" nm="question" oe="0" sch="core" zr="1"/>

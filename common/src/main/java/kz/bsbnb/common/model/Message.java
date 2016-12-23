@@ -47,7 +47,7 @@ public class Message implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateRead;
     @JsonIgnore
-    @OneToMany(mappedBy = "parentId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)

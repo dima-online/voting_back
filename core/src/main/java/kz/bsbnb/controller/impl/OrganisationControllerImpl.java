@@ -45,6 +45,8 @@ public class OrganisationControllerImpl implements IOrganisationController {
     private IUserRoleRepository userRoleRepository;
     @Autowired
     private ConfirmationService confirmationService;
+    @Autowired
+    private IVotingRepository votingRepository;
 
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -214,7 +216,9 @@ public class OrganisationControllerImpl implements IOrganisationController {
         cnt = 0;
         if (org.getVotingSet()!=null) {
             result.setVotingCount(org.getVotingSet().size());
-            for (Voting voting : org.getVotingSet()) {
+            List<Voting> vots = votingRepository.getByOrganisationId(org);
+
+            for (Voting voting : vots) {
                 if (voting.getDateClose() != null) {
                     cnt++;
                 }

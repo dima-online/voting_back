@@ -40,10 +40,10 @@ public class Answer implements Serializable {
     private String finalScore;
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Question questionId;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answerId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answerId", fetch = FetchType.LAZY)
     private Set<Decision> decisionSet;
 
     public Answer() {

@@ -24,5 +24,11 @@ public interface IVotingRepository extends PagingAndSortingRepository<Voting, Lo
     @Query(value = "SELECT v from Voting v where v.dateEnd is not null and v.dateEnd<?1 and v.status not in ('STOPED','CLOSED')")
     List<Voting> fingByEndDate(Date endDate);
 
+    @Query(value = "SELECT v from Voting v where v.dateClose is null and v.dateBegin is not null and v.status in ('STARTED') order by v.dateBegin desc")
+    List<Voting> findWorkVoting();
+
+    @Query(value = "SELECT v from Voting v where v.dateClose is not null order by v.dateBegin desc")
+    List<Voting> findOldVoting();
+
     List<Voting> findByStatus(String aNew);
 }

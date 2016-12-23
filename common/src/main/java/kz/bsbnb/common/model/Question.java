@@ -39,6 +39,8 @@ public class Question implements Serializable {
     @Size(min = 1, max = 20)
     @Column(name = "question_type")
     private String questionType;
+    @Column(name = "max_count")
+    private Integer maxCount;
     @Column(name = "num")
     private Integer num;
     @Size(max = 2000)
@@ -139,6 +141,14 @@ public class Question implements Serializable {
 
     public void setQuestionType(String questionType) {
         this.questionType = questionType;
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
     }
 
     @Override

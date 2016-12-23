@@ -17,5 +17,6 @@
     <include file="2016-12-05--11-upd_reestr.xml" relativeToChangelogFile="true"/>
     <include file="2016-12-05--12-upd_voting.xml" relativeToChangelogFile="true"/>
     <include file="2016-12-05--13-upd_decision.xml" relativeToChangelogFile="true"/>
+    <include file="2016-12-22--14-upd_question.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

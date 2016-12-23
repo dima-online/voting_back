@@ -10,8 +10,17 @@ public class RepQuestionBean {
     private Long id;
     private String question;
     private List<RepAnswerBean> repAnswerBeanList;
+    private Integer maxCount;
 
     public RepQuestionBean() {
+    }
+
+    public Integer getMaxCount() {
+        return maxCount;
+    }
+
+    public void setMaxCount(Integer maxCount) {
+        this.maxCount = maxCount;
     }
 
     public Long getId() {
