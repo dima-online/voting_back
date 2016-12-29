@@ -14,6 +14,7 @@ import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IDecisionController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
+import kz.bsbnb.processor.AttributeProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.JsonUtil;
@@ -74,6 +75,9 @@ public class VotingControllerImpl implements IVotingController {
 
     @Autowired
     IQuestionFileRepository questionFileRepository;
+
+    @Autowired
+    AttributeProcessor attributeProcessor;
 
     @Autowired
     ConfirmationService confirmationService;
@@ -138,6 +142,56 @@ public class VotingControllerImpl implements IVotingController {
             return new SimpleResponse(result).SUCCESS();
         } else {
             return new SimpleResponse("Не найдено голосование с ID=" + votingBean.getId()).ERROR_NOT_FOUND();
+        }
+    }
+
+    @Override
+    @RequestMapping(value = "/editWhenStarted", method = RequestMethod.POST)
+    public SimpleResponse editVotingWhenStarted(@RequestBody @Valid RegVotingBean votingBean, @RequestParam(defaultValue = "0") String reason) {
+        if (reason.equals("0")||"".equals(reason)) {
+            return new SimpleResponse("Укажите причину").ERROR_CUSTOM();
+        } else {
+            User user = userRepository.findOne(votingBean.getUserId());
+            Voting voting = castFromBean(votingBean, user);
+            Voting oldVoting = votingRepository.findOne(votingBean.getId());
+            if (oldVoting != null&&oldVoting.getStatus().equals("STARTED")) {
+                List<Attribute> attributes = new ArrayList<>();
+                oldVoting.setWhoChanged(user);
+                oldVoting.setLastChanged(new Date());
+                if (!voting.getDateEnd().equals(oldVoting.getDateEnd())) {
+                    Attribute a = new Attribute();
+                    a.setValue(oldVoting.getDateEnd().toString());
+                    a.setObject("VOTE");
+                    a.setObjectId(oldVoting.getId());
+                    a.setTypeValue("DATE_END");
+                    attributes.add(a);
+                }
+                oldVoting.setDateEnd(voting.getDateEnd());
+                if (!voting.getDateBegin().equals(oldVoting.getDateBegin())) {
+                    Attribute a = new Attribute();
+                    a.setValue(oldVoting.getDateBegin().toString());
+                    a.setObject("VOTE");
+                    a.setObjectId(oldVoting.getId());
+                    a.setTypeValue("DATE_BEGIN");
+                    attributes.add(a);
+                }
+                oldVoting.setDateBegin(voting.getDateBegin());
+                if (!attributes.isEmpty()) {
+                    Attribute a = new Attribute();
+                    a.setValue(reason);
+                    a.setObject("VOTE");
+                    a.setObjectId(oldVoting.getId());
+                    a.setTypeValue("REASON");
+                    attributes.add(a);
+                    attributeProcessor.merge("VOTE", oldVoting.getId(), attributes);
+                }
+
+                oldVoting = votingRepository.save(oldVoting);
+                RegVotingBean result = castToBean(oldVoting);
+                return new SimpleResponse(result).SUCCESS();
+            } else {
+                return new SimpleResponse("Не найдено действующее голосование с ID=" + votingBean.getId()).ERROR_NOT_FOUND();
+            }
         }
     }
 
@@ -868,7 +922,7 @@ public class VotingControllerImpl implements IVotingController {
             newVotings.add(voting);
         }
         for (Voting voting : newVotings) {
-            if (voting.getDateBegin() != null && voting.getDateBegin().before(new Date())) {
+            if (voting.getDateBegin() != null && voting.getDateBegin().before(new Date()) && voting.getDateEnd().after(new Date())) {
                 System.out.println("Голосование с ID " + voting.getId() + " с датой начала " + voting.getDateBegin());
                 if (voting.getLastReestrId() != null) {
                     System.out.println("Имеет ссылку на реестр (" + voting.getLastReestrId() + ")");

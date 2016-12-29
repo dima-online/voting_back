@@ -251,7 +251,7 @@ public class DecisionControllerImpl implements IDecisionController {
                     bAnswerId = true;
                 }
                 User user = userRepository.findOne(bean.getUserId());
-                if (user != null && user.getIin().equals(result.getIin())) {
+                if (user != null && (user.getIin().equals(result.getIin()) || (user.getIin().equals(result.getBin())))) {
                     if (bUserId && bQuestionId && bAnswerId) {
                         dec.setStatus("NEW");
 //                    dec = decisionRepository.save(dec);

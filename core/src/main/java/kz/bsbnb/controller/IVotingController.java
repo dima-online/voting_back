@@ -76,4 +76,6 @@ public interface IVotingController {
     void checkDecisions();
 
     void updateQuestionDecisions(Long questionId);
+
+    SimpleResponse editVotingWhenStarted(RegVotingBean votingBean, String reason);
 }

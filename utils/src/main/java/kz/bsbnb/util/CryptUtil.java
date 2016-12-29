@@ -147,7 +147,7 @@ public class CryptUtil {
     }
 
     public static VerifyIIN verifyXml(String xmlString) {
-        VerifyIIN result = new VerifyIIN(false, "");
+        VerifyIIN result = new VerifyIIN(false, "", "");
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
@@ -177,6 +177,10 @@ public class CryptUtil {
                         if (next.trim().startsWith("SERIALNUMBER")) {
                             result.setIin(next.substring(17));
                             System.out.println(result.getIin());
+                        }
+                        if (next.trim().startsWith("OU=BIN")) {
+                            result.setBin(next.substring(7));
+                            System.out.println(result.getBin());
                         }
                     }
                     rootEl.removeChild(sigElement);
@@ -234,10 +238,20 @@ public class CryptUtil {
     public static class VerifyIIN {
         private boolean verify;
         private String iin;
+        private String bin;
 
-        public VerifyIIN(boolean verify, String iin) {
+        public VerifyIIN(boolean verify, String iin, String bin) {
             this.verify = verify;
             this.iin = iin;
+            this.bin = bin;
+        }
+
+        public String getBin() {
+            return bin;
+        }
+
+        public void setBin(String bin) {
+            this.bin = bin;
         }
 
         public boolean isVerify() {

@@ -44,7 +44,7 @@ public class MessageControllerImpl implements IMessageController {
     @Override
     @RequestMapping(value = "/newThread", method = RequestMethod.POST)
     public SimpleResponse createThread(@RequestBody @Valid ThreadBean message) {
-        System.out.println("newThread start "+new Date().toString());
+        //System.out.println("newThread start "+new Date().toString());
         Message mess = new Message();
         mess.setBody(message.getBody());
         mess.setDateCreate(new Date());
@@ -67,14 +67,14 @@ public class MessageControllerImpl implements IMessageController {
         mess.setUserId(user);
         mess = messageRepository.save(mess);
         message.setId(mess.getId());
-        System.out.println("newThread end "+new Date().toString());
+        //System.out.println("newThread end "+new Date().toString());
         return new SimpleResponse(castToThreadBean(mess)).SUCCESS();
     }
 
     @Override
     @RequestMapping(value = "/newMessage/{threadId}", method = RequestMethod.POST)
     public SimpleResponse createMessage(@PathVariable Long threadId, @RequestParam(defaultValue = "ROLE_USER") String strRole, @RequestBody @Valid MessageBean message) {
-        System.out.println("newMessage/{threadId} start "+new Date().toString());
+        //System.out.println("newMessage/{threadId} start "+new Date().toString());
         Message mess = new Message();
         mess.setBody(message.getBody());
         mess.setDateCreate(new Date());
@@ -103,7 +103,7 @@ public class MessageControllerImpl implements IMessageController {
         messageRepository.save(parent);
         mess = messageRepository.save(mess);
         message.setId(mess.getId());
-        System.out.println("newMessage/{threadId} end "+new Date().toString());
+        //System.out.println("newMessage/{threadId} end "+new Date().toString());
         return new SimpleResponse(castToBean(mess)).SUCCESS();
     }
 
@@ -111,7 +111,7 @@ public class MessageControllerImpl implements IMessageController {
     @Override
     @RequestMapping(value = "/listThread/{userId}", method = RequestMethod.GET)
     public List<ThreadBean> getAllMessages(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String strRole) {
-        System.out.println("listThread/{userId} start (role="+strRole+")"+new Date().toString());
+        //System.out.println("listThread/{userId} start (role="+strRole+")"+new Date().toString());
         User user = userRepository.findOne(userId);
         List<ThreadBean> result = new ArrayList<>();
         Role role = Role.valueOf(strRole);
@@ -204,14 +204,14 @@ public class MessageControllerImpl implements IMessageController {
                 return o2.getDateCreate().compareTo(o1.getDateCreate());
             }
         });
-        System.out.println("listThread/{userId} end "+new Date().toString());
+        //System.out.println("listThread/{userId} end "+new Date().toString());
         return result;
     }
 
     @Override
     @RequestMapping(value = "/listMessage/{threadId}", method = RequestMethod.GET)
     public List<MessageBean> getMessages(@PathVariable Long threadId) {
-        System.out.println("listMessage/{threadId} start "+new Date().toString());
+        //System.out.println("listMessage/{threadId} start "+new Date().toString());
         Message message = messageRepository.findOne(threadId);
         List<MessageBean> result = new ArrayList<>();
         if (message != null) {
@@ -220,7 +220,7 @@ public class MessageControllerImpl implements IMessageController {
                 result.add(castToBean(m));
             }
         }
-        System.out.println("listMessage/{threadId} before sort "+new Date().toString());
+        //System.out.println("listMessage/{threadId} before sort "+new Date().toString());
         Collections.sort(result, new Comparator<MessageBean>() {
 
             @Override
@@ -228,14 +228,14 @@ public class MessageControllerImpl implements IMessageController {
                 return o2.getDateCreate().compareTo(o1.getDateCreate());
             }
         });
-        System.out.println("listMessage/{threadId} end "+new Date().toString());
+        //System.out.println("listMessage/{threadId} end "+new Date().toString());
         return result;
     }
 
     @Override
     @RequestMapping(value = "/unReadCount/{userId}", method = RequestMethod.GET)
     public Integer getUnreadMessagesCount(@PathVariable Long userId, @RequestParam(defaultValue = "ROLE_USER") String strRole) {
-        System.out.println("unReadCount/{userId} start (role="+strRole+")"+new Date().toString());
+        //System.out.println("unReadCount/{userId} start (role="+strRole+")"+new Date().toString());
         User user = userRepository.findOne(userId);
         Integer result = 0;
         Role role = Role.valueOf(strRole);
@@ -270,14 +270,14 @@ public class MessageControllerImpl implements IMessageController {
                 }
             }
         }
-        System.out.println("unReadCount/{userId} end "+new Date().toString());
+        //System.out.println("unReadCount/{userId} end "+new Date().toString());
         return result;
     }
 
     @Override
     @RequestMapping(value = "/listMessage/{threadId}/{userId}", method = RequestMethod.GET)
     public List<MessageBean> getUserMessages(@PathVariable Long threadId, @PathVariable Long userId) {
-        System.out.println("listMessage/{threadId}/{userId} start "+new Date().toString());
+        //System.out.println("listMessage/{threadId}/{userId} start "+new Date().toString());
         Message message = messageRepository.findOne(threadId);
         User user = userRepository.findOne(userId);
         Role role = getUserRole(user);
@@ -400,7 +400,7 @@ public class MessageControllerImpl implements IMessageController {
                 }
             }
         }
-        System.out.println("listMessage/{threadId}/{userId} before sort "+new Date().toString());
+        //System.out.println("listMessage/{threadId}/{userId} before sort "+new Date().toString());
         Collections.sort(result, new Comparator<MessageBean>() {
 
             @Override
@@ -408,12 +408,12 @@ public class MessageControllerImpl implements IMessageController {
                 return o2.getDateCreate().compareTo(o1.getDateCreate());
             }
         });
-        System.out.println("listMessage/{threadId}/{userId} end "+new Date().toString());
+        //System.out.println("listMessage/{threadId}/{userId} end "+new Date().toString());
         return result;
     }
 
     private Role getUserRole(User user) {
-        System.out.println("getUserRole start "+new Date().toString());
+        //System.out.println("getUserRole start "+new Date().toString());
         Role result = Role.ROLE_USER;
         for (UserRoles userRoles : user.getUserRolesSet()) {
             Role temp = userRoles.getRole();
@@ -421,7 +421,7 @@ public class MessageControllerImpl implements IMessageController {
                 result = temp;
             }
         }
-        System.out.println("getUserRole end "+new Date().toString());
+        //System.out.println("getUserRole end "+new Date().toString());
         return result;
     }
 
@@ -440,7 +440,7 @@ public class MessageControllerImpl implements IMessageController {
     }
 
     private MessageBean castToBean(Message message) {
-        System.out.println("castToBean start "+new Date().toString());
+        //System.out.println("castToBean start "+new Date().toString());
         MessageBean result = new MessageBean();
         result.setDateRead(message.getDateRead());
         result.setId(message.getId());
@@ -464,12 +464,12 @@ public class MessageControllerImpl implements IMessageController {
                 result.setUserName(userController.getFullName(message.getUserId().getUserInfoId()));
             }
         }
-        System.out.println("castToBean end "+new Date().toString());
+        //System.out.println("castToBean end "+new Date().toString());
         return result;
     }
 
     private ThreadBean castToThreadBean(Message message) {
-        System.out.println("castToThreadBean start "+new Date().toString());
+        //System.out.println("castToThreadBean start "+new Date().toString());
         ThreadBean result = new ThreadBean();
         result.setDateRead(message.getDateRead());
         result.setId(message.getId());
@@ -485,7 +485,7 @@ public class MessageControllerImpl implements IMessageController {
         if (message.getUserId() != null) {
             result.setUserId(message.getUserId().getId());
         }
-        System.out.println("castToThreadBean end "+new Date().toString());
+        //System.out.println("castToThreadBean end "+new Date().toString());
         return result;
     }
 

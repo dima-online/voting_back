@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // todo: synchronize with db
         http.authorizeRequests()
-                .antMatchers("/", "/user/registration", "/user/login", "/user/remind", "/user/verifyIIN")
+                .antMatchers("/", "/user/registration", "/user/login", "/user/remind", "/user/verifyIIN/{iin}")
                 .permitAll()
                 .anyRequest().authenticated()
 //                .and()
