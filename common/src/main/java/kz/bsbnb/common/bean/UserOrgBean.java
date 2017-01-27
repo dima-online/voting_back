@@ -1,6 +1,7 @@
 package kz.bsbnb.common.bean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,9 +15,18 @@ public class UserOrgBean {
     private String organisationName;
     private Integer shareCount;
     private double sharePercent;
+    private Date shareDate;
 
     public UserOrgBean() {
         this.roles = new ArrayList<>();
+    }
+
+    public Date getShareDate() {
+        return shareDate;
+    }
+
+    public void setShareDate(Date shareDate) {
+        this.shareDate = shareDate;
     }
 
     public Long getUserId() {

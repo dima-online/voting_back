@@ -59,8 +59,18 @@ public class Question implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
     private Set<QuestionFile> questionFileSet;
+    @Column(name = "priv_can_vote")
+    private Boolean privCanVote;
 
     public Question() {
+    }
+
+    public Boolean getPrivCanVote() {
+        return privCanVote;
+    }
+
+    public void setPrivCanVote(Boolean privCanVote) {
+        this.privCanVote = privCanVote;
     }
 
     public Question(Long id) {

@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="IERCBVotingServicesservice" targetNamespace="http://tempuri.org/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns1="urn:ERCBServices.Objects.Voting.Core" xmlns:ns2="urn:ERCBServices">
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ERCBServices.Objects.Voting.Core">
+      <complexType name="TResponseRegistry">
+        <sequence>
+          <element name="Registry" type="ns1:TRegistry"/>
+          <element name="ErrorCode" type="xs:int"/>
+          <element name="ErrorText" type="xs:string"/>
+        </sequence>
+      </complexType>
+      <complexType name="TRegistry">
+        <sequence>
+          <element name="RegistryDate" type="xs:date"/>
+          <element name="IssuerIDN" type="xs:string"/>
+          <element name="IssuerName" type="xs:string"/>
+          <element name="Shareholders" type="ns2:Shareholders"/>
+        </sequence>
+      </complexType>
+      <complexType name="TShareholder">
+        <sequence>
+          <element name="ShareholderName" type="xs:string"/>
+          <element name="ShareholderNoun" type="xs:string"/>
+          <element name="ShareholderSurname" type="xs:string"/>
+          <element name="ShareholderPatronymic" type="xs:string"/>
+          <element name="ShareholderIDN" type="xs:string"/>
+          <element name="ShareholderNIN" type="xs:string"/>
+          <element name="ShareholderKind" type="xs:string"/>
+          <element name="Amount" type="xs:double"/>
+          <element name="Voting" type="xs:double"/>
+          <element name="PercentVoting" type="xs:double"/>
+          <element name="Phone" type="xs:string"/>
+          <element name="Mail" type="xs:string"/>
+          <element name="VotingIDN" type="xs:string"/>
+        </sequence>
+      </complexType>
+    </schema>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ERCBServices">
+      <complexType name="Shareholders">
+        <complexContent>
+          <restriction base="soapenc:Array">
+            <sequence/>
+            <attribute ref="soapenc:arrayType" n1:arrayType="ns1:TShareholder[]" xmlns:n1="http://schemas.xmlsoap.org/wsdl/"/>
+          </restriction>
+        </complexContent>
+      </complexType>
+    </schema>
+  </types>
+  <message name="GetRegistry0Request">
+    <part name="AIDN" type="xs:string"/>
+    <part name="AOrderDate" type="xs:string"/>
+  </message>
+  <message name="GetRegistry0Response">
+    <part name="ARegistry" type="ns1:TResponseRegistry"/>
+  </message>
+  <message name="ExistsRegistry1Request">
+    <part name="AIDN" type="xs:string"/>
+    <part name="AOrderDate" type="xs:string"/>
+  </message>
+  <message name="ExistsRegistry1Response">
+    <part name="return" type="xs:int"/>
+  </message>
+  <message name="GetChief2Request">
+    <part name="AIDN" type="xs:string"/>
+  </message>
+  <message name="GetChief2Response">
+    <part name="return" type="xs:string"/>
+  </message>
+  <portType name="IERCBVotingServices">
+    <operation name="GetRegistry">
+      <input message="tns:GetRegistry0Request"/>
+      <output message="tns:GetRegistry0Response"/>
+    </operation>
+    <operation name="ExistsRegistry">
+      <input message="tns:ExistsRegistry1Request"/>
+      <output message="tns:ExistsRegistry1Response"/>
+    </operation>
+    <operation name="GetChief">
+      <input message="tns:GetChief2Request"/>
+      <output message="tns:GetChief2Response"/>
+    </operation>
+  </portType>
+  <binding name="IERCBVotingServicesbinding" type="tns:IERCBVotingServices">
+    <binding xmlns="http://schemas.xmlsoap.org/wsdl/soap/" style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetRegistry">
+      <operation xmlns="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://tempuri.org/#GetRegistry" style="rpc"/>
+      <input>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </input>
+      <output>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </output>
+    </operation>
+    <operation name="ExistsRegistry">
+      <operation xmlns="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://tempuri.org/#ExistsRegistry" style="rpc"/>
+      <input>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </input>
+      <output>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </output>
+    </operation>
+    <operation name="GetChief">
+      <operation xmlns="http://schemas.xmlsoap.org/wsdl/soap/" soapAction="http://tempuri.org/#GetChief" style="rpc"/>
+      <input>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </input>
+      <output>
+        <body xmlns="http://schemas.xmlsoap.org/wsdl/soap/" use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://tempuri.org/"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="IERCBVotingServicesservice">
+    <port name="IERCBVotingServicesPort" binding="tns:IERCBVotingServicesbinding">
+      <address xmlns="http://schemas.xmlsoap.org/wsdl/soap/" location="http://cabinet.tisr.kz:8083/soap/IERCBVotingServices"/>
+    </port>
+  </service>
+</definitions>
+

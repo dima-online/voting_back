@@ -6,16 +6,13 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                    http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="Ruslan Beyganov" id="2016-10-19--08-change_message" objectQuotingStrategy="LEGACY">
+    <changeSet author="Ruslan Beyganov" id="2017-01-11--17-upd_user_roles" objectQuotingStrategy="LEGACY">
         <sql splitStatements="true">
-            /************ Update: Tables ***************/
 
-            /******************** Update Table: organisation ************************/
-
-            ALTER TABLE core.organisation ADD all_share_count INTEGER NULL;
+            ALTER TABLE core.user_roles ADD share_date TIMESTAMP NULL;
 
             /* Add Comments */
-            COMMENT ON COLUMN core.organisation.all_share_count IS 'Общее количество акции';
+            COMMENT ON COLUMN core.user_roles.share_date IS 'Дата последней загрузки реестра';
         </sql>
     </changeSet>
 </databaseChangeLog>

@@ -21,6 +21,7 @@ public class RepVotingBean {
     private String organisationName;
     private List<RepQuestionBean> repQuestionBeen;
     private Long lastReestrId;
+    private Boolean kvoroom;
 
     public RepVotingBean() {
     }
@@ -119,5 +120,13 @@ public class RepVotingBean {
 
     public void setOrganisationName(String organisationName) {
         this.organisationName = organisationName;
+    }
+
+    public Boolean getKvoroom() {
+        return kvoroom;
+    }
+
+    public void setKvoroom(Boolean kvoroom) {
+        this.kvoroom = kvoroom;
     }
 }

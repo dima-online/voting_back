@@ -79,6 +79,8 @@ public class Voting implements Serializable {
     private Set<Voter> voterSet;
     @Column(name = "last_reestr_id")
     private Long lastReestrId;
+    @Column(name = "kvoroom")
+    private Boolean kvoroom;
 
     public Voting() {
     }
@@ -198,6 +200,14 @@ public class Voting implements Serializable {
 
     public void setWhoChanged(User whoChanged) {
         this.whoChanged = whoChanged;
+    }
+
+    public Boolean getKvoroom() {
+        return kvoroom;
+    }
+
+    public void setKvoroom(Boolean kvoroom) {
+        this.kvoroom = kvoroom;
     }
 
     @XmlTransient

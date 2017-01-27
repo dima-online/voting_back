@@ -17,8 +17,17 @@ public class UserProfileBean {
     private String iin;
     private List<UserOrgBean> beanList;
     private Boolean isOrg;
+    private String voterIin;
 
     public UserProfileBean() {
+    }
+
+    public String getVoterIin() {
+        return voterIin;
+    }
+
+    public void setVoterIin(String voterIin) {
+        this.voterIin = voterIin;
     }
 
     public String getLastName() {

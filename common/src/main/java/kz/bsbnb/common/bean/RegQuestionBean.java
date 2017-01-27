@@ -13,8 +13,17 @@ public class RegQuestionBean {
     private Integer num;
     private List<Long> filesId;
     private Integer maxCount;
+    private Boolean privCanVote;
 
     public RegQuestionBean() {
+    }
+
+    public Boolean getPrivCanVote() {
+        return privCanVote;
+    }
+
+    public void setPrivCanVote(Boolean privCanVote) {
+        this.privCanVote = privCanVote;
     }
 
     public Integer getMaxCount() {

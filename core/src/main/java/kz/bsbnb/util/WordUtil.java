@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class WordUtil {
 
-    public static void fill(Map<String, String> map, Long votingId) {
+    public static String fill(Map<String, String> map, Long votingId) {
         String docxPath = "/opt/voting/test/test.docx";
 //        String dotxPath = "/opt/voting/test/test.dotx";
 
@@ -24,9 +24,10 @@ public class WordUtil {
 
             ReplaceVariables replaceVariables = new ReplaceVariables(map);
             replaceVariables.readAndReplaceDocFile(filePath, fileName);
-
+            return fileName;
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 

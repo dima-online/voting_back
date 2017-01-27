@@ -312,6 +312,8 @@ public class OrganisationControllerImpl implements IOrganisationController {
                             fName = fName + " " + (userRoles.getUserId().getUserInfoId().getMiddleName() == null ? " " : userRoles.getUserId().getUserInfoId().getMiddleName());
                             userBean.setFullName(fName.trim());
                             userBean.setPhone(userRoles.getUserId().getUserInfoId().getPhone());
+                            userBean.setVoterIin(userRoles.getUserId().getUserInfoId().getVoterIin());
+                            userBean.setVoterIin(userRoles.getUserId().getUserInfoId().getVoterIin());
                         }
                         userBean.setOrganisationId(organisation.getId());
                         result.add(userBean);

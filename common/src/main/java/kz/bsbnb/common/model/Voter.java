@@ -57,8 +57,28 @@ public class Voter implements Serializable {
     @Column(name = "date_voting")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateVoting;
+    @Column(name = "has_gold_share")
+    private Boolean hasGoldShare;
+    @Column(name = "priv_share_count")
+    private Long privShareCount;
 
     public Voter() {
+    }
+
+    public Long getPrivShareCount() {
+        return privShareCount;
+    }
+
+    public void setPrivShareCount(Long privShareCount) {
+        this.privShareCount = privShareCount;
+    }
+
+    public Boolean getHasGoldShare() {
+        return hasGoldShare;
+    }
+
+    public void setHasGoldShare(Boolean hasGoldShare) {
+        this.hasGoldShare = hasGoldShare;
     }
 
     public Voter(Long id) {

@@ -19,8 +19,17 @@ public class QuestionBean {
     private Set<Files> questionFileSet;
     private String decisionStatus;
     private Integer maxCount;
+    private Boolean privCanVote;
 
     public QuestionBean() {
+    }
+
+    public Boolean getPrivCanVote() {
+        return privCanVote;
+    }
+
+    public void setPrivCanVote(Boolean privCanVote) {
+        this.privCanVote = privCanVote;
     }
 
     public Integer getMaxCount() {

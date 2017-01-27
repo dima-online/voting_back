@@ -4,6 +4,7 @@ import kz.bsbnb.common.external.Reestr;
 import kz.bsbnb.common.external.ReestrHead;
 import kz.bsbnb.util.SimpleResponse;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,4 +22,8 @@ public interface IReestrController {
     SimpleResponse getList(Long reestrHeadId, Long votingId);
 
     SimpleResponse getHeadList(Long votingId);
+
+    SimpleResponse checkRegistry(Long votingId, String regDate);
+    SimpleResponse getRegistry(Long votingId, String regDate);
+    SimpleResponse getChief(String bin);
 }

@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                   http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Ruslan Beyganov" id="2017-01-06--15-upd_user" objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+
+            ALTER TABLE core.user_info ADD voter_iin VARCHAR(12) NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.user_info.voter_iin IS 'ИИН физ.лица, который может проголосовать за юр.лицо';
+
+            ALTER TABLE core.voter ADD has_gold_share BOOL NULL;
+            ALTER TABLE core.voter ADD priv_share_count BIGINT NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.voter.priv_share_count IS 'Количество привилигированных кции';
+
+            ALTER TABLE core.question ADD priv_can_vote BOOL NULL;
+
+            /* Add Comments */
+            COMMENT ON COLUMN core.question.priv_can_vote IS 'Могут голосовать привелигированные акции';
+        </sql>
+    </changeSet>
+</databaseChangeLog>

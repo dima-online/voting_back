@@ -13,8 +13,26 @@ public class VoterBean {
     private int shareCount;
     private double sharePercent;
     private Set<DecisionBean> decisions;
+    private Boolean hasGoldShare;
+    private Long privShareCount;
 
     public VoterBean() {
+    }
+
+    public Long getPrivShareCount() {
+        return privShareCount;
+    }
+
+    public void setPrivShareCount(Long privShareCount) {
+        this.privShareCount = privShareCount;
+    }
+
+    public Boolean getHasGoldShare() {
+        return hasGoldShare;
+    }
+
+    public void setHasGoldShare(Boolean hasGoldShare) {
+        this.hasGoldShare = hasGoldShare;
     }
 
     public Long getId() {

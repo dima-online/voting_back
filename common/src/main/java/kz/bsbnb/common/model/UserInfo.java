@@ -57,8 +57,19 @@ public class UserInfo implements Serializable {
     private Set<User> userSet;
     @Column(name = "is_org")
     private Boolean isOrg;
+    @Size(max = 12)
+    @Column(name = "voter_iin")
+    private String voterIin;
 
     public UserInfo() {
+    }
+
+    public String getVoterIin() {
+        return voterIin;
+    }
+
+    public void setVoterIin(String voterIin) {
+        this.voterIin = voterIin;
     }
 
     public UserInfo(Long id) {

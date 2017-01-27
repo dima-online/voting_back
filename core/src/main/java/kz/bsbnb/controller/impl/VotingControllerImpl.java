@@ -10,6 +10,8 @@ import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.QuestionType;
 import kz.bsbnb.common.consts.Role;
+import kz.bsbnb.common.external.Reestr;
+import kz.bsbnb.common.external.ReestrHead;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IDecisionController;
 import kz.bsbnb.controller.IUserController;
@@ -17,10 +19,7 @@ import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.processor.AttributeProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
-import kz.bsbnb.util.JsonUtil;
-import kz.bsbnb.util.SimpleResponse;
-import kz.bsbnb.util.StringUtil;
-import kz.bsbnb.util.WordUtil;
+import kz.bsbnb.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +79,8 @@ public class VotingControllerImpl implements IVotingController {
     AttributeProcessor attributeProcessor;
 
     @Autowired
+    IAttributeRepository attributeRepository;
+    @Autowired
     ConfirmationService confirmationService;
 
     @Autowired
@@ -90,6 +91,9 @@ public class VotingControllerImpl implements IVotingController {
 
     @Autowired
     IVotingInvoke votingInvoke;
+
+    @Autowired
+    IReestrHeadRepository reestrHeadRepository;
 
     @Override
     @RequestMapping(value = "/list/{userId}", method = RequestMethod.GET)
@@ -148,13 +152,13 @@ public class VotingControllerImpl implements IVotingController {
     @Override
     @RequestMapping(value = "/editWhenStarted", method = RequestMethod.POST)
     public SimpleResponse editVotingWhenStarted(@RequestBody @Valid RegVotingBean votingBean, @RequestParam(defaultValue = "0") String reason) {
-        if (reason.equals("0")||"".equals(reason)) {
+        if (reason.equals("0") || "".equals(reason)) {
             return new SimpleResponse("Укажите причину").ERROR_CUSTOM();
         } else {
             User user = userRepository.findOne(votingBean.getUserId());
             Voting voting = castFromBean(votingBean, user);
             Voting oldVoting = votingRepository.findOne(votingBean.getId());
-            if (oldVoting != null&&oldVoting.getStatus().equals("STARTED")) {
+            if (oldVoting != null && oldVoting.getStatus().equals("STARTED")) {
                 List<Attribute> attributes = new ArrayList<>();
                 oldVoting.setWhoChanged(user);
                 oldVoting.setLastChanged(new Date());
@@ -396,6 +400,7 @@ public class VotingControllerImpl implements IVotingController {
                 User user = userRepository.findOne(userId);
                 voting.setStatus("STOPED");
                 voting.setDateClose(new Date());
+                voting.setKvoroom(calcKvoroom(voting));
                 voting.setStatus("CLOSED");
                 voting = votingRepository.save(voting);
                 return new SimpleResponse(userController.castToBean(voting, user));
@@ -416,6 +421,7 @@ public class VotingControllerImpl implements IVotingController {
             } else {
                 User user = userRepository.findOne(userId);
                 voting.setDateClose(new Date());
+                voting.setKvoroom(calcKvoroom(voting));
                 voting.setStatus("CLOSED");
                 voting = votingRepository.save(voting);
                 return new SimpleResponse(userController.castToBean(voting, user));
@@ -439,6 +445,7 @@ public class VotingControllerImpl implements IVotingController {
             result.setQuestionType(question.getQuestionType());
             result.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
             result.setVotingId(voting);
+            result.setPrivCanVote(question.getPrivCanVote());
             result.setNum(question.getNum());
             result = questionRepository.save(result);
             for (Long fileId : question.getFilesId()) {
@@ -717,10 +724,12 @@ public class VotingControllerImpl implements IVotingController {
             repVotingBeen.setSubject(voting.getSubject());
             repVotingBeen.setVotingType(voting.getVotingType());
             repVotingBeen.setRepQuestionBeen(new ArrayList<>());
+            repVotingBeen.setKvoroom(voting.getKvoroom());
             for (Question question : voting.getQuestionSet()) {
                 RepQuestionBean repQuestionBean = new RepQuestionBean();
                 repQuestionBean.setId(question.getId());
                 repQuestionBean.setQuestion(question.getQuestion());
+                repQuestionBean.setPrivCanVote(question.getPrivCanVote());
                 repQuestionBean.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
                 repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
                 for (Answer answer : question.getAnswerSet()) {
@@ -748,14 +757,14 @@ public class VotingControllerImpl implements IVotingController {
                             repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
                             repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
                             if (question.getQuestionType().equals("ORDINARY")) {
-                                repAnswerBean.setScore(1);
+                                repAnswerBean.setScore(decision.getScore());
                             } else {
                                 repAnswerBean.setScore(decision.getScore());
                             }
                             repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
                         } else {
                             if (question.getQuestionType().equals("ORDINARY")) {
-                                repAnswerBean.setScore(repAnswerBean.getScore() + 1);
+                                repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
                             } else {
                                 repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
                             }
@@ -795,6 +804,8 @@ public class VotingControllerImpl implements IVotingController {
                                 bean = new RepVoterBean();
                                 bean.setVoterId(decision.getVoterId().getId());
                                 bean.setQuestionId(questionId);
+                                bean.setPrivShareCount(decision.getVoterId().getPrivShareCount());
+                                bean.setHasGoldShare(decision.getVoterId().getHasGoldShare());
                                 bean.setUserId(decision.getVoterId().getUserId().getId());
                                 bean.setUserName(userController.getFullName(decision.getVoterId().getUserId().getUserInfoId()));
                                 bean.setDecisionDate(decision.getDateCreate());
@@ -857,22 +868,47 @@ public class VotingControllerImpl implements IVotingController {
         if (voting != null && voting.getDateClose() != null) {
             Map<String, String> map = new HashMap<>();
             map.put("organization_name", voting.getOrganisationId().getOrganisationName());
-            SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy");
-            map.put("voting_endDate", dt.format(voting.getDateClose()) + " года");
+            List<Attribute> attrs = attributeRepository.findByObjectAndObjectId("ORG", voting.getOrganisationId().getId());
+            String addr = attributeProcessor.getValue(attrs, "ADDRESS");
+
+            map.put("organization_address", addr == null ? "Адрес не указан" : addr);
+            SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat ftLong = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+            map.put("voting_endDate", ft.format(voting.getDateClose()) + " года");
+            map.put("date_begin", ftLong.format(voting.getDateBegin()));
+            map.put("date_begin_short", ft.format(voting.getDateBegin()) + " года");
+            map.put("date_end", ftLong.format(voting.getDateEnd()));
+            ReestrHead reestr = reestrHeadRepository.findOne(voting.getLastReestrId());
+            map.put("reestr_date", ft.format(reestr.getDateCreate()));
+
+            map.put("total_count", String.valueOf(voting.getOrganisationId().getAllShareCount()));
+            Long realCount = 0L;
+            for (Voter voter : voting.getVoterSet()) {
+                if (!voter.getDecisionSet().isEmpty()) {
+                    realCount = realCount + voter.getShareCount();
+                }
+            }
+
+            map.put("real_count", String.valueOf(realCount));
+            map.put("total_count_text", ConvertUtil.digits2Text(voting.getOrganisationId().getAllShareCount().doubleValue()));
+            map.put("real_count_text", ConvertUtil.digits2Text(realCount.doubleValue()));
+            map.put("prc_count", String.valueOf(realCount.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue()*100));
+
             String str = "";
             for (Question question : voting.getQuestionSet()) {
+                str = str + "\n"+question.getNum().toString();
                 str = str + "\nФормулировка решения, поставленного на голосование:\n";
                 str = str + "\"" + question.getQuestion() + "\".\n";
                 str = str + "Итоги голосования:\n";
                 if (question.getDecision() != null) {
                     try {
                         System.out.println("question.getDecision()=" + question.getDecision());
-                        List<Object> list = (List<Object>) JsonUtil.fromJson(question.getDecision(), List.class);
-                        for (Object totalDecision : list) {
+                        List<Map> list = (List<Map>) JsonUtil.fromJson(question.getDecision(), List.class);
+
+                        for (Map totalDecision : list) {
                             System.out.println(totalDecision);
                             try {
-                                TotalDecision decision = (TotalDecision) totalDecision;
-                                str = str + "\"" + decision.getAnswerText() + "\"\t–\t" + decision.getAnswerCount() + "\n";
+                                str = str + "\"" + totalDecision.get("answerText").toString() + "\"\t–\t" + totalDecision.get(question.getQuestionType().equals("ORDINARY")?"answerCount":"answerScore").toString() + " голос (-а, -ов)\n";
                             } catch (Exception e) {
                                 str = str + "\n";
                             }
@@ -889,14 +925,19 @@ public class VotingControllerImpl implements IVotingController {
             map.put("decision_text", str);
 
 
-            WordUtil.fill(map, votingId);
-            File file = new File("/opt/voting/files/test.docx");
+            String fileName = WordUtil.fill(map, votingId);
+            if (fileName == null) {
+                fileName = "/opt/voting/files/test.docx";
+            } else {
+                fileName = "/opt/voting/files/" + fileName;
+            }
+            File file = new File(fileName);
             if (file.exists() && !file.isDirectory()) {
                 try {
                     // get your file as InputStream
                     // do something
 
-                    InputStream is = new FileInputStream("/opt/voting/files/test.docx");
+                    InputStream is = new FileInputStream(fileName);
                     // copy it to response's OutputStream
                     org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
                     response.flushBuffer();
@@ -1027,6 +1068,7 @@ public class VotingControllerImpl implements IVotingController {
         for (Voting voting : newVotings) {
             if (voting.getDateEnd().before(new Date())) {
                 voting.setStatus("STOPED");
+                voting.setKvoroom(calcKvoroom(voting));
                 voting.setStatus("CLOSED");
                 voting.setDateClose(new Date());
                 votingRepository.save(voting);
@@ -1035,11 +1077,25 @@ public class VotingControllerImpl implements IVotingController {
         for (Voting voting : startedVotings) {
             if (voting.getDateEnd().before(new Date())) {
                 voting.setStatus("STOPED");
+                voting.setKvoroom(calcKvoroom(voting));
                 voting.setStatus("CLOSED");
                 voting.setDateClose(new Date());
                 votingRepository.save(voting);
             }
         }
+    }
+
+    private Boolean calcKvoroom(Voting voting) {
+        Long all = voting.getOrganisationId().getAllShareCount();
+        Long vote = 0L;
+        if (voting.getVoterSet()!=null) {
+            for (Voter voter:voting.getVoterSet()) {
+                if (voter.getDecisionSet()!=null) {
+                    vote = vote + voter.getShareCount();
+                }
+            }
+        }
+        return vote*2>all;
     }
 
     @Override

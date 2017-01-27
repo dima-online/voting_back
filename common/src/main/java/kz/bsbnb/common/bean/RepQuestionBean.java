@@ -11,8 +11,17 @@ public class RepQuestionBean {
     private String question;
     private List<RepAnswerBean> repAnswerBeanList;
     private Integer maxCount;
+    private Boolean privCanVote;
 
     public RepQuestionBean() {
+    }
+
+    public Boolean getPrivCanVote() {
+        return privCanVote;
+    }
+
+    public void setPrivCanVote(Boolean privCanVote) {
+        this.privCanVote = privCanVote;
     }
 
     public Integer getMaxCount() {

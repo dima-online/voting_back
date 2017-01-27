@@ -19,8 +19,17 @@ public class RegUserBean {
     private String password;
     private String oldPassword;
     private Integer shareCount;
+    private String voterIin;
 
     public RegUserBean() {
+    }
+
+    public String getVoterIin() {
+        return voterIin;
+    }
+
+    public void setVoterIin(String voterIin) {
+        this.voterIin = voterIin;
     }
 
     public Integer getShareCount() {

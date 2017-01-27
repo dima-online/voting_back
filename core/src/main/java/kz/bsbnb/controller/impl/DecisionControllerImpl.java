@@ -55,7 +55,7 @@ public class DecisionControllerImpl implements IDecisionController {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
             } else if (dec.getVoterId() == null) {
                 result.setData("Голосующий не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount()==null?1:dec.getQuestionId().getMaxCount()) < bean.getScore()) {
+            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < bean.getScore()) {
                 result.setData("Очки больше доступного").ERROR_CUSTOM();
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
@@ -146,7 +146,7 @@ public class DecisionControllerImpl implements IDecisionController {
                     decisions.add("Голосующий не найден");
                     str = "Голосующий не найден";
                     hasError = true;
-                } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount()==null?1:dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
                     decisions.add("Очки больше доступного");
                     str = "Очки больше доступного";
                     hasError = true;
@@ -196,7 +196,7 @@ public class DecisionControllerImpl implements IDecisionController {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
             } else if (dec.getVoterId() == null) {
                 result.setData("Голосующий не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount()==null?1:dec.getQuestionId().getMaxCount()) < bean.getScore()) {
+            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < bean.getScore()) {
                 result.setData("Очки больше доступного").ERROR_CUSTOM();
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
@@ -216,6 +216,9 @@ public class DecisionControllerImpl implements IDecisionController {
                             result.setData(obj).ERROR_CUSTOM();
                         } else {
                             dec = (Decision) obj;
+                            if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() != null) {
+                                dec.setScore(dec.getVoterId().getShareCount());
+                            }
                             decisionRepository.save(dec);
                             result.setData(dec).SUCCESS();
                         }
@@ -299,7 +302,7 @@ public class DecisionControllerImpl implements IDecisionController {
                         decisions.add("Голосующий не найден");
                         str = "Голосующий не найден";
                         check.setHasError(true);
-                    } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount()==null?1:dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                    } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
                         decisions.add("Очки больше доступного");
                         str = "Очки больше доступного";
                         check.setHasError(true);

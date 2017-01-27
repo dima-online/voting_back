@@ -6,6 +6,7 @@ package kz.bsbnb.common.bean;
 public class UserBean extends CoreUserBean{
 
     private String login;
+    private String voterIin;
 
     public UserBean() {
         super();
@@ -19,4 +20,11 @@ public class UserBean extends CoreUserBean{
         this.login = login;
     }
 
+    public String getVoterIin() {
+        return voterIin;
+    }
+
+    public void setVoterIin(String voterIin) {
+        this.voterIin = voterIin;
+    }
 }

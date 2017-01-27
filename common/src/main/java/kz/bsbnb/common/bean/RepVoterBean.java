@@ -13,8 +13,26 @@ public class RepVoterBean {
     private String userName;
     private Date decisionDate;
     private List<RepDecisionBean> decisionBeanList;
+    private Long privShareCount;
+    private Boolean hasGoldShare;
 
     public RepVoterBean() {
+    }
+
+    public Long getPrivShareCount() {
+        return privShareCount;
+    }
+
+    public void setPrivShareCount(Long privShareCount) {
+        this.privShareCount = privShareCount;
+    }
+
+    public Boolean getHasGoldShare() {
+        return hasGoldShare;
+    }
+
+    public void setHasGoldShare(Boolean hasGoldShare) {
+        this.hasGoldShare = hasGoldShare;
     }
 
     public Date getDecisionDate() {

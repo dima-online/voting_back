@@ -6,16 +6,11 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                    http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="Ruslan Beyganov" id="2016-10-19--08-change_message" objectQuotingStrategy="LEGACY">
+    <changeSet author="Ruslan Beyganov" id="2017-01-06--16-upd_org" objectQuotingStrategy="LEGACY">
         <sql splitStatements="true">
-            /************ Update: Tables ***************/
 
-            /******************** Update Table: organisation ************************/
+            ALTER TABLE core.organisation ADD all_share_count BIGINT NULL;
 
-            ALTER TABLE core.organisation ADD all_share_count INTEGER NULL;
-
-            /* Add Comments */
-            COMMENT ON COLUMN core.organisation.all_share_count IS 'Общее количество акции';
         </sql>
     </changeSet>
 </databaseChangeLog>

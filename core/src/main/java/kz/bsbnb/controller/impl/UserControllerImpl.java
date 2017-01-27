@@ -107,6 +107,7 @@ public class UserControllerImpl implements IUserController {
                 userData.setFirstName(user.getUserInfoId().getFirstName());
                 userData.setMiddleName(user.getUserInfoId().getMiddleName());
             }
+            userData.setVoterIin(user.getUserInfoId().getVoterIin());
         }
         userData.setIin(user.getIin());
         List<UserOrgBean> userBeanList = new ArrayList<>();
@@ -138,6 +139,7 @@ public class UserControllerImpl implements IUserController {
                 }
                 userBean.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
                 userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
+                userBean.setShareDate(userRoles.getSharePercent() == null ? null : userRoles.getShareDate());
             }
             if (!isFound) {
                 userBean.setUserId(userRoles.getUserId().getId());
@@ -453,44 +455,6 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
-    @RequestMapping(value = "/orgs/workvoting_oldversion/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> _getAllOrgsWithWorkVoting(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        if (localUser != null) {
-            //for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            List<Organisation> organisations = organisationRepository.getWorkVoteOrg();
-            for (Organisation org : organisations) {
-//                organisation.setId(userRoles.getOrgId().getId());
-//                organisation.setExternalId(userRoles.getOrgId().getExternalId());
-//                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-//                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
-//                organisation.setStatus(userRoles.getOrgId().getStatus());
-//                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-                List<VotingBean> vSet = new ArrayList<>();
-                boolean canAdd = false;
-                List<Voting> vots = votingRepository.getByOrganisationId(org);
-
-                for (Voting voting : vots) {
-//                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                    if (voting.getDateClose() == null && voting.getDateBegin() != null && voting.getStatus().equals("STARTED")) {
-                        VotingBean votingBean = castToBean(voting, localUser);
-                        vSet.add(votingBean);
-                        canAdd = true;
-                    }
-                }
-                if (canAdd) {
-                    OrgBean organisation = castToBean(org, localUser);
-                    organisation.setVotingSet(vSet);
-                    result.add(organisation);
-                }
-            }
-        }
-        return result;
-    }
-
-
-    @Override
     @RequestMapping(value = "/orgs/oldvoting/{userId}", method = RequestMethod.GET)
     public List<OrgBean> getAllOrgsWithOldVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
@@ -511,43 +475,6 @@ public class UserControllerImpl implements IUserController {
             while (itr1.hasNext()) {
                 Map.Entry<Long, OrgBean> entry = itr1.next();
                 result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @RequestMapping(value = "/orgs/oldvoting_oldversion/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> _getAllOrgsWithOldVoting(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        if (localUser != null) {
-            //for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            List<Organisation> organisations = organisationRepository.getOldVoteOrg();
-            for (Organisation org : organisations) {
-//                organisation.setId(userRoles.getOrgId().getId());
-//                organisation.setExternalId(userRoles.getOrgId().getExternalId());
-//                organisation.setOrganisationName(userRoles.getOrgId().getOrganisationName());
-//                organisation.setOrganisationNum(userRoles.getOrgId().getOrganisationNum());
-//                organisation.setStatus(userRoles.getOrgId().getStatus());
-//                organisation.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-                List<VotingBean> vSet = new ArrayList<>();
-                boolean canAdd = false;
-                List<Voting> vots = votingRepository.getByOrganisationId(org);
-
-                for (Voting voting : vots) {
-//                for (Voting voting : userRoles.getOrgId().getVotingSet()) {
-                    if (voting.getDateClose() != null) {
-                        VotingBean votingBean = castToBean(voting, localUser);
-                        vSet.add(votingBean);
-                        canAdd = true;
-                    }
-                }
-                if (canAdd) {
-                    OrgBean organisation = castToBean(org, localUser);
-                    organisation.setVotingSet(vSet);
-                    result.add(organisation);
-                }
             }
         }
         return result;
@@ -618,6 +545,7 @@ public class UserControllerImpl implements IUserController {
             fName = fName + " " + (user.getUserInfoId().getMiddleName() == null ? " " : user.getUserInfoId().getMiddleName());
             userBean.setFullName(fName.trim());
             userBean.setPhone(user.getUserInfoId().getPhone());
+            userBean.setVoterIin(user.getUserInfoId().getVoterIin());
         }
         if (!user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;
@@ -655,6 +583,7 @@ public class UserControllerImpl implements IUserController {
             userBean.setFirstName(userInfo.getFirstName());
             userBean.setMiddleName(userInfo.getMiddleName());
             userBean.setOrg(userInfo.getOrg());
+            userBean.setVoterIin(userInfo.getVoterIin());
         }
         if (user.getUserRolesSet() != null && !user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;
@@ -685,6 +614,7 @@ public class UserControllerImpl implements IUserController {
                 e.printStackTrace();
             }
         }
+        result.setPrivCanVote(q.getPrivCanVote());
         result.setNum(q.getNum());
         result.setQuestion(q.getQuestion());
         result.setQuestionType(q.getQuestionType());
@@ -742,6 +672,8 @@ public class UserControllerImpl implements IUserController {
                 beanSet.add(bean);
             }
         }
+        result.setHasGoldShare(voter.getHasGoldShare());
+        result.setPrivShareCount(voter.getPrivShareCount());
         result.setDecisions(beanSet);
 //        result.setVoting(castToBean(voter.getVotingId(),voter.getUserId()));
         result.setUserId(castUser(voter.getUserId()));
@@ -766,6 +698,7 @@ public class UserControllerImpl implements IUserController {
         result.setVotingType(voting.getVotingType());
         result.setOrganisationId(voting.getOrganisationId().getId());
         result.setOrganisationName(voting.getOrganisationId().getOrganisationName());
+        result.setKvoroom(voting.getKvoroom());
         Role role = getRole(user);
         boolean canReadPdf = false;
         Voter vot = voterRepository.findByVotingIdAndUserId(voting, user);

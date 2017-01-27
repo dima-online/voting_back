@@ -6,16 +6,13 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
                    http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="Ruslan Beyganov" id="2016-10-19--08-change_message" objectQuotingStrategy="LEGACY">
+    <changeSet author="Ruslan Beyganov" id="2017-01-11--18-upd_voting" objectQuotingStrategy="LEGACY">
         <sql splitStatements="true">
-            /************ Update: Tables ***************/
 
-            /******************** Update Table: organisation ************************/
-
-            ALTER TABLE core.organisation ADD all_share_count INTEGER NULL;
+            ALTER TABLE core.voting ADD kvoroom BOOL NULL;
 
             /* Add Comments */
-            COMMENT ON COLUMN core.organisation.all_share_count IS 'Общее количество акции';
+            COMMENT ON COLUMN core.voting.kvoroom IS 'Признак наличия кворума';
         </sql>
     </changeSet>
 </databaseChangeLog>

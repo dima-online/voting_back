@@ -22,6 +22,7 @@ public class VotingBean {
     private Integer questionCount;
     private Long lastReestrId;
     private Integer shareCount;
+    private Boolean kvoroom;
 
     public VotingBean() {
     }
@@ -160,5 +161,13 @@ public class VotingBean {
 
     public void setCanVote(boolean canVote) {
         this.canVote = canVote;
+    }
+
+    public Boolean getKvoroom() {
+        return kvoroom;
+    }
+
+    public void setKvoroom(Boolean kvoroom) {
+        this.kvoroom = kvoroom;
     }
 }

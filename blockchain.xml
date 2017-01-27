@@ -249,6 +249,10 @@
         <DT arr="0" ds="Integer" en="" id="4" ln="null" sc="null" sg="1" un="0"/>
         <Cm>Максимальное количество избираемых</Cm>
       </Cl>
+      <Cl au="0" df="" nm="priv_can_vote" nu="1">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Могут голосовать привелигированные акции</Cm>
+      </Cl>
       <Fk deAc="3" nm="fk_question_voting" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="voting" oe="1" sch="core" zr="0"/>
         <CdTb mn="1" nm="question" oe="0" sch="core" zr="1"/>
@@ -343,6 +347,10 @@
         <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
         <Cm>Признак фр. лица</Cm>
       </Cl>
+      <Cl au="0" df="" nm="voter_iin" nu="1">
+        <DT arr="0" ds="VarChar" en="" id="12" ln="12" sc="null" sg="1" un="0"/>
+        <Cm>ИИН физ.лица, который может проголосовать за юр.лицо</Cm>
+      </Cl>
       <UniqueConstraints/>
       <SchTrHis/>
     </Tbl>
@@ -374,6 +382,10 @@
       <Cl au="0" df="" nm="share_percent" nu="1">
         <DT arr="0" ds="Float" en="" id="6" ln="null" sc="null" sg="1" un="0"/>
         <Cm>% голосующих акции</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="share_date" nu="1">
+        <DT arr="0" ds="DateTime" en="" id="700" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Дата последней загрузки реестра</Cm>
       </Cl>
       <Fk deAc="3" nm="fk_user_roles_organisation" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
@@ -420,6 +432,13 @@
       <Cl au="0" df="" nm="date_voting" nu="1">
         <DT arr="0" ds="TimeStamp" en="" id="93" ln="null" sc="null" sg="1" un="0"/>
         <Cm>Дата фиксации голосования</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="has_gold_share" nu="1">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+      </Cl>
+      <Cl au="0" df="" nm="priv_share_count" nu="1">
+        <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Количество привилигированных кции</Cm>
       </Cl>
       <Fk deAc="3" nm="fk_voter_user" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="user" oe="1" sch="core" zr="0"/>
@@ -483,6 +502,10 @@
       <Cl au="0" df="" nm="last_reestr_id" nu="1">
         <DT arr="0" ds="BigInt" en="" id="-5" ln="null" sc="null" sg="1" un="0"/>
         <Cm>ID последнего загруженного реестра</Cm>
+      </Cl>
+      <Cl au="0" df="" nm="kvoroom" nu="1">
+        <DT arr="0" ds="Boolean" en="" id="16" ln="null" sc="null" sg="1" un="0"/>
+        <Cm>Признак наличия кворума</Cm>
       </Cl>
       <Fk deAc="3" nm="fk_voting_organisation" prLkCl="id" upAc="3">
         <PrTb mn="0" nm="organisation" oe="1" sch="core" zr="0"/>
@@ -731,7 +754,7 @@
     <TbGl bkCl="ff6666ff" sch="core" tbl="files" x="348" y="50"/>
     <TbGl bkCl="ff6666ff" sch="core" tbl="message" x="685" y="294"/>
     <TbGl bkCl="ff6666ff" sch="core" tbl="organisation" x="300" y="294"/>
-    <TbGl bkCl="ff6666ff" sch="core" tbl="question" x="327" y="159"/>
+    <TbGl bkCl="ff6666ff" sch="core" tbl="question" x="311" y="148"/>
     <TbGl bkCl="ff6666ff" sch="core" tbl="question_file" x="50" y="50"/>
     <TbGl bkCl="ff6666ff" sch="core" tbl="user" x="1072" y="50"/>
     <TbGl bkCl="ff6666ff" sch="core" tbl="user_info" x="720" y="468"/>
@@ -744,8 +767,8 @@
     <TbGl bkCl="ff6666ff" sch="external" tbl="reestr" x="2110" y="272"/>
     <FkGl bkCl="ff000000" childEdge="WEST" nm="core.answer.fk_answer_question" parentEdge="NORTH" positioner="TwoLineUserLinkPositioner">
       <positionableLines>
-        <positionableLine lineRole="PARENT_LINE" x1="487" x2="487" y1="159" y2="54"/>
-        <positionableLine lineRole="CHILD_LINE" x1="2150" x2="491" y1="50" y2="50"/>
+        <positionableLine lineRole="PARENT_LINE" x1="471" x2="471" y1="148" y2="54"/>
+        <positionableLine lineRole="CHILD_LINE" x1="2150" x2="475" y1="50" y2="50"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.decision.fk_decision_answer" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
@@ -755,12 +778,12 @@
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="WEST" nm="core.decision.fk_decision_question" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
       <positionableLines>
-        <positionableLine lineRole="SINGLE_LINE" x1="569" x2="1800" y1="163" y2="163"/>
+        <positionableLine lineRole="SINGLE_LINE" x1="553" x2="1800" y1="152" y2="152"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="WEST" nm="core.decision.fk_decision_voter" parentEdge="EAST" positioner="OneLineUserLinkPositioner">
       <positionableLines>
-        <positionableLine lineRole="SINGLE_LINE" x1="1680" x2="1800" y1="109" y2="109"/>
+        <positionableLine lineRole="SINGLE_LINE" x1="1707" x2="1800" y1="109" y2="109"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.files.fk_files_voting" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
@@ -784,7 +807,7 @@
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question.fk_question_voting" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
       <positionableLines>
-        <positionableLine lineRole="SINGLE_LINE" x1="689" x2="569" y1="189" y2="189"/>
+        <positionableLine lineRole="SINGLE_LINE" x1="689" x2="553" y1="189" y2="189"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question_file.fk_question_file_files" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
@@ -794,8 +817,8 @@
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.question_file.fk_question_file_question" parentEdge="NORTH" positioner="TwoLineUserLinkPositioner">
       <positionableLines>
-        <positionableLine lineRole="PARENT_LINE" x1="407" x2="407" y1="159" y2="54"/>
-        <positionableLine lineRole="CHILD_LINE" x1="228" x2="403" y1="50" y2="50"/>
+        <positionableLine lineRole="PARENT_LINE" x1="391" x2="391" y1="148" y2="54"/>
+        <positionableLine lineRole="CHILD_LINE" x1="228" x2="387" y1="50" y2="50"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.user.user_user_info_fk" parentEdge="EAST" positioner="TwoLineUserLinkPositioner">
@@ -828,7 +851,7 @@
     <FkGl bkCl="ff000000" childEdge="SOUTH" nm="core.voting.fk_voting_organisation" parentEdge="EAST" positioner="TwoLineUserLinkPositioner">
       <positionableLines>
         <positionableLine lineRole="PARENT_LINE" x1="565" x2="685" y1="320" y2="320"/>
-        <positionableLine lineRole="CHILD_LINE" x1="689" x2="689" y1="233" y2="316"/>
+        <positionableLine lineRole="CHILD_LINE" x1="689" x2="689" y1="246" y2="316"/>
       </positionableLines>
     </FkGl>
     <FkGl bkCl="ff000000" childEdge="EAST" nm="core.voting.fk_voting_user" parentEdge="WEST" positioner="OneLineUserLinkPositioner">
@@ -844,7 +867,7 @@
     <Notes/>
     <Zones/>
   </Dgm>
-  <RnmMgr NxRnmId="5">
+  <RnmMgr NxRnmId="6">
     <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr_head" SupCls="Schema" SupNme="core">
       <Rnm id="1" nNm="id" oNm="Id"/>
     </RnmCh>
@@ -856,6 +879,9 @@
     </RnmCh>
     <RnmCh ObjCls="Column" ParCls="Table" ParNme="reestr" SupCls="Schema" SupNme="external">
       <Rnm id="4" nNm="nin" oNm="NIN"/>
+    </RnmCh>
+    <RnmCh ObjCls="Column" ParCls="Table" ParNme="voter" SupCls="Schema" SupNme="core">
+      <Rnm id="5" nNm="priv_share_count" oNm="priv_share_coun"/>
     </RnmCh>
   </RnmMgr>
   <DbDocOptionMgr>

@@ -12,6 +12,7 @@ import kz.bsbnb.common.util.Constants;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *
@@ -47,8 +48,18 @@ public class UserRoles implements Serializable {
     private Double sharePercent;
     @Column(name = "cannot_vote")
     private Integer cannotVote;
+    @Column(name = "share_date")
+    private Date shareDate;
 
     public UserRoles() {
+    }
+
+    public Date getShareDate() {
+        return shareDate;
+    }
+
+    public void setShareDate(Date shareDate) {
+        this.shareDate = shareDate;
     }
 
     public UserRoles(Long id) {
