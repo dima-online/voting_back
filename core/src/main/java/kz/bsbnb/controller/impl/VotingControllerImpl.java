@@ -873,7 +873,7 @@ public class VotingControllerImpl implements IVotingController {
 
             map.put("organization_address", addr == null ? "Адрес не указан" : addr);
             SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
-            SimpleDateFormat ftLong = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
+            SimpleDateFormat ftLong = new SimpleDateFormat("dd/MM/yyyy HH:mm");
             map.put("voting_endDate", ft.format(voting.getDateClose()) + " года");
             map.put("date_begin", ftLong.format(voting.getDateBegin()));
             map.put("date_begin_short", ft.format(voting.getDateBegin()) + " года");
@@ -881,22 +881,29 @@ public class VotingControllerImpl implements IVotingController {
             ReestrHead reestr = reestrHeadRepository.findOne(voting.getLastReestrId());
             map.put("reestr_date", ft.format(reestr.getDateCreate()));
 
-            map.put("total_count", String.valueOf(voting.getOrganisationId().getAllShareCount()));
             Long realCount = 0L;
+            Long voterCount = 0L;
             for (Voter voter : voting.getVoterSet()) {
                 if (!voter.getDecisionSet().isEmpty()) {
                     realCount = realCount + voter.getShareCount();
+                    voterCount++;
                 }
             }
+            if (voting.getKvoroom()!=null && voting.getKvoroom()) {
+                voterCount = voting.getOrganisationId().getAllShareCount();
+            }
+
+            map.put("total_count", String.valueOf(voterCount));
 
             map.put("real_count", String.valueOf(realCount));
-            map.put("total_count_text", ConvertUtil.digits2Text(voting.getOrganisationId().getAllShareCount().doubleValue()));
+            map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
+
             map.put("real_count_text", ConvertUtil.digits2Text(realCount.doubleValue()));
-            map.put("prc_count", String.valueOf(realCount.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue()*100));
+            map.put("prc_count", String.valueOf(realCount.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100));
 
             String str = "";
             for (Question question : voting.getQuestionSet()) {
-                str = str + "\n"+question.getNum().toString();
+                str = str + "\n" + question.getNum().toString();
                 str = str + "\nФормулировка решения, поставленного на голосование:\n";
                 str = str + "\"" + question.getQuestion() + "\".\n";
                 str = str + "Итоги голосования:\n";
@@ -908,7 +915,7 @@ public class VotingControllerImpl implements IVotingController {
                         for (Map totalDecision : list) {
                             System.out.println(totalDecision);
                             try {
-                                str = str + "\"" + totalDecision.get("answerText").toString() + "\"\t–\t" + totalDecision.get(question.getQuestionType().equals("ORDINARY")?"answerCount":"answerScore").toString() + " голос (-а, -ов)\n";
+                                str = str + "\"" + totalDecision.get("answerText").toString() + "\"\t–\t" + totalDecision.get(question.getQuestionType().equals("ORDINARY") ? "answerCount" : "answerScore").toString() + " голос (-а, -ов)\n";
                             } catch (Exception e) {
                                 str = str + "\n";
                             }
@@ -924,10 +931,20 @@ public class VotingControllerImpl implements IVotingController {
 
             map.put("decision_text", str);
 
+            String tempName = "";
+            if (voting.getKvoroom()) {
+                tempName = "/opt/voting/test/test.docx";
+            } else {
+                tempName = "/opt/voting/test/test2.docx";
+            }
+            String fileName = WordUtil.fill(map, votingId, tempName);
 
-            String fileName = WordUtil.fill(map, votingId);
             if (fileName == null) {
-                fileName = "/opt/voting/files/test.docx";
+                if (voting.getKvoroom()) {
+                    fileName = "/opt/voting/files/test.docx";
+                } else {
+                    fileName = "/opt/voting/files/test2.docx";
+                }
             } else {
                 fileName = "/opt/voting/files/" + fileName;
             }
@@ -1088,14 +1105,22 @@ public class VotingControllerImpl implements IVotingController {
     private Boolean calcKvoroom(Voting voting) {
         Long all = voting.getOrganisationId().getAllShareCount();
         Long vote = 0L;
-        if (voting.getVoterSet()!=null) {
-            for (Voter voter:voting.getVoterSet()) {
-                if (voter.getDecisionSet()!=null) {
-                    vote = vote + voter.getShareCount();
+        if (voting.getVoterSet() != null) {
+            for (Voter voter : voting.getVoterSet()) {
+                if (voter.getDecisionSet() != null) {
+                    boolean approved = false;
+                    for (Decision decision : voter.getDecisionSet()) {
+                        if (decision.getStatus().equals("READY")) {
+                            approved = true;
+                        }
+                    }
+                    if (approved) {
+                        vote = vote + voter.getShareCount();
+                    }
                 }
             }
         }
-        return vote*2>all;
+        return vote * 2 > all;
     }
 
     @Override

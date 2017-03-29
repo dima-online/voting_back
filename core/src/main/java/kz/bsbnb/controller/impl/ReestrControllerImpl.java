@@ -9,7 +9,6 @@ import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.ERCBService.*;
 import kz.bsbnb.util.SimpleResponse;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,6 @@ import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -71,6 +69,10 @@ public class ReestrControllerImpl implements IReestrController {
     @RequestMapping(value = "/fill/{reestrHeadId}", method = RequestMethod.POST)
     public SimpleResponse newList(@PathVariable Long reestrHeadId, @RequestBody @Valid List<Reestr> list) {
         ReestrHead reestrHead = reestrHeadRepository.findOne(reestrHeadId);
+        return newList(reestrHead, list);
+    }
+
+    private SimpleResponse newList(ReestrHead reestrHead, List<Reestr> list) {
         if (reestrHead != null) {
             if (!list.isEmpty()) {
                 //Удаляем старые значения
@@ -110,7 +112,7 @@ public class ReestrControllerImpl implements IReestrController {
                 return new SimpleResponse("Список реестра пуст").ERROR_CUSTOM();
             }
         } else {
-            return new SimpleResponse("Нет такой заголовка в системе (" + reestrHeadId + ")").ERROR_CUSTOM();
+            return new SimpleResponse("Нет такой заголовка в системе (" + reestrHead.getId() + ")").ERROR_CUSTOM();
         }
     }
 
@@ -158,6 +160,10 @@ public class ReestrControllerImpl implements IReestrController {
     public SimpleResponse getList(@PathVariable Long reestrHeadId, @PathVariable Long votingId) {
         ReestrHead reestrHead = reestrHeadRepository.findOne(reestrHeadId);
         Voting voting = votingRepository.findOne(votingId);
+        return getList(reestrHead, voting);
+    }
+
+    private SimpleResponse getList(ReestrHead reestrHead, Voting voting) {
         if (reestrHead != null) {
             if (voting != null) {
                 if (reestrHead.getIin().equals(voting.getOrganisationId().getOrganisationNum())) {
@@ -212,11 +218,11 @@ public class ReestrControllerImpl implements IReestrController {
                                 voterRepository.deleteByIds(voter.getId());
                             }
                             voting.setLastChanged(reestrHead.getDateCreate());
-                            voting.setLastReestrId(reestrHeadId);
+                            voting.setLastReestrId(reestrHead.getId());
                             voting = votingRepository.save(voting);
 
                             List<Voter> newVoter = new ArrayList<>();
-                            for (Reestr reestr : reestrHead.getReestrSet()) {
+                            for (Reestr reestr : reestrs) {
                                 User user = userRepository.findByIin(reestr.getVoterIin());
                                 if (user == null) {
                                     user = new User();
@@ -235,7 +241,12 @@ public class ReestrControllerImpl implements IReestrController {
                                 }
                                 if (!isFound) {
                                     voter = new Voter();
-                                    voter.setShareCount(reestr.getShareCount());
+                                    int count = reestr.getShareCount();
+                                    if (reestr.getShareType() == null || "".equals(reestr.getShareType().trim()) || reestr.getShareType().contains("прост")) {
+                                        voter.setShareCount(voter.getShareCount() + count);
+                                    } else {
+                                        voter.setPrivShareCount(voter.getPrivShareCount() == null ? 0L : voter.getPrivShareCount() + (long) count);
+                                    }
                                     voter.setUserId(user);
                                     voter.setDateAdding(new Date());
                                     voter.setVotingId(voting);
@@ -258,10 +269,10 @@ public class ReestrControllerImpl implements IReestrController {
                     return new SimpleResponse("ИИН организации и реестра не совпадают").ERROR_CUSTOM();
                 }
             } else {
-                return new SimpleResponse("Нет такого голосования в системе (" + votingId + ")").ERROR_CUSTOM();
+                return new SimpleResponse("Нет такого голосования в системе (" + voting.getId() + ")").ERROR_CUSTOM();
             }
         } else {
-            return new SimpleResponse("Нет такой заголовка в системе (" + reestrHeadId + ")").ERROR_CUSTOM();
+            return new SimpleResponse("Нет такой заголовка в системе (" + reestrHead.getId() + ")").ERROR_CUSTOM();
         }
     }
 
@@ -344,7 +355,7 @@ public class ReestrControllerImpl implements IReestrController {
                         }
                         result = newList(reestrHead.getId(), reestrs);
                         if (result.isSuccess()) {
-                            result = getList(reestrHead.getId(), votingId);
+                            result = getList(reestrHead, voting);
                         }
                     }
                     return result;

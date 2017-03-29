@@ -9,8 +9,8 @@ import java.util.Map;
  */
 public class WordUtil {
 
-    public static String fill(Map<String, String> map, Long votingId) {
-        String docxPath = "/opt/voting/test/test.docx";
+    public static String fill(Map<String, String> map, Long votingId, String docxPath) {
+//        String docxPath = "/opt/voting/test/test.docx";
 //        String dotxPath = "/opt/voting/test/test.dotx";
 
         String filePath = docxPath;

@@ -7,12 +7,12 @@
 
 package kz.bsbnb.util.ERCBService;
 
-public class TResponseRegistry  implements java.io.Serializable {
+public class TResponseRegistry implements java.io.Serializable {
     private kz.bsbnb.util.ERCBService.TRegistry registry;
 
     private int errorCode;
 
-    private java.lang.String errorText;
+    private String errorText;
 
     public TResponseRegistry() {
     }
@@ -20,7 +20,7 @@ public class TResponseRegistry  implements java.io.Serializable {
     public TResponseRegistry(
            kz.bsbnb.util.ERCBService.TRegistry registry,
            int errorCode,
-           java.lang.String errorText) {
+           String errorText) {
            this.registry = registry;
            this.errorCode = errorCode;
            this.errorText = errorText;
@@ -29,7 +29,7 @@ public class TResponseRegistry  implements java.io.Serializable {
 
     /**
      * Gets the registry value for this TResponseRegistry.
-     * 
+     *
      * @return registry
      */
     public kz.bsbnb.util.ERCBService.TRegistry getRegistry() {
@@ -39,7 +39,7 @@ public class TResponseRegistry  implements java.io.Serializable {
 
     /**
      * Sets the registry value for this TResponseRegistry.
-     * 
+     *
      * @param registry
      */
     public void setRegistry(kz.bsbnb.util.ERCBService.TRegistry registry) {
@@ -49,7 +49,7 @@ public class TResponseRegistry  implements java.io.Serializable {
 
     /**
      * Gets the errorCode value for this TResponseRegistry.
-     * 
+     *
      * @return errorCode
      */
     public int getErrorCode() {
@@ -59,7 +59,7 @@ public class TResponseRegistry  implements java.io.Serializable {
 
     /**
      * Sets the errorCode value for this TResponseRegistry.
-     * 
+     *
      * @param errorCode
      */
     public void setErrorCode(int errorCode) {
@@ -69,25 +69,25 @@ public class TResponseRegistry  implements java.io.Serializable {
 
     /**
      * Gets the errorText value for this TResponseRegistry.
-     * 
+     *
      * @return errorText
      */
-    public java.lang.String getErrorText() {
+    public String getErrorText() {
         return errorText;
     }
 
 
     /**
      * Sets the errorText value for this TResponseRegistry.
-     * 
+     *
      * @param errorText
      */
-    public void setErrorText(java.lang.String errorText) {
+    public void setErrorText(String errorText) {
         this.errorText = errorText;
     }
 
-    private java.lang.Object __equalsCalc = null;
-    public synchronized boolean equals(java.lang.Object obj) {
+    private Object __equalsCalc = null;
+    public synchronized boolean equals(Object obj) {
         if (!(obj instanceof TResponseRegistry)) return false;
         TResponseRegistry other = (TResponseRegistry) obj;
         if (obj == null) return false;
@@ -97,12 +97,12 @@ public class TResponseRegistry  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.registry==null && other.getRegistry()==null) || 
+        _equals = true &&
+            ((this.registry==null && other.getRegistry()==null) ||
              (this.registry!=null &&
               this.registry.equals(other.getRegistry()))) &&
             this.errorCode == other.getErrorCode() &&
-            ((this.errorText==null && other.getErrorText()==null) || 
+            ((this.errorText==null && other.getErrorText()==null) ||
              (this.errorText!=null &&
               this.errorText.equals(other.getErrorText())));
         __equalsCalc = null;
@@ -164,10 +164,10 @@ public class TResponseRegistry  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
-        return 
+        return
           new  org.apache.axis.encoding.ser.BeanSerializer(
             _javaType, _xmlType, typeDesc);
     }
@@ -176,8 +176,8 @@ public class TResponseRegistry  implements java.io.Serializable {
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
+           String mechType,
+           Class _javaType,
            javax.xml.namespace.QName _xmlType) {
         return 
           new  org.apache.axis.encoding.ser.BeanDeserializer(

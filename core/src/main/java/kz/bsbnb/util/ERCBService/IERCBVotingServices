@@ -32,6 +32,7 @@
           <element name="Phone" type="xs:string"/>
           <element name="Mail" type="xs:string"/>
           <element name="VotingIDN" type="xs:string"/>
+          <element name="Block" type="xs:double"/>
         </sequence>
       </complexType>
     </schema>

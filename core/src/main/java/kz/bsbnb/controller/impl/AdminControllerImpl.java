@@ -15,6 +15,7 @@ import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.SimpleResponse;
 import kz.bsbnb.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @RestController
@@ -155,7 +158,9 @@ public class AdminControllerImpl implements IAdminController {
 
     @Override
     @RequestMapping(value = "/allVoting/{userId}", method = RequestMethod.GET)
-    public List<VotingBean> listVoting(@RequestParam(defaultValue = "0") Long orgId, @PathVariable Long userId) {
+    public List<VotingBean> listVoting(@RequestParam(defaultValue = "0") Long orgId, @PathVariable Long userId,
+                                       @RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "20") int count) {
         Organisation organisation = null;
         if (orgId != 0) {
             organisation = organisationRepository.findOne(orgId);
@@ -165,13 +170,16 @@ public class AdminControllerImpl implements IAdminController {
         if (user != null) {
             List<Voting> votings = new ArrayList<>();
             if (organisation != null) {
-                List<Voting> vots = votingRepository.getByOrganisationId(organisation);
+                List<Voting> vots = StreamSupport.stream(votingRepository.getByOrganisationId(organisation, new PageRequest(page, count)).spliterator(), false)
+                        .collect(Collectors.toList());
                 for (Voting voting : vots) {
                     votings.add(voting);
                 }
             } else {
-                votings = (List<Voting>) votingRepository.findAll();
+                votings = (List<Voting>) StreamSupport.stream(votingRepository.findAll(new PageRequest(page, count)).spliterator(), false)
+                        .collect(Collectors.toList());
             }
+
             for (Voting voting : votings) {
                 result.add(userController.castToBean(voting, user));
             }

@@ -34,42 +34,46 @@ public class TShareholder  implements java.io.Serializable {
 
     private java.lang.String votingIDN;
 
+    private double block;
+
     public TShareholder() {
     }
 
     public TShareholder(
-           java.lang.String shareholderName,
-           java.lang.String shareholderNoun,
-           java.lang.String shareholderSurname,
-           java.lang.String shareholderPatronymic,
-           java.lang.String shareholderIDN,
-           java.lang.String shareholderNIN,
-           java.lang.String shareholderKind,
-           double amount,
-           double voting,
-           double percentVoting,
-           java.lang.String phone,
-           java.lang.String mail,
-           java.lang.String votingIDN) {
-           this.shareholderName = shareholderName;
-           this.shareholderNoun = shareholderNoun;
-           this.shareholderSurname = shareholderSurname;
-           this.shareholderPatronymic = shareholderPatronymic;
-           this.shareholderIDN = shareholderIDN;
-           this.shareholderNIN = shareholderNIN;
-           this.shareholderKind = shareholderKind;
-           this.amount = amount;
-           this.voting = voting;
-           this.percentVoting = percentVoting;
-           this.phone = phone;
-           this.mail = mail;
-           this.votingIDN = votingIDN;
+            java.lang.String shareholderName,
+            java.lang.String shareholderNoun,
+            java.lang.String shareholderSurname,
+            java.lang.String shareholderPatronymic,
+            java.lang.String shareholderIDN,
+            java.lang.String shareholderNIN,
+            java.lang.String shareholderKind,
+            double amount,
+            double voting,
+            double percentVoting,
+            java.lang.String phone,
+            java.lang.String mail,
+            java.lang.String votingIDN,
+            double block) {
+        this.shareholderName = shareholderName;
+        this.shareholderNoun = shareholderNoun;
+        this.shareholderSurname = shareholderSurname;
+        this.shareholderPatronymic = shareholderPatronymic;
+        this.shareholderIDN = shareholderIDN;
+        this.shareholderNIN = shareholderNIN;
+        this.shareholderKind = shareholderKind;
+        this.amount = amount;
+        this.voting = voting;
+        this.percentVoting = percentVoting;
+        this.phone = phone;
+        this.mail = mail;
+        this.votingIDN = votingIDN;
+        this.block = block;
     }
 
 
     /**
      * Gets the shareholderName value for this TShareholder.
-     * 
+     *
      * @return shareholderName
      */
     public java.lang.String getShareholderName() {
@@ -79,7 +83,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderName value for this TShareholder.
-     * 
+     *
      * @param shareholderName
      */
     public void setShareholderName(java.lang.String shareholderName) {
@@ -89,7 +93,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderNoun value for this TShareholder.
-     * 
+     *
      * @return shareholderNoun
      */
     public java.lang.String getShareholderNoun() {
@@ -99,7 +103,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderNoun value for this TShareholder.
-     * 
+     *
      * @param shareholderNoun
      */
     public void setShareholderNoun(java.lang.String shareholderNoun) {
@@ -109,7 +113,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderSurname value for this TShareholder.
-     * 
+     *
      * @return shareholderSurname
      */
     public java.lang.String getShareholderSurname() {
@@ -119,7 +123,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderSurname value for this TShareholder.
-     * 
+     *
      * @param shareholderSurname
      */
     public void setShareholderSurname(java.lang.String shareholderSurname) {
@@ -129,7 +133,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderPatronymic value for this TShareholder.
-     * 
+     *
      * @return shareholderPatronymic
      */
     public java.lang.String getShareholderPatronymic() {
@@ -139,7 +143,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderPatronymic value for this TShareholder.
-     * 
+     *
      * @param shareholderPatronymic
      */
     public void setShareholderPatronymic(java.lang.String shareholderPatronymic) {
@@ -149,7 +153,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderIDN value for this TShareholder.
-     * 
+     *
      * @return shareholderIDN
      */
     public java.lang.String getShareholderIDN() {
@@ -159,7 +163,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderIDN value for this TShareholder.
-     * 
+     *
      * @param shareholderIDN
      */
     public void setShareholderIDN(java.lang.String shareholderIDN) {
@@ -169,7 +173,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderNIN value for this TShareholder.
-     * 
+     *
      * @return shareholderNIN
      */
     public java.lang.String getShareholderNIN() {
@@ -179,7 +183,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderNIN value for this TShareholder.
-     * 
+     *
      * @param shareholderNIN
      */
     public void setShareholderNIN(java.lang.String shareholderNIN) {
@@ -189,7 +193,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the shareholderKind value for this TShareholder.
-     * 
+     *
      * @return shareholderKind
      */
     public java.lang.String getShareholderKind() {
@@ -199,7 +203,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the shareholderKind value for this TShareholder.
-     * 
+     *
      * @param shareholderKind
      */
     public void setShareholderKind(java.lang.String shareholderKind) {
@@ -209,7 +213,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the amount value for this TShareholder.
-     * 
+     *
      * @return amount
      */
     public double getAmount() {
@@ -219,7 +223,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the amount value for this TShareholder.
-     * 
+     *
      * @param amount
      */
     public void setAmount(double amount) {
@@ -229,7 +233,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the voting value for this TShareholder.
-     * 
+     *
      * @return voting
      */
     public double getVoting() {
@@ -239,7 +243,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the voting value for this TShareholder.
-     * 
+     *
      * @param voting
      */
     public void setVoting(double voting) {
@@ -249,7 +253,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the percentVoting value for this TShareholder.
-     * 
+     *
      * @return percentVoting
      */
     public double getPercentVoting() {
@@ -259,7 +263,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the percentVoting value for this TShareholder.
-     * 
+     *
      * @param percentVoting
      */
     public void setPercentVoting(double percentVoting) {
@@ -269,7 +273,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the phone value for this TShareholder.
-     * 
+     *
      * @return phone
      */
     public java.lang.String getPhone() {
@@ -279,7 +283,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the phone value for this TShareholder.
-     * 
+     *
      * @param phone
      */
     public void setPhone(java.lang.String phone) {
@@ -289,7 +293,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the mail value for this TShareholder.
-     * 
+     *
      * @return mail
      */
     public java.lang.String getMail() {
@@ -299,7 +303,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the mail value for this TShareholder.
-     * 
+     *
      * @param mail
      */
     public void setMail(java.lang.String mail) {
@@ -309,7 +313,7 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Gets the votingIDN value for this TShareholder.
-     * 
+     *
      * @return votingIDN
      */
     public java.lang.String getVotingIDN() {
@@ -319,17 +323,37 @@ public class TShareholder  implements java.io.Serializable {
 
     /**
      * Sets the votingIDN value for this TShareholder.
-     * 
+     *
      * @param votingIDN
      */
     public void setVotingIDN(java.lang.String votingIDN) {
         this.votingIDN = votingIDN;
     }
 
+
+    /**
+     * Gets the block value for this TShareholder.
+     *
+     * @return block
+     */
+    public double getBlock() {
+        return block;
+    }
+
+
+    /**
+     * Sets the block value for this TShareholder.
+     *
+     * @param block
+     */
+    public void setBlock(double block) {
+        this.block = block;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof TShareholder)) return false;
-        TShareholder other = (TShareholder) obj;
+        if (!(obj instanceof kz.bsbnb.util.ERCBService.TShareholder)) return false;
+        kz.bsbnb.util.ERCBService.TShareholder other = (kz.bsbnb.util.ERCBService.TShareholder) obj;
         if (obj == null) return false;
         if (this == obj) return true;
         if (__equalsCalc != null) {
@@ -337,40 +361,41 @@ public class TShareholder  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.shareholderName==null && other.getShareholderName()==null) || 
-             (this.shareholderName!=null &&
-              this.shareholderName.equals(other.getShareholderName()))) &&
-            ((this.shareholderNoun==null && other.getShareholderNoun()==null) || 
-             (this.shareholderNoun!=null &&
-              this.shareholderNoun.equals(other.getShareholderNoun()))) &&
-            ((this.shareholderSurname==null && other.getShareholderSurname()==null) || 
-             (this.shareholderSurname!=null &&
-              this.shareholderSurname.equals(other.getShareholderSurname()))) &&
-            ((this.shareholderPatronymic==null && other.getShareholderPatronymic()==null) || 
-             (this.shareholderPatronymic!=null &&
-              this.shareholderPatronymic.equals(other.getShareholderPatronymic()))) &&
-            ((this.shareholderIDN==null && other.getShareholderIDN()==null) || 
-             (this.shareholderIDN!=null &&
-              this.shareholderIDN.equals(other.getShareholderIDN()))) &&
-            ((this.shareholderNIN==null && other.getShareholderNIN()==null) || 
-             (this.shareholderNIN!=null &&
-              this.shareholderNIN.equals(other.getShareholderNIN()))) &&
-            ((this.shareholderKind==null && other.getShareholderKind()==null) || 
-             (this.shareholderKind!=null &&
-              this.shareholderKind.equals(other.getShareholderKind()))) &&
-            this.amount == other.getAmount() &&
-            this.voting == other.getVoting() &&
-            this.percentVoting == other.getPercentVoting() &&
-            ((this.phone==null && other.getPhone()==null) || 
-             (this.phone!=null &&
-              this.phone.equals(other.getPhone()))) &&
-            ((this.mail==null && other.getMail()==null) || 
-             (this.mail!=null &&
-              this.mail.equals(other.getMail()))) &&
-            ((this.votingIDN==null && other.getVotingIDN()==null) || 
-             (this.votingIDN!=null &&
-              this.votingIDN.equals(other.getVotingIDN())));
+        _equals = true &&
+                ((this.shareholderName==null && other.getShareholderName()==null) ||
+                        (this.shareholderName!=null &&
+                                this.shareholderName.equals(other.getShareholderName()))) &&
+                ((this.shareholderNoun==null && other.getShareholderNoun()==null) ||
+                        (this.shareholderNoun!=null &&
+                                this.shareholderNoun.equals(other.getShareholderNoun()))) &&
+                ((this.shareholderSurname==null && other.getShareholderSurname()==null) ||
+                        (this.shareholderSurname!=null &&
+                                this.shareholderSurname.equals(other.getShareholderSurname()))) &&
+                ((this.shareholderPatronymic==null && other.getShareholderPatronymic()==null) ||
+                        (this.shareholderPatronymic!=null &&
+                                this.shareholderPatronymic.equals(other.getShareholderPatronymic()))) &&
+                ((this.shareholderIDN==null && other.getShareholderIDN()==null) ||
+                        (this.shareholderIDN!=null &&
+                                this.shareholderIDN.equals(other.getShareholderIDN()))) &&
+                ((this.shareholderNIN==null && other.getShareholderNIN()==null) ||
+                        (this.shareholderNIN!=null &&
+                                this.shareholderNIN.equals(other.getShareholderNIN()))) &&
+                ((this.shareholderKind==null && other.getShareholderKind()==null) ||
+                        (this.shareholderKind!=null &&
+                                this.shareholderKind.equals(other.getShareholderKind()))) &&
+                this.amount == other.getAmount() &&
+                this.voting == other.getVoting() &&
+                this.percentVoting == other.getPercentVoting() &&
+                ((this.phone==null && other.getPhone()==null) ||
+                        (this.phone!=null &&
+                                this.phone.equals(other.getPhone()))) &&
+                ((this.mail==null && other.getMail()==null) ||
+                        (this.mail!=null &&
+                                this.mail.equals(other.getMail()))) &&
+                ((this.votingIDN==null && other.getVotingIDN()==null) ||
+                        (this.votingIDN!=null &&
+                                this.votingIDN.equals(other.getVotingIDN()))) &&
+                this.block == other.getBlock();
         __equalsCalc = null;
         return _equals;
     }
@@ -415,13 +440,14 @@ public class TShareholder  implements java.io.Serializable {
         if (getVotingIDN() != null) {
             _hashCode += getVotingIDN().hashCode();
         }
+        _hashCode += new Double(getBlock()).hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(TShareholder.class, true);
+            new org.apache.axis.description.TypeDesc(kz.bsbnb.util.ERCBService.TShareholder.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("urn:ERCBServices.Objects.Voting.Core", "TShareholder"));
@@ -503,6 +529,12 @@ public class TShareholder  implements java.io.Serializable {
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("block");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "Block"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "double"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
     }
 
     /**
@@ -516,24 +548,24 @@ public class TShareholder  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new  org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new  org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

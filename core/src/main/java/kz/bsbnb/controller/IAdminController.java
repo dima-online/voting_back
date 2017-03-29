@@ -17,7 +17,7 @@ public interface IAdminController {
 
     List<ValueBean> newOrg(Long userId);
 
-    List<VotingBean> listVoting(Long orgId, Long userId);
+    List<VotingBean> listVoting(Long orgId, Long userId, int page, int count);
 
     String handleFileUpload(MultipartFile file, String fileName, String fileExt, Long votingId);
 
