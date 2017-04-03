@@ -1,9 +1,6 @@
 package kz.bsbnb.controller.impl;
 
-import kz.bsbnb.common.bean.OrgBean;
-import kz.bsbnb.common.bean.RegOrgBean;
-import kz.bsbnb.common.bean.ValueBean;
-import kz.bsbnb.common.bean.VotingBean;
+import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.FileConst;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
@@ -23,9 +20,7 @@ import javax.validation.Valid;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -184,12 +179,57 @@ public class AdminControllerImpl implements IAdminController {
                 result.add(userController.castToBean(voting, user));
             }
         }
+        Collections.sort(result, new Comparator<VotingBean>() {
+            @Override
+            public int compare(VotingBean o1, VotingBean o2) {
+                return o1.getId().compareTo(o2.getId())*(-1);
+            }
+        });
         return result;
     }
 
     @Override
     @RequestMapping(value = "/uploadFile/{votingId}", method = RequestMethod.POST)
-    public String handleFileUpload(
+    public FileUploadBean handleFileUpload(
+            @RequestParam("file") MultipartFile file, @RequestParam String fileName, @RequestParam String fileExt, @PathVariable Long votingId) {
+        String guid = StringUtil.SHA(fileName).substring(0, 7);
+        Date now = new Date();
+        String name = now.getTime() + guid + votingId;
+        Voting voting = votingRepository.findOne(votingId);
+        FileUploadBean result = new FileUploadBean();
+        if (!file.isEmpty()) {
+            if (voting != null) {
+                try {
+                    byte[] bytes = file.getBytes();
+                    BufferedOutputStream stream =
+                            new BufferedOutputStream(new FileOutputStream(new File(FileConst.DIR + name + "." + fileExt)));
+                    stream.write(bytes);
+                    stream.close();
+                    Files files = new Files();
+                    files.setFileName(fileName + "." + fileExt);
+                    files.setFilePath(name + "-" + fileExt);
+                    files.setVotingId(voting);
+                    files = filesRepository.save(files);
+                    result.setMessage( "Вы успешно загрузили " + fileName + " в " + FileConst.DIR + name + "." + fileExt + " !");
+                    result.setId(files.getId());
+                    result.setFileName(files.getFileName());
+                    result.setFilePath(files.getFilePath());
+                    return result;
+                } catch (Exception e) {
+                    result.setMessage("Ошибка при загрузке " + fileName + " => " + e.getMessage());
+                    return result;
+                }
+            } else {
+                result.setMessage( "Нет голосования с id = " + votingId);
+                return result;
+            }
+        } else {
+            result.setMessage( "Произошла ошибка при загрузке " + fileName + " Файл пуст.");
+            return result;
+        }
+    }
+
+    public String handleFileUploadOld(
             @RequestParam("file") MultipartFile file, @RequestParam String fileName, @RequestParam String fileExt, @PathVariable Long votingId) {
         String guid = StringUtil.SHA(fileName).substring(0, 7);
         Date now = new Date();

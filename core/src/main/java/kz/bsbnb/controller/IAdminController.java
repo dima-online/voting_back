@@ -1,9 +1,6 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.OrgBean;
-import kz.bsbnb.common.bean.RegOrgBean;
-import kz.bsbnb.common.bean.ValueBean;
-import kz.bsbnb.common.bean.VotingBean;
+import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.model.Files;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,7 +16,7 @@ public interface IAdminController {
 
     List<VotingBean> listVoting(Long orgId, Long userId, int page, int count);
 
-    String handleFileUpload(MultipartFile file, String fileName, String fileExt, Long votingId);
+    FileUploadBean handleFileUpload(MultipartFile file, String fileName, String fileExt, Long votingId);
 
     List<Files> getVotingFiles(Long votingId);
 
