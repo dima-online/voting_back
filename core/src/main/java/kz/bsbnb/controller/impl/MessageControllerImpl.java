@@ -477,7 +477,7 @@ public class MessageControllerImpl implements IMessageController {
         result.setBody(message.getBody());
         result.setDateCreate(message.getDateCreate());
         result.setFromUser(message.getFromUser());
-        result.setMessageCount(message.getMessageSet() == null ? 0 : message.getMessageSet().size());
+        result.setMessageCount(1+(message.getMessageSet() == null ? 0 : message.getMessageSet().size()));
         if (message.getOrganisationId() != null) {
             result.setOrganisationId(message.getOrganisationId().getId());
             result.setOrganisationName(message.getOrganisationId().getOrganisationName());

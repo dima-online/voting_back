@@ -732,7 +732,16 @@ public class VotingControllerImpl implements IVotingController {
                 repQuestionBean.setPrivCanVote(question.getPrivCanVote());
                 repQuestionBean.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
                 repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
-                for (Answer answer : question.getAnswerSet()) {
+                ArrayList<Answer> answers = new ArrayList<>();
+                answers.addAll(question.getAnswerSet());
+                Collections.sort(answers, new Comparator<Answer>() {
+                    @Override
+                    public int compare(Answer o1, Answer o2) {
+                        return o1.getId().compareTo(o2.getId());
+                    }
+                });
+
+                for (Answer answer : answers) {
                     RepAnswerBean repAnswerBean = new RepAnswerBean();
                     repAnswerBean.setId(answer.getId());
                     repAnswerBean.setScore(0);
@@ -753,15 +762,17 @@ public class VotingControllerImpl implements IVotingController {
                             }
                         }
                         if (!isFound) {
-                            repAnswerBean = new RepAnswerBean();
-                            repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
-                            repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
-                            if (question.getQuestionType().equals("ORDINARY")) {
-                                repAnswerBean.setScore(decision.getScore());
-                            } else {
-                                repAnswerBean.setScore(decision.getScore());
+                            if (decision.getAnswerId() != null) {
+                                repAnswerBean = new RepAnswerBean();
+                                repAnswerBean.setId(decision.getAnswerId() == null ? null : decision.getAnswerId().getId());
+                                repAnswerBean.setAnswerText(decision.getAnswerId() == null ? "Проголосовало" : decision.getAnswerId().getAnswer());
+                                if (question.getQuestionType().equals("ORDINARY")) {
+                                    repAnswerBean.setScore(decision.getScore());
+                                } else {
+                                    repAnswerBean.setScore(decision.getScore());
+                                }
+                                repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
                             }
-                            repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
                         } else {
                             if (question.getQuestionType().equals("ORDINARY")) {
                                 repAnswerBean.setScore(repAnswerBean.getScore() + decision.getScore());
@@ -889,7 +900,7 @@ public class VotingControllerImpl implements IVotingController {
                     voterCount++;
                 }
             }
-            if (voting.getKvoroom()!=null && voting.getKvoroom()) {
+            if (voting.getKvoroom() != null && voting.getKvoroom()) {
                 voterCount = voting.getOrganisationId().getAllShareCount();
             }
 
