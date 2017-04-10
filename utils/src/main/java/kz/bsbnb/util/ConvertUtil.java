@@ -15,6 +15,7 @@ public class ConvertUtil {
 
     public static String digits2Text(Double d){
         if(d == null || d < 0.0) return "";
+        if (d==0.0) return "ноль";
         String s = d.toString();
         int n = s.length() - s.lastIndexOf('.');
         if(n > 3) return "";

@@ -25,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.NumberFormatter;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.FileInputStream;
@@ -889,8 +890,12 @@ public class VotingControllerImpl implements IVotingController {
             map.put("date_begin", ftLong.format(voting.getDateBegin()));
             map.put("date_begin_short", ft.format(voting.getDateBegin()) + " года");
             map.put("date_end", ftLong.format(voting.getDateEnd()));
-            ReestrHead reestr = reestrHeadRepository.findOne(voting.getLastReestrId());
-            map.put("reestr_date", ft.format(reestr.getDateCreate()));
+            if (voting.getLastReestrId() != null) {
+                ReestrHead reestr = reestrHeadRepository.findOne(voting.getLastReestrId());
+                map.put("reestr_date", ft.format(reestr.getDateCreate()));
+            } else {
+                map.put("reestr_date", "без реестра");
+            }
 
             Long realCount = 0L;
             Long voterCount = 0L;
@@ -904,9 +909,9 @@ public class VotingControllerImpl implements IVotingController {
                 voterCount = voting.getOrganisationId().getAllShareCount();
             }
 
-            map.put("total_count", String.valueOf(voterCount));
+            map.put("total_count", StringUtil.parseToStr(voterCount));
 
-            map.put("real_count", String.valueOf(realCount));
+            map.put("real_count", StringUtil.parseToStr(realCount));
             map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
 
             map.put("real_count_text", ConvertUtil.digits2Text(realCount.doubleValue()));
@@ -1131,7 +1136,7 @@ public class VotingControllerImpl implements IVotingController {
                 }
             }
         }
-        return vote * 2 > all;
+        return vote * 2 > (all==null?0:all);
     }
 
     @Override

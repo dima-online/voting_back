@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Random;
 
 /**
@@ -122,5 +124,22 @@ public class StringUtil {
             }
         }
         return false;
+    }
+
+    public static final String DECIMAL_PATTERN = "###,###.###";
+    public static final String INTEGER_PATTERN = "###,###";
+
+    public static String parseToStr(Object value) {
+        String format = DECIMAL_PATTERN;
+        if (value instanceof BigInteger || value instanceof Integer || value instanceof Long) {
+            format = INTEGER_PATTERN;
+        }
+        DecimalFormat myFormatter = new DecimalFormat(format);
+        DecimalFormatSymbols formatSymbols = myFormatter.getDecimalFormatSymbols();
+        formatSymbols.setGroupingSeparator(' ');
+        myFormatter.setDecimalFormatSymbols(formatSymbols);
+
+        String output = myFormatter.format(value);
+        return output;
     }
 }
