@@ -11,8 +11,16 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("org.liquibase:liquibase-gradle-plugin:1.2.1")
         classpath("com.sun.mail:javax.mail:1.5.6")
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3")
     }
 }
+
+plugins {
+    id "org.sonarqube" version "2.3"
+}
+
+
+apply plugin: "org.sonarqube"
 
 allprojects {
     group = "kz.bsbnb"
@@ -62,6 +70,8 @@ subprojects {
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
 }
+
+
 springBoot {
     mainClass = 'kz.bsbnb.BlockChainApplication'
 }
