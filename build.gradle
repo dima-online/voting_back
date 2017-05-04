@@ -1,4 +1,6 @@
+
 buildscript {
+
     ext {
         dependencyManagementPluginVersion = '0.5.3.RELEASE'
         springBootVersion = '1.4.0.RELEASE'
@@ -12,14 +14,13 @@ buildscript {
         classpath("org.liquibase:liquibase-gradle-plugin:1.2.1")
         classpath("com.sun.mail:javax.mail:1.5.6")
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3")
+
     }
 }
 
 plugins {
     id "org.sonarqube" version "2.3"
 }
-
-
 apply plugin: "org.sonarqube"
 
 allprojects {
@@ -30,8 +31,16 @@ allprojects {
     apply plugin: 'idea'
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
+
 }
 
+/*sonarqube {
+    properties {
+        property "sonar.projectName", "Java :: Simple Project :: SonarQube Scanner for Gradle"
+        property "sonar.projectKey", "org.sonarqube:java-gradle-simple"
+        property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
+    }
+}*/
 subprojects {
     repositories {
         mavenCentral()
@@ -70,8 +79,6 @@ subprojects {
         testCompile('org.springframework.boot:spring-boot-starter-test')
     }
 }
-
-
 springBoot {
     mainClass = 'kz.bsbnb.BlockChainApplication'
 }

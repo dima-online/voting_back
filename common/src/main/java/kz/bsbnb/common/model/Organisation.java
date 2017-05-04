@@ -52,6 +52,9 @@ public class Organisation implements Serializable {
     @Basic(optional = false)
     @Column(name = "all_share_count")
     private Long allShareCount;
+    @Size(max = 200)
+    @Column(name = "executive_name",nullable = true)
+    private String executiveName;
 
     public Organisation() {
     }
@@ -98,6 +101,14 @@ public class Organisation implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getExecutiveName() {
+        return executiveName;
+    }
+
+    public void setExecutiveName(String executiveName) {
+        this.executiveName = executiveName;
     }
 
     @XmlTransient

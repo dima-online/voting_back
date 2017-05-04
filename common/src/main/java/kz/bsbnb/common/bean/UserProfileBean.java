@@ -18,6 +18,15 @@ public class UserProfileBean {
     private List<UserOrgBean> beanList;
     private Boolean isOrg;
     private String voterIin;
+    private String executiveOfficer;
+
+    public String getExecutiveOfficer() {
+        return executiveOfficer;
+    }
+
+    public void setExecutiveOfficer(String executiveOfficer) {
+        this.executiveOfficer = executiveOfficer;
+    }
 
     public UserProfileBean() {
     }

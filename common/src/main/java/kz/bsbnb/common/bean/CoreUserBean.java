@@ -19,6 +19,15 @@ public class CoreUserBean {
     private String fullName;
     private Integer shareCount;
     private Long organisationId;
+    private String executiveOfficer;
+
+    public String getExecutiveOfficer() {
+        return executiveOfficer;
+    }
+
+    public void setExecutiveOfficer(String executiveOfficer) {
+        this.executiveOfficer = executiveOfficer;
+    }
 
     public CoreUserBean() {
         this.roles = new ArrayList<>();

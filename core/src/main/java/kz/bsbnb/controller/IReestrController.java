@@ -26,4 +26,5 @@ public interface IReestrController {
     SimpleResponse checkRegistry(Long votingId, String regDate);
     SimpleResponse getRegistry(Long votingId, String regDate);
     SimpleResponse getChief(String bin);
+    public SimpleResponse getChiefByOrg(Long id);
 }

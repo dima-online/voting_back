@@ -109,6 +109,17 @@ public class UserControllerImpl implements IUserController {
             }
             userData.setVoterIin(user.getUserInfoId().getVoterIin());
         }
+        try {
+            if (user.getUserInfoId().getOrg()) {
+
+                User executive = userRepository.findByIin(user.getExecutiveOfficeIin());
+                String executiveOfficer = executive.getUserInfoId().getFirstName() + " " + executive.getUserInfoId().getMiddleName() + " " + executive.getUserInfoId().getLastName();
+                System.out.println(executiveOfficer);
+                userData.setExecutiveOfficer(executiveOfficer);
+            }
+        }catch(Exception e) {
+            userData.setExecutiveOfficer("");
+        }
         userData.setIin(user.getIin());
         List<UserOrgBean> userBeanList = new ArrayList<>();
         List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
@@ -163,6 +174,7 @@ public class UserControllerImpl implements IUserController {
     @Override
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public SimpleResponse regUser(@RequestBody @Valid RegUserBean userBean) {
+        System.out.println(userBean.getVoterIin());
         User user = userRepository.findByIin(userBean.getIin());
         if (user == null) {
             try {
@@ -173,6 +185,7 @@ public class UserControllerImpl implements IUserController {
                         user.setIin(userBean.getIin());
                         user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
                         user.setPassword(pwd(userBean.getPassword()));
+                        user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
                         user.setStatus("NEW");
                         user = userRepository.save(user);
                         UserInfo userInfo = new UserInfo();
@@ -281,6 +294,7 @@ public class UserControllerImpl implements IUserController {
         }
         if (user.getPassword() != null && localUser.getPassword().equals(user.getPassword())) {
             UserBean userBean = castUser(localUser);
+            System.out.println(userBean.getVoterIin());
             return new SimpleResponse(userBean).SUCCESS();
         } else {
             return new SimpleResponse("Неверный пароль").ERROR();
@@ -313,6 +327,7 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
     public SimpleResponse updateProfileUser(@RequestBody @Valid RegUserBean userBean) {
         User user = userRepository.findByIin(userBean.getIin());
+        System.out.println(userBean.getExecutiveOfficer());
         if (user != null) {
             UserInfo userInfo;
             if (user.getUserInfoId() != null) {
@@ -332,6 +347,9 @@ public class UserControllerImpl implements IUserController {
                 if (userBean.getOrg() != null && userBean.getOrg()) {
                     if (userBean.getFullName() != null) {
                         userInfo.setLastName(userBean.getFullName());
+                    }
+                    if(userBean.getExecutiveOfficer() != null) {
+                        user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
                     }
                 }
 
@@ -397,6 +415,7 @@ public class UserControllerImpl implements IUserController {
         bean.setOrganisationName(org.getOrganisationName());
         bean.setOrganisationNum(org.getOrganisationNum());
         bean.setAllShareCount(org.getAllShareCount());
+        bean.setExecutiveName(org.getExecutiveName());
         Integer cnt = 0;
         for (UserRoles roles : org.getUserRolesSet()) {
             if (roles.getRole().equals(Role.ROLE_USER)) {
@@ -433,9 +452,42 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
+        System.out.println(localUser.getId());
         LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
         if (localUser != null) {
             List<Voting> vots = votingRepository.findWorkVoting();
+            System.out.println(vots.size());
+            for (Voting voting : vots) {
+                if (!map.containsKey(voting.getOrganisationId().getId())) {
+                    OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
+                    organisation.setVotingSet(new ArrayList<>());
+                    map.put(voting.getOrganisationId().getId(), organisation);
+                }
+                VotingBean votingBean = castToBean(voting, localUser);
+                map.get(voting.getOrganisationId().getId()).getVotingSet().add(votingBean);
+            }
+            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
+            while (itr1.hasNext()) {
+                Map.Entry<Long, OrgBean> entry = itr1.next();
+                result.add(entry.getValue());
+            }
+        }
+        for(OrgBean bean : result) {
+            System.out.println(bean);
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/orgs/workvoting/user/{userId}", method = RequestMethod.GET)
+    public List<OrgBean> getAllOrgsWithWorkVotingForUser(@PathVariable Long userId) {
+        User localUser = userRepository.findOne(userId);
+        List<OrgBean> result = new ArrayList<>();
+        System.out.println(localUser.getId());
+        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
+        if (localUser != null) {
+            List<Voting> vots = votingRepository.findWorkingForUser(localUser);
+            System.out.println(vots.size());
             for (Voting voting : vots) {
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
@@ -463,6 +515,34 @@ public class UserControllerImpl implements IUserController {
         if (localUser != null) {
             List<Voting> vots = votingRepository.findOldVoting();
             for (Voting voting : vots) {
+                System.out.println(voting.getId());
+                if (!map.containsKey(voting.getOrganisationId().getId())) {
+                    OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
+                    organisation.setVotingSet(new ArrayList<>());
+                    map.put(voting.getOrganisationId().getId(), organisation);
+                }
+                VotingBean votingBean = castToBean(voting, localUser);
+                map.get(voting.getOrganisationId().getId()).getVotingSet().add(votingBean);
+            }
+            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
+            while (itr1.hasNext()) {
+                Map.Entry<Long, OrgBean> entry = itr1.next();
+                result.add(entry.getValue());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @RequestMapping(value = "/orgs/oldvoting/user/{userId}", method = RequestMethod.GET)
+    public List<OrgBean> getAllOrgsWithOldVotingForUser(@PathVariable Long userId) {
+        User localUser = userRepository.findOne(userId);
+        List<OrgBean> result = new ArrayList<>();
+        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
+        if (localUser != null) {
+            List<Voting> vots = votingRepository.findOldForUser(localUser);
+            for (Voting voting : vots) {
+                System.out.println(voting.getId());
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
                     organisation.setVotingSet(new ArrayList<>());
@@ -528,6 +608,9 @@ public class UserControllerImpl implements IUserController {
             }
 
         }
+        for(QuestionBean bean : result) {
+            System.out.println(bean);
+        }
         return result;
     }
 
@@ -538,6 +621,17 @@ public class UserControllerImpl implements IUserController {
         userBean.setId(user.getId());
         userBean.setLogin(user.getUsername());
         userBean.setIin(user.getIin());
+        try {
+            if (user.getUserInfoId().getOrg()) {
+
+                User executive = userRepository.findByIin(user.getExecutiveOfficeIin());
+                String executiveOfficer = executive.getUserInfoId().getFirstName() + " " + executive.getUserInfoId().getMiddleName() + " " + executive.getUserInfoId().getLastName();
+                System.out.println(executiveOfficer);
+                userBean.setExecutiveOfficer(executiveOfficer);
+            }
+        }catch(Exception e) {
+            userBean.setExecutiveOfficer("");
+        }
         if (user.getUserInfoId() != null) {
             userBean.setEmail(user.getUserInfoId().getEmail());
             String fName = user.getUserInfoId().getLastName() == null ? " " : user.getUserInfoId().getLastName();
@@ -637,6 +731,9 @@ public class UserControllerImpl implements IUserController {
                 }
             }
         }
+        /*for (QuestionFile qFile : q.getQuestionFileSet()) {
+            files.add(qFile.getFilesId());
+        }*/
         result.setQuestionFileSet(files);
         List<DecisionBean> beanSet = new ArrayList<>();
         for (Decision decision : q.getDecisionSet()) {
@@ -808,10 +905,12 @@ public class UserControllerImpl implements IUserController {
     public void getVotingQuestions(@PathVariable String filePath,
                                    HttpServletResponse response) {
         String fileName;
+        String diskPath = "C:\\test\\";
+        //String diskPath = "/opt/voting/files/";
         if (filePath.contains("-")) {
-            fileName = "/opt/voting/files/" + filePath.replace("-", ".");
+            fileName = diskPath + filePath.replace("-", ".");
         } else {
-            fileName = "/opt/voting/files/" + filePath + ".pdf";
+            fileName = diskPath + filePath + ".pdf";
         }
         System.out.println("fileName=" + fileName);
         File file = new File(fileName);
@@ -825,12 +924,14 @@ public class UserControllerImpl implements IUserController {
                 org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
                 response.flushBuffer();
             } catch (IOException ex) {
+                ex.printStackTrace();
                 throw new RuntimeException("IOError writing file to output stream");
             }
         } else {
             try {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new RuntimeException("IOError writing file to output stream");
             }
 

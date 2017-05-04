@@ -31,7 +31,7 @@ public class ReplaceVariables {
 
         IXDocReport report = XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Freemarker);
 
-        File fileOutput = new File("/opt/voting/files/" + fileName);
+        File fileOutput = new File("C:\\test\\" + fileName);
 
         try (FileOutputStream out = new FileOutputStream(fileOutput)) {
             report.process(map, out);

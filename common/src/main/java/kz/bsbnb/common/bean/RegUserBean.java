@@ -20,6 +20,7 @@ public class RegUserBean {
     private String oldPassword;
     private Integer shareCount;
     private String voterIin;
+    private String executiveOfficer;
 
     public RegUserBean() {
     }
@@ -142,5 +143,13 @@ public class RegUserBean {
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    public String getExecutiveOfficer() {
+        return executiveOfficer;
+    }
+
+    public void setExecutiveOfficer(String executiveOfficer) {
+        this.executiveOfficer = executiveOfficer;
     }
 }

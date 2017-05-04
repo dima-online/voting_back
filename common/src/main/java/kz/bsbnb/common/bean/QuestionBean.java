@@ -127,4 +127,23 @@ public class QuestionBean {
     public void setVotingId(Long votingId) {
         this.votingId = votingId;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionBean{" +
+                "id=" + id +
+                ", question='" + question + '\'' +
+                ", questionType='" + questionType + '\'' +
+                ", num=" + num +
+                ", decision='" + decision + '\'' +
+                ", decisionOS=" + decisionOS +
+                ", answerSet=" + answerSet +
+                ", decisionSet=" + decisionSet +
+                ", votingId=" + votingId +
+                ", questionFileSet=" + questionFileSet +
+                ", decisionStatus='" + decisionStatus + '\'' +
+                ", maxCount=" + maxCount +
+                ", privCanVote=" + privCanVote +
+                '}';
+    }
 }

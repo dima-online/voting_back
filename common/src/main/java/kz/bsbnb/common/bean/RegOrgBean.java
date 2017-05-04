@@ -17,8 +17,18 @@ public class RegOrgBean {
     private String address;
     private String email;
     private String phone;
+    private String executiveName;
+    private String executiveId;
 
     public RegOrgBean() {
+    }
+
+    public String getExecutiveId() {
+        return executiveId;
+    }
+
+    public void setExecutiveId(String executiveId) {
+        this.executiveId = executiveId;
     }
 
     public Integer getUserCount() {
@@ -59,6 +69,14 @@ public class RegOrgBean {
 
     public void setOrganisationName(String organisationName) {
         this.organisationName = organisationName;
+    }
+
+    public String getExecutiveName() {
+        return executiveName;
+    }
+
+    public void setExecutiveName(String executiveName) {
+        this.executiveName = executiveName;
     }
 
     public String getOrganisationNum() {

@@ -55,6 +55,9 @@ public class User implements Serializable, UserDetails {
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private UserInfo userInfoId;
+    @Size(max = 255)
+    @Column(name="executiveIin")
+    private String executiveOfficeIin;
 
     public User() {
     }
@@ -116,6 +119,14 @@ public class User implements Serializable, UserDetails {
 
     public void setUserInfoId(UserInfo userInfoId) {
         this.userInfoId = userInfoId;
+    }
+
+    public String getExecutiveOfficeIin() {
+        return executiveOfficeIin;
+    }
+
+    public void setExecutiveOfficeIin(String executiveOfficeIin) {
+        this.executiveOfficeIin = executiveOfficeIin;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Temporal;
 import java.util.List;
 
 /**
@@ -20,4 +21,5 @@ public interface IQuestionRepository extends PagingAndSortingRepository<Question
     @Transactional
     @Query("delete from Question d where d.id = ?1")
     void deleteByIds(Long id);
+
 }

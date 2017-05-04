@@ -24,7 +24,7 @@ public class BlockChainApplication {
     public static void main(String[] args) {
         SpringApplication.run(BlockChainApplication.class, args);
         //Сделано для инициализации сертификатов
-        CryptUtil.signXML("<test></test>","/opt/voting/test/test.p12","123456");
+        CryptUtil.signXML("<test></test>","C:\\Users\\Serik.Mukashev\\Documents\\voting\\RSA256_cff149024ec3c1bc05abb2bf7a4780e29ee692bc.p12","123456");
     }
 
     @Bean

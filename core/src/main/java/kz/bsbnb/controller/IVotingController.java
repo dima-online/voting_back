@@ -77,5 +77,7 @@ public interface IVotingController {
 
     void updateQuestionDecisions(Long questionId);
 
+    public List<Voting> getOldVotingsForUser(Long userId, int page, int count);
+
     SimpleResponse editVotingWhenStarted(RegVotingBean votingBean, String reason);
 }

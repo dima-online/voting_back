@@ -18,6 +18,10 @@ public class OrgBean {
     private Integer userCount;
     private Integer votingCount;
     private Integer closedVotingCount;
+    private String executiveName;
+    private String email;
+    private String address;
+    private String phone;
 
     public OrgBean() {
     }
@@ -112,5 +116,59 @@ public class OrgBean {
 
     public void setAllShareCount(Long allShareCount) {
         this.allShareCount = allShareCount;
+    }
+
+    public String getExecutiveName() {
+        return executiveName;
+    }
+
+    public void setExecutiveName(String executiveName) {
+        this.executiveName = executiveName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    @Override
+    public String toString() {
+        return "OrgBean{" +
+                "id=" + id +
+                ", organisationName='" + organisationName + '\'' +
+                ", organisationNum='" + organisationNum + '\'' +
+                ", externalId='" + externalId + '\'' +
+                ", status='" + status + '\'' +
+                ", votingSet=" + votingSet +
+                ", shareCount=" + shareCount +
+                ", sharePercent=" + sharePercent +
+                ", allShareCount=" + allShareCount +
+                ", userCount=" + userCount +
+                ", votingCount=" + votingCount +
+                ", closedVotingCount=" + closedVotingCount +
+                ", executiveName='" + executiveName + '\'' +
+                ", email='" + email + '\'' +
+                ", address='" + address + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
     }
 }

@@ -51,7 +51,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<Organisation> getOrganisations(@RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "20") int count) {
+                                               @RequestParam(defaultValue = "30") int count) {
         // todo: pagination
         List<Organisation> organisations = StreamSupport.stream(organisationRepository.findAll(new PageRequest(page, count)).spliterator(), false)
                 .collect(Collectors.toList());
@@ -121,6 +121,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                     return new SimpleResponse("Неверный БИН").ERROR_CUSTOM();
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
             }
         }
@@ -203,6 +204,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
         result.setExternalId(org.getExternalId());
         result.setAllShareCount(org.getAllShareCount());
         result.setId(org.getId());
+        result.setExecutiveName(org.getExecutiveName());
         Integer cnt = 0;
         if (org.getUserRolesSet()!=null) {
             for (UserRoles roles : org.getUserRolesSet()) {
@@ -266,6 +268,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
         result.setOrganisationName(regOrgBean.getOrganisationName());
         result.setOrganisationNum(regOrgBean.getOrganisationNum());
         result.setStatus(regOrgBean.getStatus());
+        result.setExecutiveName(regOrgBean.getExecutiveName());
         return result;
     }
 

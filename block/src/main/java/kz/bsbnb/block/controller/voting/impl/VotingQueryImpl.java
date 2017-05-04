@@ -64,6 +64,7 @@ public class VotingQueryImpl implements IVotingQuery {
             @RequestParam(value = "question") final String question) {
         //String args = voteId + " " + question;
         String[] args = {String.valueOf(voteId),question};
+        System.out.println(voteId + "  " + question);
         HLCommand command = commandProcessor.createQueryCommand(args,"question",1,null,1L);
         try {
             return hyperLedgerProcessor.sendCommand(command);

@@ -112,7 +112,7 @@ public class ReestrControllerImpl implements IReestrController {
                 return new SimpleResponse("Список реестра пуст").ERROR_CUSTOM();
             }
         } else {
-            return new SimpleResponse("Нет такой заголовка в системе (" + reestrHead.getId() + ")").ERROR_CUSTOM();
+            return new SimpleResponse("Нет такого заголовка в системе (" + reestrHead.getId() + ")").ERROR_CUSTOM();
         }
     }
 
@@ -286,6 +286,7 @@ public class ReestrControllerImpl implements IReestrController {
             try {
                 IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
                 String vDate = regDate.replace("/", ".");
+                System.out.println(bin + " " + vDate);
                 int i = iercbVotingServicesPort.existsRegistry(bin, vDate);
                 if (i == 1) {
                     return new SimpleResponse("Реестр существует").SUCCESS();
@@ -309,6 +310,7 @@ public class ReestrControllerImpl implements IReestrController {
         if (voting != null) {
             String bin = voting.getOrganisationId().getOrganisationNum();
             IERCBVotingServicesservice service = new IERCBVotingServicesserviceLocator();
+
             try {
                 IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
                 String vDate = regDate.replace("/", ".");
@@ -320,9 +322,12 @@ public class ReestrControllerImpl implements IReestrController {
                     try {
                         truncatedDate = dateFormat.parse(regDate);
                     } catch (ParseException e) {
+                        e.printStackTrace();
                         return new SimpleResponse("Неверный формат даты").ERROR_CUSTOM();
                     }
+                    System.out.println(1111111111L);
                     reestrHead = reestrHeadRepository.findByIinAndDateCreate(bin, truncatedDate);
+
                     if (reestrHead == null) {
                         reestrHead = new ReestrHead();
                         reestrHead.setDateCreate(truncatedDate);
@@ -363,8 +368,10 @@ public class ReestrControllerImpl implements IReestrController {
                     return new SimpleResponse(registry.getErrorText()).ERROR_CUSTOM();
                 }
             } catch (ServiceException e) {
+                e.printStackTrace();
                 return new SimpleResponse("Ошибка при соединении с СВР").ERROR_CUSTOM();
             } catch (RemoteException e) {
+                e.printStackTrace();
                 return new SimpleResponse("Ошибка при запросе данных").ERROR_CUSTOM();
             }
         } else {
@@ -378,13 +385,22 @@ public class ReestrControllerImpl implements IReestrController {
         IERCBVotingServicesservice service = new IERCBVotingServicesserviceLocator();
         try {
             IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
+            System.out.println(iercbVotingServicesPort.getChief(bin));
             String resp = iercbVotingServicesPort.getChief(bin);
             return new SimpleResponse(resp).SUCCESS();
         } catch (ServiceException e) {
+            e.printStackTrace();
             return new SimpleResponse("Ошибка при соединении с СВР").ERROR_CUSTOM();
         } catch (RemoteException e) {
+            e.printStackTrace();
             return new SimpleResponse("Ошибка при запросе данных").ERROR_CUSTOM();
         }
+    }
+    @Override
+    @RequestMapping(value = "/getChiefByOrg/{id}", method = RequestMethod.GET)
+    public SimpleResponse getChiefByOrg(@PathVariable Long id) {
+        Organisation org = organisationRepository.findOne(id);
+        return getChief(org.getOrganisationNum());
     }
 
 }

@@ -148,6 +148,7 @@ public class CryptUtil {
 
     public static VerifyIIN verifyXml(String xmlString) {
         VerifyIIN result = new VerifyIIN(false, "", "");
+        //System.out.println(xmlString);
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
@@ -167,7 +168,8 @@ public class CryptUtil {
                 }
                 XMLSignature signature = new XMLSignature(sigElement, "");
                 KeyInfo ki = signature.getKeyInfo();
-                final X509Certificate cert = ki.getX509Certificate();
+                System.out.println(ki.containsX509Data());
+                X509Certificate cert = ki.getX509Certificate();
                 if (cert != null) {
                     String dn = cert.getSubjectDN().toString();
                     result.setVerify(signature.checkSignatureValue(cert));

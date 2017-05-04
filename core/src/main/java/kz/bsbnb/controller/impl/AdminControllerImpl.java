@@ -216,6 +216,7 @@ public class AdminControllerImpl implements IAdminController {
                     result.setFilePath(files.getFilePath());
                     return result;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     result.setMessage("Ошибка при загрузке " + fileName + " => " + e.getMessage());
                     return result;
                 }
@@ -250,6 +251,7 @@ public class AdminControllerImpl implements IAdminController {
                     filesRepository.save(files);
                     return "Вы успешно загрузили " + fileName + " в " + FileConst.DIR + name + "." + fileExt + " !";
                 } catch (Exception e) {
+                    e.printStackTrace();
                     return "Ошибка при загрузке " + fileName + " => " + e.getMessage();
                 }
             } else {

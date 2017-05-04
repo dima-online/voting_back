@@ -73,4 +73,8 @@ public interface IUserController {
     Role getRole(User user);
 
     String getFullName(UserInfo userInfo);
+
+    List<OrgBean> getAllOrgsWithOldVotingForUser(Long userId);
+
+    List<OrgBean> getAllOrgsWithWorkVotingForUser(Long userId);
 }

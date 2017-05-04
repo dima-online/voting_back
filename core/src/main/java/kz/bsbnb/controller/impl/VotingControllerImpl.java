@@ -1,6 +1,7 @@
 package kz.bsbnb.controller.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jline.internal.Log;
 import kz.bsbnb.block.bean.AccAnswer;
 import kz.bsbnb.block.bean.AccQuestion;
 import kz.bsbnb.block.controller.voting.IVotingInvoke;
@@ -101,9 +102,33 @@ public class VotingControllerImpl implements IVotingController {
     public List<Voting> getVotings(@PathVariable Long userId,
                                    @RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "20") int count) {
-        User user = userRepository.findOne(userId);
-        return StreamSupport.stream(votingRepository.findByUser(user, new PageRequest(page, count)).spliterator(), false)
+/*        User user = userRepository.findOne(userId);
+        return StreamSupport.stream(votingRepository.findWorkingForUser(user).spliterator(), false)
                 .collect(Collectors.toList());
+                */
+        User user = userRepository.findOne(userId);
+        List<Voting> list = votingRepository.findWorkingForUser(user);
+        for(Voting v : list) {
+            System.out.println(v.getId());
+        }
+        return list;
+    }
+
+    @Override
+    @RequestMapping(value = "/list/old/{userId}", method = RequestMethod.GET)
+    public List<Voting> getOldVotingsForUser(@PathVariable Long userId,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "20") int count) {
+/*        User user = userRepository.findOne(userId);
+        return StreamSupport.stream(votingRepository.findWorkingForUser(user).spliterator(), false)
+                .collect(Collectors.toList());
+                */
+        User user = userRepository.findOne(userId);
+        List<Voting> list = votingRepository.findOldForUser(user);
+        for(Voting v : list) {
+            System.out.println(v.getId());
+        }
+        return list;
     }
 
     @Override
@@ -447,17 +472,29 @@ public class VotingControllerImpl implements IVotingController {
             result.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
             result.setVotingId(voting);
             result.setPrivCanVote(question.getPrivCanVote());
-            result.setNum(question.getNum());
-            result = questionRepository.save(result);
-            for (Long fileId : question.getFilesId()) {
-                Files file = filesRepository.findOne(fileId);
-                if (file != null) {
-                    QuestionFile questionFile = new QuestionFile();
-                    questionFile.setQuestionId(result);
-                    questionFile.setFilesId(file);
-                    questionFileRepository.save(questionFile);
+            //result.setNum(questionRepository.getMaxNumForQuestion(votingId) + 1);
+            List<Question> list = questionRepository.findByVotingId(voting);
+            int max = 0;
+            try {
+                for (Question qq : list) {
+                    if (max < qq.getNum()) max = qq.getNum();
                 }
+            }catch(Exception e) {
+                max = 0;
             }
+            result.setNum(max + 1);
+            result = questionRepository.save(result);
+            try {
+                for (Long fileId : question.getFilesId()) {
+                    Files file = filesRepository.findOne(fileId);
+                    if (file != null) {
+                        QuestionFile questionFile = new QuestionFile();
+                        questionFile.setQuestionId(result);
+                        questionFile.setFilesId(file);
+                        questionFileRepository.save(questionFile);
+                    }
+                }
+            }catch(Exception e) { e.printStackTrace();}
             if (question.getQuestionType().equals(QuestionType.ORDINARY.name())) {
                 addOrdinaryAnswer(result);
             }
@@ -478,7 +515,6 @@ public class VotingControllerImpl implements IVotingController {
             ques.setQuestion(question.getQuestion());
             ques.setMaxCount(question.getMaxCount() == null ? ques.getMaxCount() : question.getMaxCount());
             ques.setVotingId(voting);
-            ques.setNum(question.getNum());
             ques = questionRepository.save(ques);
             for (QuestionFile file : ques.getQuestionFileSet()) {
                 questionFileRepository.deleteByIds(file.getId());
@@ -875,7 +911,8 @@ public class VotingControllerImpl implements IVotingController {
     @RequestMapping(value = "/reportWord/{votingId}", method = RequestMethod.GET)
     public void getVotingQuestions(@PathVariable Long votingId,
                                    HttpServletResponse response) {
-
+        String filepath = "C:\\test\\";
+        //String filepath = "/opt/voting/test/";
         Voting voting = votingRepository.findOne(votingId);
         if (voting != null && voting.getDateClose() != null) {
             Map<String, String> map = new HashMap<>();
@@ -949,20 +986,20 @@ public class VotingControllerImpl implements IVotingController {
 
             String tempName = "";
             if (voting.getKvoroom()) {
-                tempName = "/opt/voting/test/test.docx";
+                tempName = filepath + "test.docx";
             } else {
-                tempName = "/opt/voting/test/test2.docx";
+                tempName = filepath + "test2.docx";
             }
             String fileName = WordUtil.fill(map, votingId, tempName);
 
             if (fileName == null) {
                 if (voting.getKvoroom()) {
-                    fileName = "/opt/voting/files/test.docx";
+                    fileName = filepath + "test.docx";
                 } else {
-                    fileName = "/opt/voting/files/test2.docx";
+                    fileName = filepath + "test2.docx";
                 }
             } else {
-                fileName = "/opt/voting/files/" + fileName;
+                fileName = filepath + fileName;
             }
             File file = new File(fileName);
             if (file.exists() && !file.isDirectory()) {
@@ -992,9 +1029,12 @@ public class VotingControllerImpl implements IVotingController {
     public void checkVotingInBlockChain() {
         List<Voting> toVotings = votingRepository.findByStatus("TO_BLOCKCHAIN");
         List<Voting> newVotings = votingRepository.findByStatus("NEW");
+
         for (Voting voting : toVotings) {
             newVotings.add(voting);
         }
+
+
         for (Voting voting : newVotings) {
             if (voting.getDateBegin() != null && voting.getDateBegin().before(new Date()) && voting.getDateEnd().after(new Date())) {
                 System.out.println("Голосование с ID " + voting.getId() + " с датой начала " + voting.getDateBegin());
@@ -1052,6 +1092,7 @@ public class VotingControllerImpl implements IVotingController {
                             System.out.println("accumQuestions = " + accumQuestions);
                             System.out.println("userPoints = " + userPoints);
                             Object o = votingInvoke.register(voting.getId(), ordinaryQuestions.trim(), accumQuestions, userPoints.trim());
+                            System.out.println(((HLMessage)o).getResult().getMessage());
                             if (o instanceof HLMessage) {
                                 HLMessage m = (HLMessage) o;
                                 if (m.getError() != null) {
@@ -1062,7 +1103,7 @@ public class VotingControllerImpl implements IVotingController {
                                     votingRepository.save(voting);
                                 }
                             } else {
-                                System.out.println("o=" + o.toString());
+                                //System.out.println("o=" + o);
                             }
                         } else {
                             System.out.println("Не имеет вопросов");
@@ -1076,7 +1117,7 @@ public class VotingControllerImpl implements IVotingController {
             }
         }
 
-
+        System.out.println(blockchainProperties.getStatus());
         if (blockchainProperties.getStatus().equals("ACTIVE")) {
             List<Voting> createdVotings = votingRepository.findByStatus("CREATED");
             for (Voting voting : createdVotings) {
