@@ -21,6 +21,7 @@ public class RegUserBean {
     private Integer shareCount;
     private String voterIin;
     private String executiveOfficer;
+    private String executiveOfficerName;
 
     public RegUserBean() {
     }
@@ -151,5 +152,13 @@ public class RegUserBean {
 
     public void setExecutiveOfficer(String executiveOfficer) {
         this.executiveOfficer = executiveOfficer;
+    }
+
+    public String getExecutiveOfficerName() {
+        return executiveOfficerName;
+    }
+
+    public void setExecutiveOfficerName(String executiveOfficerName) {
+        this.executiveOfficerName = executiveOfficerName;
     }
 }

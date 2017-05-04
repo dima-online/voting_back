@@ -31,7 +31,7 @@ public class Decision implements Serializable {
     private Date dateCreate;
     @Column(name = "score")
     private Integer score;
-    @JoinColumn(name = "answer_id", referencedColumnName = "id")
+    @JoinColumn(name = "answer_id", referencedColumnName = "id",nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Answer answerId;
     @JoinColumn(name = "question_id", referencedColumnName = "id")

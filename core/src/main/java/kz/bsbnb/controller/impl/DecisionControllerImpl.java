@@ -8,9 +8,7 @@ import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IDecisionController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
-import kz.bsbnb.repository.IDecisionRepository;
-import kz.bsbnb.repository.IQuestionRepository;
-import kz.bsbnb.repository.IUserRepository;
+import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CryptUtil;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
@@ -42,6 +40,8 @@ public class DecisionControllerImpl implements IDecisionController {
     IVotingController votingController;
     @Autowired
     IUserController userController;
+    @Autowired
+    IVoterRepository voterRepository;
 
 
     @Override
@@ -82,6 +82,8 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse delDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
+        System.out.println(bean.getComments());
+        //Decision dec = (Decision) decisionRepository.findByQuestionIdAndVoterId(questionRepository.findOne(bean.getQuestionId()), voterRepository.findOne(bean.getUserId()));
         if (bean.getConfirm() != null && bean.getConfirm().getUserId() != null) {
             User admin = userRepository.findOne(bean.getConfirm().getUserId());
             Role role = userController.getRole(admin);
@@ -96,15 +98,18 @@ public class DecisionControllerImpl implements IDecisionController {
                                 isFound = true;
                             }
                         }
+                        decision.setComments(bean.getComments());
                         decision.setStatus("KILLED");
                         decisionRepository.save(decision);
 //                decisionRepository.deleteByIds(decision.getId());
                     }
-                    if (bean.getComments() != null && !"".equals(bean.getComments()) && !isFound) {
-                        Decision decision = new Decision();
+                    if (bean.getComments() != null && !bean.getComments().equals("") && !isFound) {
+                        Decision decision = decisionRepository.findOne(bean.getId());
                         decision.setComments(bean.getComments());
+                        System.out.println(bean.getComments());
                         decision.setStatus("KILLED");
                         decision.setDateCreate(new Date());
+                        decision.setAnswerId(dec.getAnswerId());
                         decision.setQuestionId(dec.getQuestionId());
                         decision.setVoterId(dec.getVoterId());
                         decisionRepository.save(decision);
@@ -120,6 +125,7 @@ public class DecisionControllerImpl implements IDecisionController {
         } else {
             result.setData("Введите данные администратора").ERROR_CUSTOM();
         }
+        System.out.println("Here");
         return result;
     }
 
@@ -342,6 +348,7 @@ public class DecisionControllerImpl implements IDecisionController {
             result.setData(str).ERROR_CUSTOM();
         } else {
             for (Object obj : decisions) {
+                System.out.println((Decision)obj);
                 decisionRepository.save((Decision) obj);
             }
             result.setData(decisions).SUCCESS();

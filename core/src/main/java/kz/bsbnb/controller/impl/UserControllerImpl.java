@@ -115,7 +115,8 @@ public class UserControllerImpl implements IUserController {
                 User executive = userRepository.findByIin(user.getExecutiveOfficeIin());
                 String executiveOfficer = executive.getUserInfoId().getFirstName() + " " + executive.getUserInfoId().getMiddleName() + " " + executive.getUserInfoId().getLastName();
                 System.out.println(executiveOfficer);
-                userData.setExecutiveOfficer(executiveOfficer);
+                userData.setExecutiveOfficer(user.getExecutiveOfficeIin());
+                userData.setExecutiveOfficerName(executiveOfficer);
             }
         }catch(Exception e) {
             userData.setExecutiveOfficer("");
@@ -327,7 +328,7 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
     public SimpleResponse updateProfileUser(@RequestBody @Valid RegUserBean userBean) {
         User user = userRepository.findByIin(userBean.getIin());
-        System.out.println(userBean.getExecutiveOfficer());
+        System.out.println(userBean.getFullName());
         if (user != null) {
             UserInfo userInfo;
             if (user.getUserInfoId() != null) {
@@ -399,10 +400,16 @@ public class UserControllerImpl implements IUserController {
     @Override
     @RequestMapping(value = "/orgs/{userId}", method = RequestMethod.GET)
     public List<OrgBean> getAllOrgs(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
+          User localUser = userRepository.findOne(userId);
+//        List<OrgBean> result = new ArrayList<>();
+//        for (UserRoles userRoles : localUser.getUserRolesSet()) {
+//            result.add(castToBean(userRoles.getOrgId(), localUser));
+//            System.out.println(userRoles.getOrgId().getOrganisationName());
+//        }
         List<OrgBean> result = new ArrayList<>();
-        for (UserRoles userRoles : localUser.getUserRolesSet()) {
-            result.add(castToBean(userRoles.getOrgId(), localUser));
+        List<Organisation> orgs = (List<Organisation>) organisationRepository.findAll();
+        for(Organisation org1 : orgs){
+            result.add(castToBean(org1,localUser));
         }
         return result;
     }
@@ -626,8 +633,9 @@ public class UserControllerImpl implements IUserController {
 
                 User executive = userRepository.findByIin(user.getExecutiveOfficeIin());
                 String executiveOfficer = executive.getUserInfoId().getFirstName() + " " + executive.getUserInfoId().getMiddleName() + " " + executive.getUserInfoId().getLastName();
-                System.out.println(executiveOfficer);
-                userBean.setExecutiveOfficer(executiveOfficer);
+                System.out.println(user.getExecutiveOfficeIin());
+                userBean.setExecutiveOfficerName(executiveOfficer);
+                userBean.setExecutiveOfficer(user.getExecutiveOfficeIin());
             }
         }catch(Exception e) {
             userBean.setExecutiveOfficer("");

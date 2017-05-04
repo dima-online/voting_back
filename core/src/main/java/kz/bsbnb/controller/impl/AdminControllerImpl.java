@@ -6,6 +6,7 @@ import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IAdminController;
 import kz.bsbnb.controller.IOrganisationController;
+import kz.bsbnb.controller.IReestrController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CheckUtil;
@@ -45,12 +46,15 @@ public class AdminControllerImpl implements IAdminController {
     private IOrganisationController organisationController;
     @Autowired
     private IOrganisationRepository organisationRepository;
+    @Autowired
+    private IReestrController reestrController;
 
     @Override
     @RequestMapping(value = "/newOrg/{userId}", method = RequestMethod.POST)
     public SimpleResponse newOrg(@PathVariable Long userId, @RequestBody @Valid RegOrgBean orgBean) {
         Organisation oldOrg = organisationRepository.findByOrganisationNum(orgBean.getOrganisationNum());
-
+        String executiveName = reestrController.getChiefName(orgBean.getOrganisationNum());
+        orgBean.setExecutiveName(executiveName);
         if (oldOrg != null) {
             return new SimpleResponse("Эмитент с таким БИН существует").ERROR_CUSTOM();
         } else {

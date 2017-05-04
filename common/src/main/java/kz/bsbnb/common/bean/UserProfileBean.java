@@ -19,6 +19,15 @@ public class UserProfileBean {
     private Boolean isOrg;
     private String voterIin;
     private String executiveOfficer;
+    private String executiveOfficerName;
+
+    public String getExecutiveOfficerName() {
+        return executiveOfficerName;
+    }
+
+    public void setExecutiveOfficerName(String executiveOfficerName) {
+        this.executiveOfficerName = executiveOfficerName;
+    }
 
     public String getExecutiveOfficer() {
         return executiveOfficer;

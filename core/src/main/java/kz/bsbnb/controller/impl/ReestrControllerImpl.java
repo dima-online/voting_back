@@ -138,6 +138,8 @@ public class ReestrControllerImpl implements IReestrController {
         }
     }
 
+
+
     @Override
     @RequestMapping(value = "/headByVotingId/{votingId}", method = RequestMethod.GET)
     public SimpleResponse getHeadList(@PathVariable Long votingId) {
@@ -396,6 +398,23 @@ public class ReestrControllerImpl implements IReestrController {
             return new SimpleResponse("Ошибка при запросе данных").ERROR_CUSTOM();
         }
     }
+
+    public String getChiefName(String bin) {
+        IERCBVotingServicesservice service = new IERCBVotingServicesserviceLocator();
+        try {
+            IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
+            String resp = iercbVotingServicesPort.getChief(bin);
+            return resp;
+        } catch (ServiceException e) {
+            e.printStackTrace();
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+
+        }
+        return null;
+    }
+
     @Override
     @RequestMapping(value = "/getChiefByOrg/{id}", method = RequestMethod.GET)
     public SimpleResponse getChiefByOrg(@PathVariable Long id) {

@@ -52,4 +52,7 @@ dependencies {
 //    compile name: 'wsdl4j-1.5.1'
 
 }
+run {
+    main = 'kz.bsbnb.BlockChainApplication'
+}
 

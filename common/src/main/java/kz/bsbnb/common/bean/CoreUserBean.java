@@ -20,6 +20,7 @@ public class CoreUserBean {
     private Integer shareCount;
     private Long organisationId;
     private String executiveOfficer;
+    private String executiveOfficerName;
 
     public String getExecutiveOfficer() {
         return executiveOfficer;
@@ -92,4 +93,12 @@ public class CoreUserBean {
     public String getFullName() {return fullName;}
 
     public void setFullName(String fullName) {this.fullName = fullName;}
+
+    public String getExecutiveOfficerName() {
+        return executiveOfficerName;
+    }
+
+    public void setExecutiveOfficerName(String executiveOfficerName) {
+        this.executiveOfficerName = executiveOfficerName;
+    }
 }
