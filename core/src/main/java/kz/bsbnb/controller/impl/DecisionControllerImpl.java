@@ -99,6 +99,7 @@ public class DecisionControllerImpl implements IDecisionController {
                             }
                         }
                         decision.setComments(bean.getComments());
+                        decision.setScore(new Integer(0));
                         decision.setStatus("KILLED");
                         decisionRepository.save(decision);
 //                decisionRepository.deleteByIds(decision.getId());
@@ -111,6 +112,7 @@ public class DecisionControllerImpl implements IDecisionController {
                         decision.setDateCreate(new Date());
                         decision.setAnswerId(dec.getAnswerId());
                         decision.setQuestionId(dec.getQuestionId());
+                        decision.setScore(new Integer(0));
                         decision.setVoterId(dec.getVoterId());
                         decisionRepository.save(decision);
                     }
