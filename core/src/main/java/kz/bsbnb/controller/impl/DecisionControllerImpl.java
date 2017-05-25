@@ -82,7 +82,7 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse delDecision(@RequestBody @Valid DecisionBean bean) {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
-        System.out.println(bean.getComments());
+        System.out.println(bean.getCancelReason());
         //Decision dec = (Decision) decisionRepository.findByQuestionIdAndVoterId(questionRepository.findOne(bean.getQuestionId()), voterRepository.findOne(bean.getUserId()));
         if (bean.getConfirm() != null && bean.getConfirm().getUserId() != null) {
             User admin = userRepository.findOne(bean.getConfirm().getUserId());
@@ -92,14 +92,13 @@ public class DecisionControllerImpl implements IDecisionController {
                 if (!oldDecitions.isEmpty()) {
                     boolean isFound = false;
                     for (Decision decision : oldDecitions) {
-                        if (bean.getComments() != null && !"".equals(bean.getComments())) {
+                        if (bean.getCancelReason() != null && !"".equals(bean.getCancelReason())) {
                             if (decision.getAnswerId() == null) {
-                                decision.setComments(bean.getComments());
+                                decision.setCancelReason(bean.getCancelReason());
                                 isFound = true;
                             }
                         }
-                        decision.setComments(bean.getComments());
-                        decision.setScore(new Integer(0));
+                        decision.setCancelReason(bean.getCancelReason());
                         decision.setStatus("KILLED");
                         decisionRepository.save(decision);
 //                decisionRepository.deleteByIds(decision.getId());
@@ -107,12 +106,11 @@ public class DecisionControllerImpl implements IDecisionController {
                     if (bean.getComments() != null && !bean.getComments().equals("") && !isFound) {
                         Decision decision = decisionRepository.findOne(bean.getId());
                         decision.setComments(bean.getComments());
-                        System.out.println(bean.getComments());
+                        decision.setCancelReason(bean.getCancelReason());
                         decision.setStatus("KILLED");
                         decision.setDateCreate(new Date());
                         decision.setAnswerId(dec.getAnswerId());
                         decision.setQuestionId(dec.getQuestionId());
-                        decision.setScore(new Integer(0));
                         decision.setVoterId(dec.getVoterId());
                         decisionRepository.save(decision);
                     }
@@ -247,7 +245,10 @@ public class DecisionControllerImpl implements IDecisionController {
             String strAnswerId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "answerId");
             CryptUtil.VerifyIIN result = CryptUtil.verifyXml(bean.getConfirm().getXmlBody());
             boolean bUserId = false, bQuestionId = false, bAnswerId = false;
-            if (result.isVerify()) {
+            if (result.isAuth()) {
+                check.setHasError(true);
+                return "Выберите сертификат с префиксом rsa";
+            } else if (result.isVerify()) {
                 if (strUserId != null && !strUserId.equals("") && String.valueOf(bean.getUserId()).equals(strUserId)) {
                     bUserId = true;
                 }
@@ -290,10 +291,18 @@ public class DecisionControllerImpl implements IDecisionController {
     public SimpleResponse regCheckDecision(@RequestBody @Valid List<DecisionBean> beans) {
         SimpleResponse result = new SimpleResponse();
         List<Decision> oldDecisions = new ArrayList<>();
+        String resComment = "";
+        for (DecisionBean bean : beans) {
+            if(bean != null)
+            if(bean.getComments() != null && !bean.getComments().equals(""))
+                resComment = bean.getComments();
+        }
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
+            dec.setComments(resComment);
             oldDecisions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
         }
+
         List<Object> decisions = new ArrayList<>();
         String str = "Ваше решение - пустое";
         CheckDecision check = new CheckDecision(false);
@@ -301,6 +310,7 @@ public class DecisionControllerImpl implements IDecisionController {
             Decision dec = votingController.getDecisionFromBean(bean);
 //          System.out.println("bean=[" + "{answer=" + bean.getAnswerId() + "}{id=" + bean.getId() + "}{question=" + bean.getQuestionId() + "}{user=" + bean.getUserId() + "}{score=" + bean.getScore() + "}]");
             if (dec != null) {
+                dec.setComments(resComment);
                 if (!check.isHasError()) {
                     if (dec.getQuestionId() == null) {
                         decisions.add("Вопрос не найден");
@@ -350,8 +360,12 @@ public class DecisionControllerImpl implements IDecisionController {
             result.setData(str).ERROR_CUSTOM();
         } else {
             for (Object obj : decisions) {
-                System.out.println((Decision)obj);
-                decisionRepository.save((Decision) obj);
+                System.out.println(((Decision)obj).getComments());
+                try {
+                    decisionRepository.save((Decision) obj);
+                }catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
             }
             result.setData(decisions).SUCCESS();
         }

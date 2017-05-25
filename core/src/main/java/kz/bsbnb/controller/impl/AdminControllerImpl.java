@@ -143,11 +143,12 @@ public class AdminControllerImpl implements IAdminController {
         result.add(v2);
         List<Voting> votes = (List<Voting>) votingRepository.findAll();
         Integer allOpenVoting = 0;
-        for (Voting vote : votes) {
-            if (vote.getDateClose() == null) {
-                allOpenVoting++;
-            }
-        }
+//        for (Voting vote : votes) {
+//            if (vote.getDateClose() == null) {
+//                allOpenVoting++;
+//            }
+//        }
+        allOpenVoting = votes.size();
         ValueBean v3 = new ValueBean();
         v3.setKey("ALL_VOTED");
         v3.setValue("" + allOpenVoting);

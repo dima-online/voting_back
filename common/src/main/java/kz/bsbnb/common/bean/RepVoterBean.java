@@ -15,6 +15,7 @@ public class RepVoterBean {
     private List<RepDecisionBean> decisionBeanList;
     private Long privShareCount;
     private Boolean hasGoldShare;
+    private String cancelReason;
 
     public RepVoterBean() {
     }
@@ -69,6 +70,14 @@ public class RepVoterBean {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 
     public void setUserName(String userName) {

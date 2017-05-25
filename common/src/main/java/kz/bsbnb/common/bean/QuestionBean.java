@@ -20,8 +20,19 @@ public class QuestionBean {
     private String decisionStatus;
     private Integer maxCount;
     private Boolean privCanVote;
+    private String cancelReason;
+    private List<SimpleDecisionBean> results;
+
 
     public QuestionBean() {
+    }
+
+    public List<SimpleDecisionBean> getResults() {
+        return results;
+    }
+
+    public void setResults(List<SimpleDecisionBean> results) {
+        this.results = results;
     }
 
     public Boolean getPrivCanVote() {
@@ -126,6 +137,14 @@ public class QuestionBean {
 
     public void setVotingId(Long votingId) {
         this.votingId = votingId;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class CheckUtil {
         }
     }
 
-     public static class INNLenException extends RIException {
+    public static class INNLenException extends RIException {
 
         public INNLenException(int len) {
             super("ИИН/БИН должен содержать 12 цифр");

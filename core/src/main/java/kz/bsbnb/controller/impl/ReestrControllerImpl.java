@@ -187,7 +187,11 @@ public class ReestrControllerImpl implements IReestrController {
                                     user.setIin(reestr.getVoterIin());
                                     user.setUsername(reestr.getIin());
                                     user.setStatus("AUTO");
-                                    user = userRepository.save(user);
+                                    try {
+                                        user = userRepository.save(user);
+                                    }catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 boolean isFound = false;
                                 UserRoles userRoles = null;
@@ -207,7 +211,11 @@ public class ReestrControllerImpl implements IReestrController {
                                     userRoles.setShareDate(reestrHead.getDateCreate());
                                     userRoles.setCannotVote(0);
                                     userRoles.setOrgId(voting.getOrganisationId());
-                                    userRoles = userRoleRepository.save(userRoles);
+                                    try {
+                                        userRoles = userRoleRepository.save(userRoles);
+                                    }catch(Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     newRoles.add(userRoles);
                                 } else {
                                     userRoles.setSharePercent(userRoles.getSharePercent() + reestr.getSharePercent());

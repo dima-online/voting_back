@@ -137,7 +137,11 @@ public class OrganisationControllerImpl implements IOrganisationController {
         } else {
                     Organisation org = castFromBean(regOrgBean);
                     org.setStatus("CAN_VOTE");
-                    org = organisationRepository.save(org);
+                    try {
+                        org = organisationRepository.save(org);
+                    }catch(Exception e) {
+                        e.printStackTrace();
+                    }
                     List<Attribute> attributes = getAttrFromBean(regOrgBean);
                     attributeProcessor.merge("ORG", org.getId(), attributes);
 

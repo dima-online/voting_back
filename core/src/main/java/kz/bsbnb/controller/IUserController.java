@@ -7,6 +7,7 @@ import kz.bsbnb.util.SimpleResponse;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kanattulbassiyev on 8/7/16.
@@ -77,4 +78,6 @@ public interface IUserController {
     List<OrgBean> getAllOrgsWithOldVotingForUser(Long userId);
 
     List<OrgBean> getAllOrgsWithWorkVotingForUser(Long userId);
+
+    List<SimpleDecisionBean> getDecisionsForQuestion(Long questionId);
 }

@@ -4,13 +4,14 @@ import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IUserController;
-import kz.bsbnb.processor.UserProcessor;
+
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -186,6 +187,8 @@ public class UserControllerImpl implements IUserController {
                         user.setIin(userBean.getIin());
                         user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
                         user.setPassword(pwd(userBean.getPassword()));
+                        System.out.println(userBean.getExecutiveOfficer());
+                        System.out.println(userBean.getExecutiveOfficerName());
                         user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
                         user.setStatus("NEW");
                         user = userRepository.save(user);
@@ -201,6 +204,9 @@ public class UserControllerImpl implements IUserController {
                         userInfo.setMiddleName(userBean.getMiddleName());
                         userInfo.setIdn(userBean.getIin());
                         userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
+                        if(userBean.getExecutiveOfficer() != null) {
+                            userInfo.setVoterIin(userBean.getExecutiveOfficer());
+                        }
                         userInfo = userInfoRepository.save(userInfo);
                         user.setUserInfoId(userInfo);
                         user = userRepository.save(user);
@@ -239,7 +245,12 @@ public class UserControllerImpl implements IUserController {
                     userInfo.setMiddleName(userBean.getMiddleName());
                     userInfo.setIdn(userBean.getIin());
                     userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
-                    userInfo = userInfoRepository.save(userInfo);
+                    try {
+                        userInfo = userInfoRepository.save(userInfo);
+                    }catch (Exception e) {
+                        e.printStackTrace();
+                        return new SimpleResponse("Попробуйте еще раз");
+                    }
                     user.setUserInfoId(userInfo);
                     user = userRepository.save(user);
                     userBean = castUser(user, userInfo);
@@ -287,7 +298,9 @@ public class UserControllerImpl implements IUserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public SimpleResponse checkUser(@RequestBody @Valid User user) {
         User localUser = userRepository.findByIin(user.getIin());
-        System.out.println("login user -> " + user.getIin());
+        for(UserRoles r : localUser.getUserRolesSet()) {
+            System.out.println(r.getRole().toString());
+        }
         if (localUser == null) {
             return new SimpleResponse("Не найден пользователь с таким ИИН").ERROR_NOT_FOUND();
         } else if (localUser.getStatus().equals("AUTO")) {
@@ -459,11 +472,9 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        System.out.println(localUser.getId());
         LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
         if (localUser != null) {
             List<Voting> vots = votingRepository.findWorkVoting();
-            System.out.println(vots.size());
             for (Voting voting : vots) {
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
@@ -479,9 +490,6 @@ public class UserControllerImpl implements IUserController {
                 result.add(entry.getValue());
             }
         }
-        for(OrgBean bean : result) {
-            System.out.println(bean);
-        }
         return result;
     }
 
@@ -490,11 +498,9 @@ public class UserControllerImpl implements IUserController {
     public List<OrgBean> getAllOrgsWithWorkVotingForUser(@PathVariable Long userId) {
         User localUser = userRepository.findOne(userId);
         List<OrgBean> result = new ArrayList<>();
-        System.out.println(localUser.getId());
         LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
         if (localUser != null) {
             List<Voting> vots = votingRepository.findWorkingForUser(localUser);
-            System.out.println(vots.size());
             for (Voting voting : vots) {
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
@@ -522,7 +528,6 @@ public class UserControllerImpl implements IUserController {
         if (localUser != null) {
             List<Voting> vots = votingRepository.findOldVoting();
             for (Voting voting : vots) {
-                System.out.println(voting.getId());
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
                     organisation.setVotingSet(new ArrayList<>());
@@ -549,7 +554,6 @@ public class UserControllerImpl implements IUserController {
         if (localUser != null) {
             List<Voting> vots = votingRepository.findOldForUser(localUser);
             for (Voting voting : vots) {
-                System.out.println(voting.getId());
                 if (!map.containsKey(voting.getOrganisationId().getId())) {
                     OrgBean organisation = castToBean(voting.getOrganisationId(), localUser);
                     organisation.setVotingSet(new ArrayList<>());
@@ -590,6 +594,39 @@ public class UserControllerImpl implements IUserController {
         }
     }
 
+    @RequestMapping(value = "/getTotal/{questionId}", method = RequestMethod.POST)
+    public List<SimpleDecisionBean> getDecisionsForQuestion(@PathVariable Long questionId) {
+        Question question = questionRepository.findOne(questionId);
+        Set<Answer> answers = question.getAnswerSet();
+        Set<Decision> decisions = question.getDecisionSet();
+        Map<Answer, Integer>  totalScores = new HashMap<>();
+        for(Answer a : answers) {
+            totalScores.put(a,new Integer(0));
+        }
+        for(Decision d: decisions) {
+            //System.out.println(d.getAnswerId().getAnswer() +  " "  + d.getScore());
+            if(d.getStatus().equals("READY"))
+            if(totalScores.containsKey(d.getAnswerId())) {
+                totalScores.replace(d.getAnswerId(),d.getScore() + totalScores.get(d.getAnswerId()));
+            } else {
+                totalScores.put(d.getAnswerId(), d.getScore());
+            }
+        }
+        List<SimpleDecisionBean> result = new ArrayList<>();
+        for(Answer a : totalScores.keySet()) {
+            if(a != null)
+            result.add(new SimpleDecisionBean(a.getAnswer(),totalScores.get(a),a.getId()));
+        }
+        Collections.sort(result, new Comparator<SimpleDecisionBean>() {
+            @Override
+            public int compare(SimpleDecisionBean o1, SimpleDecisionBean o2) {
+                return (int)(o1.getId() - o2.getId());
+            }
+        });
+        return result;
+
+    }
+
     @Override
     @RequestMapping(value = "/questions/{votingId}/{userId}", method = RequestMethod.GET)
     public List<QuestionBean> getVotingQuestions(@PathVariable Long votingId, @PathVariable Long userId) {
@@ -611,13 +648,15 @@ public class UserControllerImpl implements IUserController {
             });
             for (Question q : question) {
                 QuestionBean bean = castFromQuestion(q, user, canVote(voting, user));
+                List<SimpleDecisionBean> results = getDecisionsForQuestion(q.getId());
+                bean.setResults(results);
                 result.add(bean);
             }
 
         }
-        for(QuestionBean bean : result) {
-            System.out.println(bean);
-        }
+//        for(QuestionBean bean : result) {
+//            System.out.println(bean);
+//        }
         return result;
     }
 
@@ -749,6 +788,7 @@ public class UserControllerImpl implements IUserController {
                 DecisionBean bean = getBeanFromDecision(decision);
                 beanSet.add(bean);
                 result.setDecisionStatus(decision.getStatus());
+                result.setCancelReason(decision.getCancelReason());
             }
         }
         result.setDecisionSet(beanSet);

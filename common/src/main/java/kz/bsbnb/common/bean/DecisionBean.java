@@ -13,6 +13,7 @@ public class DecisionBean {
     private Long questionId;
     private String comments;
     private Long userId;
+    private String cancelReason;
     private ConfirmBean confirm;
 
     public DecisionBean() {
@@ -81,5 +82,13 @@ public class DecisionBean {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 }

@@ -58,6 +58,21 @@ public class CryptUtil {
 
     }
 
+    public static boolean isAuthCert(X509Certificate cert) {
+        try {
+            if (cert.getExtendedKeyUsage()!=null) {
+                for (String exKeyUsage: cert.getExtendedKeyUsage()) {
+                    if (exKeyUsage.equals("1.3.6.1.5.5.7.3.2")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static String signXML(String xmlString, final String container, String password) {
 
         String result = null;
@@ -173,6 +188,7 @@ public class CryptUtil {
                 if (cert != null) {
                     String dn = cert.getSubjectDN().toString();
                     result.setVerify(signature.checkSignatureValue(cert));
+                    result.setAuth(isAuthCert(cert));
                     System.out.println("dn=" + dn);
                     List<String> ls = new ArrayList<String>(Arrays.asList(dn.split(",")));
                     for (String next : ls) {
@@ -241,11 +257,13 @@ public class CryptUtil {
         private boolean verify;
         private String iin;
         private String bin;
+        private boolean isAuth;
 
         public VerifyIIN(boolean verify, String iin, String bin) {
             this.verify = verify;
             this.iin = iin;
             this.bin = bin;
+            this.isAuth = false;
         }
 
         public String getBin() {
@@ -270,6 +288,14 @@ public class CryptUtil {
 
         public void setIin(String iin) {
             this.iin = iin;
+        }
+
+        public boolean isAuth() {
+            return isAuth;
+        }
+
+        public void setAuth(boolean auth) {
+            isAuth = auth;
         }
     }
 }

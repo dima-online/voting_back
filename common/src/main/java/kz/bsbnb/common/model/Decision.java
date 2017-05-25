@@ -44,6 +44,8 @@ public class Decision implements Serializable {
     private String comments;
     @Column(name = "status")
     private String status;
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 
     public Decision() {
     }
@@ -116,6 +118,14 @@ public class Decision implements Serializable {
     public String getComments() {return comments;}
 
     public void setComments(String comments) {this.comments = comments;}
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
+    }
 
     @Override
     public int hashCode() {

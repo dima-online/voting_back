@@ -309,6 +309,7 @@ public class VotingControllerImpl implements IVotingController {
     @RequestMapping(value = "/{votingId}", method = RequestMethod.GET)
     public SimpleResponse getVoting(@PathVariable Long votingId) {
         Voting voting = votingRepository.findOne(votingId);
+        voting.setHasQuestions(!voting.getQuestionSet().isEmpty());
         if (voting == null) {
             return new SimpleResponse("Не найдено голосование с ID=" + votingId).ERROR_NOT_FOUND();
         } else {
@@ -858,6 +859,7 @@ public class VotingControllerImpl implements IVotingController {
                                 bean.setUserName(userController.getFullName(decision.getVoterId().getUserId().getUserInfoId()));
                                 bean.setDecisionDate(decision.getDateCreate());
                                 bean.setDecisionBeanList(new ArrayList<>());
+                                bean.setCancelReason(decision.getCancelReason());
                                 repVoterBeens.add(bean);
                             }
                             RepDecisionBean repDecisionBean = new RepDecisionBean();
@@ -923,9 +925,9 @@ public class VotingControllerImpl implements IVotingController {
             map.put("organization_address", addr == null ? "Адрес не указан" : addr);
             SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat ftLong = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            map.put("voting_endDate", ft.format(voting.getDateClose()) + " года");
+            map.put("voting_endDate", ft.format(voting.getDateClose()) + " год");
             map.put("date_begin", ftLong.format(voting.getDateBegin()));
-            map.put("date_begin_short", ft.format(voting.getDateBegin()) + " года");
+            map.put("date_begin_short", ft.format(voting.getDateBegin()) + " год");
             map.put("date_end", ftLong.format(voting.getDateEnd()));
             if (voting.getLastReestrId() != null) {
                 ReestrHead reestr = reestrHeadRepository.findOne(voting.getLastReestrId());
@@ -936,25 +938,37 @@ public class VotingControllerImpl implements IVotingController {
 
             Long realCount = 0L;
             Long voterCount = 0L;
+            Long votingShares = 0L;
             for (Voter voter : voting.getVoterSet()) {
+                votingShares += voter.getShareCount();
                 if (!voter.getDecisionSet().isEmpty()) {
-                    realCount = realCount + voter.getShareCount();
-                    voterCount++;
+                    for(Decision d : voter.getDecisionSet()) {
+                        if(!d.getStatus().equals("KILLED")) {
+                            realCount = realCount + voter.getShareCount();
+
+                        }
+                    }
                 }
+                voterCount++;
             }
+
+
+
+
             if (voting.getKvoroom() != null && voting.getKvoroom()) {
                 voterCount = voting.getOrganisationId().getAllShareCount();
             }
 
             map.put("total_count", StringUtil.parseToStr(voterCount));
 
-            map.put("real_count", StringUtil.parseToStr(realCount));
+            map.put("real_count", StringUtil.parseToStr(votingShares));
             map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
 
-            map.put("real_count_text", ConvertUtil.digits2Text(realCount.doubleValue()));
-            map.put("prc_count", String.valueOf(realCount.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100));
+            map.put("real_count_text", ConvertUtil.digits2Text(votingShares.doubleValue()));
+            map.put("prc_count", String.format("%1$,.2f", votingShares.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100));
 
             String str = "";
+            /*
             for (Question question : voting.getQuestionSet()) {
                 str = str + "\n" + question.getNum().toString();
                 str = str + "\nФормулировка решения, поставленного на голосование:\n";
@@ -980,6 +994,18 @@ public class VotingControllerImpl implements IVotingController {
                 } else {
                     str = str + "Голосов нет\n";
                 }
+            }
+            */
+            for (Question question : voting.getQuestionSet()) {
+                str = str + "\n" + question.getNum().toString();
+                str = str + "\nФормулировка решения, поставленного на голосование:\n";
+                str = str + "\"" + question.getQuestion() + "\".\n";
+                str = str + "Итоги голосования:\n";
+                List<SimpleDecisionBean> totalDecisions = userController.getDecisionsForQuestion(question.getId());
+                for(SimpleDecisionBean res : totalDecisions) {
+                    str = str + "\"" + res.getAnswerText().toString() + "\"\t–\t" + res.getTotalScore().toString() + " голос (-а, -ов)\n";
+                }
+
             }
 
             map.put("decision_text", str);
@@ -1125,8 +1151,10 @@ public class VotingControllerImpl implements IVotingController {
                 Object o = votingQuery.getQuestionInfo(voting.getId(), firstQuestionId);
                 if (o instanceof HLMessage) {
                     HLMessage m = (HLMessage) o;
+                    System.out.println(m.toString());
                     if (m.getError() != null) {
                         System.out.println("При проверке голосования с ID " + voting.getId() + " произошла ошибка " + m.getError().getMessage());
+                        System.out.println(m.getError().getData());
                     } else if (m.getResult() != null) {
                         System.out.println("Проверка голосования с ID " + voting.getId() + " Завершилась статусом " + m.getResult().getStatus());
                         voting.setStatus("STARTED");
@@ -1312,6 +1340,7 @@ public class VotingControllerImpl implements IVotingController {
         }
         return result;
     }
+
 
     @Override
     public void updateQuestionDecisions(Long questionId) {
