@@ -965,7 +965,7 @@ public class VotingControllerImpl implements IVotingController {
             map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
 
             map.put("real_count_text", ConvertUtil.digits2Text(votingShares.doubleValue()));
-            map.put("prc_count", String.format("%1$,.2f", votingShares.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100));
+            map.put("prc_count", (int)( votingShares.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100) + "");
 
             String str = "";
             /*
