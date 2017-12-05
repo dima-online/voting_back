@@ -36,9 +36,6 @@ dependencies {
     compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.docx:1.0.6')
     compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.document:1.0.6')
     compile('fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker:1.0.6')
-    compile project(':common')
-    compile project(':utils')
-    compile project(':block')
     compile group: 'org.apache.axis', name: 'axis', version: '1.4'
     compile group: 'org.apache.axis', name: 'axis-jaxrpc', version: '1.4'
     compile group: 'commons-discovery', name: 'commons-discovery', version: '0.5'
@@ -51,6 +48,10 @@ dependencies {
 //    compile name: 'saaj'
 //    compile name: 'wsdl4j-1.5.1'
 
+    compile project(':common')
+    compile project(':utils')
+    compile project(':block')
+    compile project(':digisign')
 }
 run {
     main = 'kz.bsbnb.BlockChainApplication'

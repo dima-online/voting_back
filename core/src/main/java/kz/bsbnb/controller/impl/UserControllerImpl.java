@@ -4,14 +4,13 @@ import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IUserController;
-
+import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -119,7 +118,7 @@ public class UserControllerImpl implements IUserController {
                 userData.setExecutiveOfficer(user.getExecutiveOfficeIin());
                 userData.setExecutiveOfficerName(executiveOfficer);
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             userData.setExecutiveOfficer("");
         }
         userData.setIin(user.getIin());
@@ -204,7 +203,7 @@ public class UserControllerImpl implements IUserController {
                         userInfo.setMiddleName(userBean.getMiddleName());
                         userInfo.setIdn(userBean.getIin());
                         userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
-                        if(userBean.getExecutiveOfficer() != null) {
+                        if (userBean.getExecutiveOfficer() != null) {
                             userInfo.setVoterIin(userBean.getExecutiveOfficer());
                         }
                         userInfo = userInfoRepository.save(userInfo);
@@ -247,7 +246,7 @@ public class UserControllerImpl implements IUserController {
                     userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
                     try {
                         userInfo = userInfoRepository.save(userInfo);
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         return new SimpleResponse("Попробуйте еще раз");
                     }
@@ -294,25 +293,13 @@ public class UserControllerImpl implements IUserController {
         }
     }
 
+    @Autowired
+    SecurityProcessor securityProcessor;
+
     @Override
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public SimpleResponse checkUser(@RequestBody @Valid User user) {
-        User localUser = userRepository.findByIin(user.getIin());
-        for(UserRoles r : localUser.getUserRolesSet()) {
-            System.out.println(r.getRole().toString());
-        }
-        if (localUser == null) {
-            return new SimpleResponse("Не найден пользователь с таким ИИН").ERROR_NOT_FOUND();
-        } else if (localUser.getStatus().equals("AUTO")) {
-            return new SimpleResponse("Пройдите, пожалуйста, регистрацию").ERROR_NOT_FOUND();
-        }
-        if (user.getPassword() != null && localUser.getPassword().equals(user.getPassword())) {
-            UserBean userBean = castUser(localUser);
-            System.out.println(userBean.getVoterIin());
-            return new SimpleResponse(userBean).SUCCESS();
-        } else {
-            return new SimpleResponse("Неверный пароль").ERROR();
-        }
+        return securityProcessor.login(user, false);
     }
 
     @Override
@@ -362,7 +349,7 @@ public class UserControllerImpl implements IUserController {
                     if (userBean.getFullName() != null) {
                         userInfo.setLastName(userBean.getFullName());
                     }
-                    if(userBean.getExecutiveOfficer() != null) {
+                    if (userBean.getExecutiveOfficer() != null) {
                         user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
                     }
                 }
@@ -413,7 +400,7 @@ public class UserControllerImpl implements IUserController {
     @Override
     @RequestMapping(value = "/orgs/{userId}", method = RequestMethod.GET)
     public List<OrgBean> getAllOrgs(@PathVariable Long userId) {
-          User localUser = userRepository.findOne(userId);
+        User localUser = userRepository.findOne(userId);
 //        List<OrgBean> result = new ArrayList<>();
 //        for (UserRoles userRoles : localUser.getUserRolesSet()) {
 //            result.add(castToBean(userRoles.getOrgId(), localUser));
@@ -421,8 +408,8 @@ public class UserControllerImpl implements IUserController {
 //        }
         List<OrgBean> result = new ArrayList<>();
         List<Organisation> orgs = (List<Organisation>) organisationRepository.findAll();
-        for(Organisation org1 : orgs){
-            result.add(castToBean(org1,localUser));
+        for (Organisation org1 : orgs) {
+            result.add(castToBean(org1, localUser));
         }
         return result;
     }
@@ -599,28 +586,28 @@ public class UserControllerImpl implements IUserController {
         Question question = questionRepository.findOne(questionId);
         Set<Answer> answers = question.getAnswerSet();
         Set<Decision> decisions = question.getDecisionSet();
-        Map<Answer, Integer>  totalScores = new HashMap<>();
-        for(Answer a : answers) {
-            totalScores.put(a,new Integer(0));
+        Map<Answer, Integer> totalScores = new HashMap<>();
+        for (Answer a : answers) {
+            totalScores.put(a, new Integer(0));
         }
-        for(Decision d: decisions) {
+        for (Decision d : decisions) {
             //System.out.println(d.getAnswerId().getAnswer() +  " "  + d.getScore());
-            if(d.getStatus().equals("READY"))
-            if(totalScores.containsKey(d.getAnswerId())) {
-                totalScores.replace(d.getAnswerId(),d.getScore() + totalScores.get(d.getAnswerId()));
-            } else {
-                totalScores.put(d.getAnswerId(), d.getScore());
-            }
+            if (d.getStatus().equals("READY"))
+                if (totalScores.containsKey(d.getAnswerId())) {
+                    totalScores.replace(d.getAnswerId(), d.getScore() + totalScores.get(d.getAnswerId()));
+                } else {
+                    totalScores.put(d.getAnswerId(), d.getScore());
+                }
         }
         List<SimpleDecisionBean> result = new ArrayList<>();
-        for(Answer a : totalScores.keySet()) {
-            if(a != null)
-            result.add(new SimpleDecisionBean(a.getAnswer(),totalScores.get(a),a.getId()));
+        for (Answer a : totalScores.keySet()) {
+            if (a != null)
+                result.add(new SimpleDecisionBean(a.getAnswer(), totalScores.get(a), a.getId()));
         }
         Collections.sort(result, new Comparator<SimpleDecisionBean>() {
             @Override
             public int compare(SimpleDecisionBean o1, SimpleDecisionBean o2) {
-                return (int)(o1.getId() - o2.getId());
+                return (int) (o1.getId() - o2.getId());
             }
         });
         return result;
@@ -676,7 +663,7 @@ public class UserControllerImpl implements IUserController {
                 userBean.setExecutiveOfficerName(executiveOfficer);
                 userBean.setExecutiveOfficer(user.getExecutiveOfficeIin());
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             userBean.setExecutiveOfficer("");
         }
         if (user.getUserInfoId() != null) {

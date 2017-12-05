@@ -1,5 +1,6 @@
 package kz.bsbnb.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpStatus;
 
@@ -11,6 +12,12 @@ import java.util.Map;
 /**
  * Created by Olzhas.Pazyldayev on 01.09.2016
  */
+@JsonIgnoreProperties({
+        "searchTotal",
+        "warning",
+        "clazz",
+        "cropParameters"
+})
 public class SimpleResponse implements Serializable {
 
     private static final long serialVersionUID = -3133231140239334607L;
@@ -25,6 +32,7 @@ public class SimpleResponse implements Serializable {
     private boolean warning;
     private Class<?> clazz;
     private List<String> cropParameters;
+    private static final int NOT_AUTHORIZED = 317;
 
 
     public SimpleResponse() {
@@ -58,6 +66,13 @@ public class SimpleResponse implements Serializable {
         this.message = message;
     }
 
+    public SimpleResponse(Object data, String message) {
+        super();
+        this.data = data;
+        this.state = HttpStatus.OK.value();
+        this.message = message;
+    }
+
     public SimpleResponse(Object data, long timestamp, int state, String message, boolean success) {
         super();
         this.data = data;
@@ -86,6 +101,7 @@ public class SimpleResponse implements Serializable {
             }
             this.total = ((Map) data).size();
         }
+        this.clazz = data.getClass();
 
         return this;
     }
@@ -125,7 +141,7 @@ public class SimpleResponse implements Serializable {
     public SimpleResponse ERROR_CUSTOM() {
         this.success = false;
         this.timestamp = System.currentTimeMillis();
-        this.message = this.message == null ? "https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#" + state
+        this.message = this.message == null ? "На данный момент Ваш запрос не может быть выполнен. Пожалуйста попробуйте обновить страницу или попробовать позже"
                 : this.message;
 
         return this;
@@ -147,6 +163,31 @@ public class SimpleResponse implements Serializable {
         this.state = HttpStatus.NOT_FOUND.value();
         return ERROR_CUSTOM();
     }
+
+    /*
+    * Return 317 HTTP status
+    */
+    public SimpleResponse NOT_AUTHORIZED() {
+        this.state = NOT_AUTHORIZED;
+        return ERROR_CUSTOM();
+    }
+
+    /*
+    * Return 415 HTTP status
+    */
+    public SimpleResponse ERROR_UNSUPPORTED_MEDIA_TYPE() {
+        this.state = HttpStatus.UNSUPPORTED_MEDIA_TYPE.value();
+        return ERROR_CUSTOM();
+    }
+
+    /*
+    * Return 500 HTTP status
+    */
+    public SimpleResponse ERROR_INTERNAL_SERVER() {
+        this.state = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        return ERROR_CUSTOM();
+    }
+
 
     public Long getTimestamp() {
         return timestamp;

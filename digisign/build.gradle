@@ -1,0 +1,22 @@
+group 'kz.bsbnb'
+version '0.0.1-SNAPSHOT'
+
+apply plugin: 'java'
+
+buildscript{
+    repositories{
+//        flatDir {
+//            dirs "$rootProject.projectDir/libs"
+//        }
+        mavenCentral()
+    }
+
+}
+
+dependencies {
+    compile('commons-codec:commons-codec:1.10')
+//  compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(':utils')
+}
+
+bootRepackage.enabled = false
