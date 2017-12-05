@@ -9,7 +9,9 @@ import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.ERCBService.*;
 import kz.bsbnb.util.SimpleResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by ruslan on 09.12.16.
@@ -48,6 +51,9 @@ public class ReestrControllerImpl implements IReestrController {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private MessageSource messageSource;
 
 
     @Override
@@ -306,7 +312,7 @@ public class ReestrControllerImpl implements IReestrController {
             } catch (ServiceException e) {
                 return new SimpleResponse("Ошибка при соединении с СВР").ERROR_CUSTOM();
             } catch (RemoteException e) {
-                return new SimpleResponse("Ошибка при запросе данных").ERROR_CUSTOM();
+                return new SimpleResponse(messageSource.getMessage("error-retrieving-data",null,Locale.ENGLISH)).ERROR_CUSTOM();
             }
         } else {
             return new SimpleResponse("Голосование не найдено").ERROR_CUSTOM();

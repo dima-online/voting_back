@@ -35,9 +35,6 @@ public class Answer implements Serializable {
     @Size(min = 1, max = 2000)
     @Column(name = "answer")
     private String answer;
-    @Size(max = 2000)
-    @Column(name = "final_score")
-    private String finalScore;
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -74,13 +71,7 @@ public class Answer implements Serializable {
         this.answer = answer;
     }
 
-    public String getFinalScore() {
-        return finalScore;
-    }
 
-    public void setFinalScore(String finalScore) {
-        this.finalScore = finalScore;
-    }
 
     public Question getQuestionId() {
         return questionId;

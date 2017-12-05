@@ -38,9 +38,6 @@ public class Voter implements Serializable {
     @NotNull
     @Column(name = "share_count")
     private Integer shareCount;
-    @Size(max = 200)
-    @Column(name = "signature")
-    private String signature;
     @Size(max = 2000)
     @Column(name = "public_key")
     private String publicKey;
@@ -113,14 +110,6 @@ public class Voter implements Serializable {
 
     public void setShareCount(Integer shareCount) {
         this.shareCount = shareCount;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(String signature) {
-        this.signature = signature;
     }
 
     public String getPublicKey() {

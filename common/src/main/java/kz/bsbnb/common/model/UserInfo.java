@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  *
- * @author ruslan
+ * @author serik.mukashev
  */
 @Entity
 @Table(name = "user_info", schema = Constants.DB_SCHEMA_CORE)
@@ -57,9 +57,16 @@ public class UserInfo implements Serializable {
     private Set<User> userSet;
     @Column(name = "is_org")
     private Boolean isOrg;
+    @Column(name = "sms_notification")
+    private Boolean smsNotification;
+    @Column(name = "email_notification")
+    private Boolean emailNotification;
+
+    //!!!Delete later!!!
     @Size(max = 12)
     @Column(name = "voter_iin")
     private String voterIin;
+    //!!!Delete later!!!
 
     public UserInfo() {
     }
@@ -138,6 +145,22 @@ public class UserInfo implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Boolean getSmsNotification() {
+        return smsNotification;
+    }
+
+    public void setSmsNotification(Boolean smsNotification) {
+        this.smsNotification = smsNotification;
+    }
+
+    public Boolean getEmailNotification() {
+        return emailNotification;
+    }
+
+    public void setEmailNotification(Boolean emailNotification) {
+        this.emailNotification = emailNotification;
     }
 
     @XmlTransient

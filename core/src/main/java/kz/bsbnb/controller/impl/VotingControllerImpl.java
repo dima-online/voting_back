@@ -11,6 +11,7 @@ import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.QuestionType;
 import kz.bsbnb.common.consts.Role;
+import kz.bsbnb.common.consts.VotingType;
 import kz.bsbnb.common.external.Reestr;
 import kz.bsbnb.common.external.ReestrHead;
 import kz.bsbnb.common.model.*;
@@ -166,7 +167,7 @@ public class VotingControllerImpl implements IVotingController {
             oldVoting.setDateEnd(voting.getDateEnd());
             oldVoting.setDateBegin(voting.getDateBegin());
             oldVoting.setSubject(voting.getSubject());
-            oldVoting.setVotingType(voting.getVotingType());
+            oldVoting.setVotingType(VotingType.valueOf(voting.getVotingType()));
             oldVoting = votingRepository.save(oldVoting);
             RegVotingBean result = castToBean(oldVoting);
             return new SimpleResponse(result).SUCCESS();
@@ -240,7 +241,7 @@ public class VotingControllerImpl implements IVotingController {
     private Voting castFromBean(RegVotingBean votingBean, User user) {
         Voting result = new Voting();
         result.setDateBegin(votingBean.getDateBegin());
-        result.setVotingType(votingBean.getVotingType());
+        result.setVotingType(VotingType.getEnum(votingBean.getVotingType()));
         result.setSubject(votingBean.getSubject());
         result.setDateEnd(votingBean.getDateEnd());
         result.setDateCreate(votingBean.getDateCreate() == null ? new Date() : votingBean.getDateCreate());

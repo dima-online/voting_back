@@ -50,11 +50,15 @@ public class Organisation implements Serializable {
     @OneToMany(mappedBy = "organisationId", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
     @Basic(optional = false)
-    @Column(name = "all_share_count")
+    @Column(name = "total_share_count")
     private Long allShareCount;
     @Size(max = 200)
     @Column(name = "executive_name",nullable = true)
     private String executiveName;
+    @Column(name = "logo")
+    private Byte[] logo;
+    @Column(name = "result_link")
+    private String resultLink;
 
     public Organisation() {
     }
@@ -85,6 +89,22 @@ public class Organisation implements Serializable {
 
     public void setOrganisationNum(String organisationNum) {
         this.organisationNum = organisationNum;
+    }
+
+    public Byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(Byte[] logo) {
+        this.logo = logo;
+    }
+
+    public String getResultLink() {
+        return resultLink;
+    }
+
+    public void setResultLink(String resultLink) {
+        this.resultLink = resultLink;
     }
 
     public String getExternalId() {

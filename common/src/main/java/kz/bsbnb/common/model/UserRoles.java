@@ -16,7 +16,7 @@ import java.util.Date;
 
 /**
  *
- * @author ruslan
+ * @author serik.mukashev
  */
 @Entity
 @Table(name = "user_roles", schema = Constants.DB_SCHEMA_CORE)

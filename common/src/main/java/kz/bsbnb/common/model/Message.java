@@ -18,7 +18,7 @@ import java.util.Set;
 
 /**
  *
- * @author ruslan
+ * @author serik.mukashev
  */
 @Entity
 @Table(name = "message", schema = Constants.DB_SCHEMA_CORE)

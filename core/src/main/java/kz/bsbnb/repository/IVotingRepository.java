@@ -35,9 +35,18 @@ public interface IVotingRepository extends PagingAndSortingRepository<Voting, Lo
     @Query(value = "SELECT v from Voting v where v.dateClose is null and v.dateBegin is not null and v.status in ('STARTED') order by v.dateBegin desc")
     List<Voting> findWorkVoting();
 
+    @Query(value = "SELECT v from Voting v where v.status in ('STARTED') order by v.dateBegin desc")
+    Page<Voting> findWorkVoting(Pageable pageRequest);
+
 
     @Query(value = "SELECT v from Voting v where v.dateClose is not null order by v.dateBegin desc")
     List<Voting> findOldVoting();
 
+    @Query(value = "SELECT v from Voting v where v.status in ('STOPED','CLOSED') AND v.votingType not in ('SECRET') order by v.id desc")
+    Page<Voting> findOldVoting(Pageable pageRequest);
+
     List<Voting> findByStatus(String aNew);
+
+    @Query(value = "SELECT v from Voting v where v.votingType not in ('SECRET') order by v.id desc")
+    Page<Voting> findPublic(Pageable pageRequest);
 }

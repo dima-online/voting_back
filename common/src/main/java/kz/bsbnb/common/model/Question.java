@@ -34,6 +34,12 @@ public class Question implements Serializable {
     @Size(min = 1, max = 2000)
     @Column(name = "question")
     private String question;
+    @Size(min = 1, max = 2000)
+    @Column(name = "question_rus")
+    private String questionRus;
+    @Size(min = 1, max = 2000)
+    @Column(name = "question_kaz")
+    private String questionKaz;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -105,6 +111,22 @@ public class Question implements Serializable {
 
     public void setQuestion(String question) {
         this.question = question;
+    }
+
+    public String getQuestionRus() {
+        return questionRus;
+    }
+
+    public void setQuestionRus(String questionRus) {
+        this.questionRus = questionRus;
+    }
+
+    public String getQuestionKaz() {
+        return questionKaz;
+    }
+
+    public void setQuestionKaz(String questionKaz) {
+        this.questionKaz = questionKaz;
     }
 
     public Integer getNum() {

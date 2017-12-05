@@ -6,6 +6,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kz.bsbnb.common.consts.VotingType;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -33,9 +34,9 @@ public class Voting implements Serializable {
     private Long id;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 20)
     @Column(name = "voting_type")
-    private String votingType;
+    @Enumerated(EnumType.STRING)
+    private VotingType votingType;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 200)
@@ -91,7 +92,7 @@ public class Voting implements Serializable {
         this.id = id;
     }
 
-    public Voting(Long id, String votingType, String subject, Date dateCreate, String status) {
+    public Voting(Long id, VotingType votingType, String subject, Date dateCreate, String status) {
         this.id = id;
         this.votingType = votingType;
         this.subject = subject;
@@ -116,10 +117,10 @@ public class Voting implements Serializable {
     }
 
     public String getVotingType() {
-        return votingType;
+        return votingType.toString();
     }
 
-    public void setVotingType(String votingType) {
+    public void setVotingType(VotingType votingType) {
         this.votingType = votingType;
     }
 

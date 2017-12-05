@@ -840,7 +840,7 @@ public class UserControllerImpl implements IUserController {
         result.setQuestionCount(voting.getQuestionSet().size());
         result.setStatus(voting.getStatus());
         result.setSubject(voting.getSubject());
-        result.setVotingType(voting.getVotingType());
+        result.setVotingType(voting.getVotingType().toString());
         result.setOrganisationId(voting.getOrganisationId().getId());
         result.setOrganisationName(voting.getOrganisationId().getOrganisationName());
         result.setKvoroom(voting.getKvoroom());

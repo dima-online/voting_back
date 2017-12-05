@@ -42,6 +42,12 @@ public class Files implements Serializable {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "filesId", fetch = FetchType.EAGER)
     private Set<QuestionFile> questionFileSet;
+    @Column(name = "content")
+    private Byte[] content;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "type")
+    private String type;
 
     public Files() {
     }
@@ -75,6 +81,14 @@ public class Files implements Serializable {
         return filePath;
     }
 
+    public Byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(Byte[] content) {
+        this.content = content;
+    }
+
     public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
@@ -85,6 +99,22 @@ public class Files implements Serializable {
 
     public void setVotingId(Voting votingId) {
         this.votingId = votingId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @XmlTransient

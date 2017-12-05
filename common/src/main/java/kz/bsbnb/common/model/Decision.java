@@ -46,6 +46,8 @@ public class Decision implements Serializable {
     private String status;
     @Column(name = "cancel_reason")
     private String cancelReason;
+    @Column(name = "signature")
+    private String signature;
 
     public Decision() {
     }
@@ -125,6 +127,14 @@ public class Decision implements Serializable {
 
     public void setCancelReason(String cancelReason) {
         this.cancelReason = cancelReason;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     @Override
