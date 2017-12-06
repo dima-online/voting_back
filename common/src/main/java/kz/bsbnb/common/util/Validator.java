@@ -1,7 +1,7 @@
 package kz.bsbnb.common.util;
 
 
-import kz.bsbnb.util.exception.UserShowException;
+import kz.bsbnb.common.util.exception.UserShowException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 

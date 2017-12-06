@@ -18,7 +18,7 @@ import kz.bsbnb.repository.IUserRepository;
 import kz.bsbnb.repository.IUserSessionRepository;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
-import kz.bsbnb.util.exception.UserActiveException;
+import kz.bsbnb.common.util.exception.UserActiveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

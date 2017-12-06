@@ -1,4 +1,4 @@
-package kz.bsbnb.util.exception;
+package kz.bsbnb.common.util.exception;
 
 /**
  * Created by Olzhas.Pazyldayev on 12.10.2017.
