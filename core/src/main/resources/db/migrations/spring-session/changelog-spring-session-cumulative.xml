@@ -4,6 +4,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <include file="create-spring-session-sql-pg.xml" relativeToChangelogFile="true"/>
+    <include file="create-spring-session-sql-pg-old.xml" relativeToChangelogFile="true"/>
     <!--<include file="create-spring-session-sql-ora.xml" relativeToChangelogFile="true"/>-->
 </databaseChangeLog>
