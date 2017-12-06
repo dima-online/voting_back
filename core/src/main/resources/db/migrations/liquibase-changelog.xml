@@ -15,6 +15,7 @@
     </changeSet>
     <!-- Should be only links to per-version cumulative changelog files. -->
     <include file="v-1.0/changelog-v.1.0-cumulative.xml" relativeToChangelogFile="true"/>
+    <include file="spring-session/changelog-spring-session-cumulative.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 
 <!--
