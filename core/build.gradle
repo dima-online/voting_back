@@ -53,7 +53,20 @@ dependencies {
     compile project(':block')
     compile project(':digisign')
 }
-run {
-    main = 'kz.bsbnb.BlockChainApplication'
+task prod {
+    doLast {
+        run.systemProperty 'spring.profiles.active', 'prod'
+    }
 }
 
+task dev {
+    doLast {
+        run.systemProperty 'spring.profiles.active', 'dev'
+    }
+}
+
+run {
+    jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8001'
+    systemProperties = System.properties
+    main = 'kz.bsbnb.BlockChainApplication'
+}
