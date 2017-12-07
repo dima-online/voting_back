@@ -37,10 +37,10 @@ public class User implements Serializable, UserDetails {
     @Column(name = "id")
     private Long id;
     @Size(max = 255)
-    @Column(name = "iin")
+    @Column(name = "iin",unique = true)
     private String iin;
     @Size(max = 255)
-    @Column(name = "username")
+    @Column(name = "username",unique = true)
     private String username;
     @Size(max = 255)
     @Column(name = "password")
@@ -51,9 +51,9 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<UserRoles> userRolesSet;
-    @JsonIgnore
+//    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private UserInfo userInfoId;
     @Size(max = 255)
     @Column(name="executiveIin")
@@ -137,21 +137,26 @@ public class User implements Serializable, UserDetails {
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof User)) {
-            return false;
-        }
-        User other = (User) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (!iin.equals(user.iin)) return false;
+        if (!username.equals(user.username)) return false;
+        if (!status.equals(user.status)) return false;
+        return userInfoId.equals(user.userInfoId);
     }
 
     @Override
     public String toString() {
-        return "kz.bsbnb.common.model.User[ id=" + id + " ]";
+        return "User{" +
+                "id=" + id +
+                ", iin='" + iin + '\'' +
+                ", username='" + username + '\'' +
+                ", userInfoId=" + userInfoId +
+                '}';
     }
 
     @Override

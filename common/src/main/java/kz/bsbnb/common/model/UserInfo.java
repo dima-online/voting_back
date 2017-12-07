@@ -184,21 +184,30 @@ public class UserInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserInfo)) {
-            return false;
-        }
-        UserInfo other = (UserInfo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserInfo)) return false;
+
+        UserInfo userInfo = (UserInfo) o;
+
+        if (!lastName.equals(userInfo.lastName)) return false;
+        if (!firstName.equals(userInfo.firstName)) return false;
+        if (!middleName.equals(userInfo.middleName)) return false;
+        if (!phone.equals(userInfo.phone)) return false;
+        if (!email.equals(userInfo.email)) return false;
+        return voterIin != null ? voterIin.equals(userInfo.voterIin) : userInfo.voterIin == null;
     }
 
     @Override
     public String toString() {
-        return "kz.bsbnb.common.model.UserInfo[ id=" + id + " ]";
+        return "UserInfo{" +
+                "lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", smsNotification=" + smsNotification +
+                ", emailNotification=" + emailNotification +
+                '}';
     }
-    
 }

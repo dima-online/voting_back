@@ -1,6 +1,6 @@
 package kz.bsbnb;
 
-import kz.bsbnb.util.CryptUtil;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

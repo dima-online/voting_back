@@ -17,7 +17,7 @@ public class UserInfoMapper implements IPersistable {
     private String email; //"ritchie@mail.ru",
     private String status;
     private Boolean isOrg;
-    private String voterIin;
+
 
     public UserInfoMapper() {
     }
@@ -101,11 +101,5 @@ public class UserInfoMapper implements IPersistable {
         isOrg = org;
     }
 
-    public String getVoterIin() {
-        return voterIin;
-    }
 
-    public void setVoterIin(String voterIin) {
-        this.voterIin = voterIin;
-    }
 }

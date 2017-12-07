@@ -50,7 +50,7 @@ public class Organisation implements Serializable {
     @OneToMany(mappedBy = "organisationId", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
     @Basic(optional = false)
-    @Column(name = "total_share_count")
+    @Column(name = "all_share_count")
     private Long allShareCount;
     @Size(max = 200)
     @Column(name = "executive_name",nullable = true)

@@ -3,6 +3,7 @@ package kz.bsbnb.processor.impl;
 import kz.bsbnb.common.bean.UserMapper;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.User;
+import kz.bsbnb.common.model.UserRoles;
 import kz.bsbnb.common.model.UserSession;
 import kz.bsbnb.common.util.BruteUtil;
 import kz.bsbnb.common.util.Validator;
@@ -37,6 +38,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -85,11 +87,18 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         return null;
     }
 
-    private User login(String iin) {
+    private User login(User userBean) {
 
-        User user = userRepository.findByIin(iin);
-        Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
-
+        User user = null;
+        try {
+            user = userRepository.findByIin(userBean.getIin());
+        }catch (Throwable t) {
+            if (user == null) {
+                userBean.setStatus("ACTIVE");
+                userRepository.save(userBean);
+                user = userRepository.findByIin(user.getUsername());
+            }
+        }
         logoutAllPreviousSessions(user.getUsername());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
@@ -97,7 +106,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             throw new UsernameNotFoundException(messageProcessor.getMessage("error.user.username.not.correct"));
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info(String.format("%s with iin:%s authenticated", user.getUsername()));
+        logger.info(String.format("user with iin:%s authenticated", user.getUsername()));
         return user;
     }
 
@@ -105,9 +114,9 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     public SimpleResponse login(User user, Boolean mobile) {
         try {
             Thread.sleep(BruteUtil.waitRandom() * 1000);
-            user = login(user.getIin());
+            user = login(user);
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.not.found"), false);
-            isAllowedMobile(mobile, user);
+            //isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
 
         } catch (NullPointerException e) {
@@ -137,16 +146,16 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             } else {
                 response = digisignRestProcessor.verifyNCASignature(document, loginOrder.getSignature(), DigisignProcessor.OPERATION_TYPE_AUTH);
             }
-
             if (!response.getValid())
                 return new SimpleResponse(messageProcessor.getMessage(response.getCode().getErrorMessage())).ERROR();
 
             User user = (User) JsonUtil.fromJson(loginOrder.getJsonDocument(), User.class);
+            user.setUsername(user.getIin());
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
             loginOrder.setUser(user);
-            user = login(loginOrder.getUser().getUsername());
+            user = login(loginOrder.getUser());
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
-            isAllowedMobile(mobile, user);
+            //isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
         } catch (NullPointerException e) {
             return new SimpleResponse(e.getMessage()).ERROR();
@@ -192,7 +201,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             if (sessions.size() > 0) {
                 for (UserSession session : sessions) {
                     if (System.currentTimeMillis() - session.getLastAccessTime() < 1000 * 60 * 2) {
-                        throw new UserActiveException(messageProcessor.getMessage("error.user.active.exist", username));
+                        throw new UserActiveException(messageProcessor.getMessage("error.user.active.exist") + username);
                     }
                 }
                 sessions.forEach(userSession -> userSessionRepository.delete(userSession));
