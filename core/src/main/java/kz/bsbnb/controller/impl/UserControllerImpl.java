@@ -368,6 +368,8 @@ public class UserControllerImpl implements IUserController {
                 userInfo.setStatus("NEW");
                 userInfo.setEmail(userBean.getEmail());
                 userInfo.setPhone(userBean.getPhone());
+                userInfo.setEmailNotification(userBean.getEmailNotification());
+                userInfo.setSmsNotification(userBean.getSmsNotification());
                 userInfo.setFirstName(userBean.getFirstName());
                 userInfo.setLastName(userBean.getLastName());
                 userInfo.setMiddleName(userBean.getMiddleName());

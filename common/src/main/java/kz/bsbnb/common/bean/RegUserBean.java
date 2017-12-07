@@ -1,5 +1,7 @@
 package kz.bsbnb.common.bean;
 
+
+
 /**
  * Created by ruslan on 19/10/2016.
  */
@@ -22,8 +24,26 @@ public class RegUserBean {
     private String voterIin;
     private String executiveOfficer;
     private String executiveOfficerName;
+    private Boolean smsNotification;
+    private Boolean emailNotification;
 
     public RegUserBean() {
+    }
+
+    public Boolean getSmsNotification() {
+        return smsNotification;
+    }
+
+    public void setSmsNotification(Boolean smsNotification) {
+        this.smsNotification = smsNotification;
+    }
+
+    public Boolean getEmailNotification() {
+        return emailNotification;
+    }
+
+    public void setEmailNotification(Boolean emailNotification) {
+        this.emailNotification = emailNotification;
     }
 
     public String getVoterIin() {
