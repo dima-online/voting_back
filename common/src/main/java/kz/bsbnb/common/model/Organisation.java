@@ -24,7 +24,7 @@ public class Organisation implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @SequenceGenerator(name = "core.organisation_id_seq", sequenceName = "core.organisation_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "core.organisation_id_seq", sequenceName = "core.organisation_id_seq", allocationSize = 1,initialValue = 100)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.organisation_id_seq")
     @Basic(optional = false)
     @Column(name = "id")
@@ -50,8 +50,8 @@ public class Organisation implements Serializable {
     @OneToMany(mappedBy = "organisationId", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
     @Basic(optional = false)
-    @Column(name = "all_share_count")
-    private Long allShareCount;
+    @Column(name = "total_share_count")
+    private Long totalShareCount;
     @Size(max = 200)
     @Column(name = "executive_name",nullable = true)
     private String executiveName;
@@ -160,11 +160,11 @@ public class Organisation implements Serializable {
     }
 
     public Long getAllShareCount() {
-        return allShareCount;
+        return totalShareCount;
     }
 
-    public void setAllShareCount(Long allShareCount) {
-        this.allShareCount = allShareCount;
+    public void setAllShareCount(Long totalShareCount) {
+        this.totalShareCount = totalShareCount;
     }
 
     @Override

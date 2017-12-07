@@ -8,7 +8,7 @@
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <changeSet author="abish" id="create_spring_session_tables" objectQuotingStrategy="LEGACY">
         <sql splitStatements="true">
-            CREATE TABLE SPRING_SESSION_ATTRIBUTES (
+            CREATE TABLE IF NOT EXISTS SPRING_SESSION_ATTRIBUTES (
             SESSION_ID CHAR(36),
             ATTRIBUTE_NAME VARCHAR(200),
             ATTRIBUTE_BYTES BYTEA,

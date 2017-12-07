@@ -31,7 +31,7 @@ public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @SequenceGenerator(name = "core.user_id_seq", sequenceName = "core.user_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "core.user_id_seq", sequenceName = "core.user_id_seq", allocationSize = 1, initialValue = 100)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.user_id_seq")
     @Basic(optional = false)
     @Column(name = "id")

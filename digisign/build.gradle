@@ -16,7 +16,7 @@ buildscript{
 dependencies {
     compile('commons-codec:commons-codec:1.10')
 //  compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':utils')
+//    compile project(':utils')
 }
 
 bootRepackage.enabled = false

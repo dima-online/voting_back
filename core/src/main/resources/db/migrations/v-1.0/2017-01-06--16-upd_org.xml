@@ -9,7 +9,7 @@
     <changeSet author="Ruslan Beyganov" id="2017-01-06--16-upd_org" objectQuotingStrategy="LEGACY">
         <sql splitStatements="true">
 
-            ALTER TABLE core.organisation ADD all_share_count BIGINT NULL;
+            ALTER TABLE core.organisation ADD total_share_count BIGINT NULL;
 
         </sql>
     </changeSet>

@@ -91,7 +91,11 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
         User user = null;
         try {
-            user = userRepository.findByIin(userBean.getIin());
+            System.out.println("2222222222");
+            System.out.println(userBean.getUsername());
+            user = userRepository.findByIin(userBean.getUsername());
+            System.out.println("33333333333");
+            System.out.println(user.getUsername());
         }catch (Throwable t) {
             if (user == null) {
                 userBean.setStatus("ACTIVE");
@@ -140,7 +144,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
             String document = loginOrder.getJsonDocument();
             DigisignResponse response;
-
+            System.out.println(document);
             if (!ncaLayer) {
                 response = digisignRestProcessor.verifySignature(document, loginOrder.getSignature(), loginOrder.getPublicKey(), DigisignProcessor.OPERATION_TYPE_AUTH);
             } else {
@@ -153,7 +157,10 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             user.setUsername(user.getIin());
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
             loginOrder.setUser(user);
+            System.out.println("00000000000");
+            System.out.println(user.getUsername());
             user = login(loginOrder.getUser());
+            System.out.println("1111111111111");
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
             //isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
