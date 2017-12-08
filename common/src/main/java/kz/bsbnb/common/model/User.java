@@ -49,7 +49,7 @@ public class User implements Serializable, UserDetails {
     @Column(name = "status")
     private String status;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "userId", fetch = FetchType.LAZY)
     private Set<UserRoles> userRolesSet;
 //    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
@@ -183,7 +183,7 @@ public class User implements Serializable, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> result = new ArrayList<>();
-
+        if(userRolesSet == null || userRolesSet.size() == 0) return null;
         for (UserRoles userRole : userRolesSet) {
             result.add(new SimpleGrantedAuthority(userRole.getRole().name()));
         }

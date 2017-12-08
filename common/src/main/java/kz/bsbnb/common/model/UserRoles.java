@@ -40,7 +40,7 @@ public class UserRoles implements Serializable {
     private Organisation orgId;
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private User userId;
     @Column(name = "share_count")
     private Integer shareCount;

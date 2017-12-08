@@ -16,6 +16,7 @@ import kz.bsbnb.processor.MessageProcessor;
 import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.processor.UserProcessor;
 import kz.bsbnb.repository.IUserRepository;
+import kz.bsbnb.repository.IUserRoleRepository;
 import kz.bsbnb.repository.IUserSessionRepository;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
@@ -32,6 +33,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,6 +51,9 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private IUserRoleRepository userRoleRepository;
 
     @Autowired
     MessageProcessor messageProcessor;
@@ -89,20 +94,8 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
     private User login(User userBean) {
 
-        User user = null;
-        try {
-            System.out.println("2222222222");
-            System.out.println(userBean.getUsername());
-            user = userRepository.findByIin(userBean.getUsername());
-            System.out.println("33333333333");
-            System.out.println(user.getUsername());
-        }catch (Throwable t) {
-            if (user == null) {
-                userBean.setStatus("ACTIVE");
-                userRepository.save(userBean);
-                user = userRepository.findByIin(user.getUsername());
-            }
-        }
+        User user = userRepository.findByIin(userBean.getUsername());
+        if(user == null || user.getStatus().equals("NEW")) user  = firstLogin(userBean);
         logoutAllPreviousSessions(user.getUsername());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
@@ -113,6 +106,14 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         logger.info(String.format("user with iin:%s authenticated", user.getUsername()));
         return user;
     }
+
+    @Transactional
+    private User firstLogin(User userBean) {
+        userBean.setStatus("ACTIVE");
+        userRepository.save(userBean);
+        return userRepository.findByIin(userBean.getUsername());
+    }
+
 
     @Override
     public SimpleResponse login(User user, Boolean mobile) {
@@ -157,10 +158,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             user.setUsername(user.getIin());
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
             loginOrder.setUser(user);
-            System.out.println("00000000000");
-            System.out.println(user.getUsername());
             user = login(loginOrder.getUser());
-            System.out.println("1111111111111");
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
             //isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
