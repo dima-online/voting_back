@@ -1,0 +1,74 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2017-12-10--05-insert-data-faq-items"
+               objectQuotingStrategy="LEGACY">
+
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="1"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="Передаются ли мои данные третьим сторонам?"/>
+            <column name="description"
+                    value="Данные пользователя храняться и используются исключетельно Национальным Банком РК, его подразделениями и Наицональным Удостоверяющим Центром РК."/>
+            <column name="faq_post_id" value="1"/>
+            <column name="locale" value="ru"/>
+        </insert>
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="2"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="KAZ-Передаются ли мои данные третьим сторонам?"/>
+            <column name="description"
+                    value="KAZ-Данные пользователя храняться и используются исключетельно Национальным Банком РК, его подразделениями и Наицональным Удостоверяющим Центром РК."/>
+            <column name="faq_post_id" value="1"/>
+            <column name="locale" value="kk"/>
+        </insert>        
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="3"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="Что такое электронное голосование?"/>
+            <column name="description"
+                    value="Электронное голосование."/>
+            <column name="faq_post_id" value="2"/>
+            <column name="locale" value="ru"/>
+        </insert>
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="4"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="KAZ-Что такое электронное голосование?"/>
+            <column name="description"
+                    value="KAZ-Электронное голосование."/>
+            <column name="faq_post_id" value="2"/>
+            <column name="locale" value="kk"/>
+        </insert>
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="5"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="Есть ли отличия между веб и мобильной версией ресурса?"/>
+            <column name="description" value="Функциональных отличий между веб и мобильной версией ресурса нет."/>
+            <column name="faq_post_id" value="3"/>
+            <column name="locale" value="ru"/>
+        </insert>
+        <insert tableName="faq_items" schemaName="core">
+            <column name="id" valueNumeric="6"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" value="1"/>
+            <column name="create_time" valueDate="2017-12-10 00:00:00"/>
+            <column name="title" value="KAZ-Есть ли отличия между веб и мобильной версией ресурса?"/>
+            <column name="description" value="KAZ-Функциональных отличий между веб и мобильной версией ресурса нет."/>
+            <column name="faq_post_id" value="3"/>
+            <column name="locale" value="kk"/>
+        </insert>       
+    </changeSet>
+</databaseChangeLog>

@@ -8,6 +8,7 @@ import kz.bsbnb.controller.IAdminController;
 import kz.bsbnb.controller.IOrganisationController;
 import kz.bsbnb.controller.IReestrController;
 import kz.bsbnb.controller.IUserController;
+import kz.bsbnb.processor.FaqProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.SimpleResponse;
@@ -48,6 +49,8 @@ public class AdminControllerImpl implements IAdminController {
     private IOrganisationRepository organisationRepository;
     @Autowired
     private IReestrController reestrController;
+    @Autowired
+    private FaqProcessor faqProcessor;
 
     @Override
     @RequestMapping(value = "/newOrg/{userId}", method = RequestMethod.POST)
@@ -187,7 +190,7 @@ public class AdminControllerImpl implements IAdminController {
         Collections.sort(result, new Comparator<VotingBean>() {
             @Override
             public int compare(VotingBean o1, VotingBean o2) {
-                return o1.getId().compareTo(o2.getId())*(-1);
+                return o1.getId().compareTo(o2.getId()) * (-1);
             }
         });
         return result;
@@ -215,7 +218,7 @@ public class AdminControllerImpl implements IAdminController {
                     files.setFilePath(name + "-" + fileExt);
                     files.setVotingId(voting);
                     files = filesRepository.save(files);
-                    result.setMessage( "Вы успешно загрузили " + fileName + " в " + FileConst.DIR + name + "." + fileExt + " !");
+                    result.setMessage("Вы успешно загрузили " + fileName + " в " + FileConst.DIR + name + "." + fileExt + " !");
                     result.setId(files.getId());
                     result.setFileName(files.getFileName());
                     result.setFilePath(files.getFilePath());
@@ -226,11 +229,11 @@ public class AdminControllerImpl implements IAdminController {
                     return result;
                 }
             } else {
-                result.setMessage( "Нет голосования с id = " + votingId);
+                result.setMessage("Нет голосования с id = " + votingId);
                 return result;
             }
         } else {
-            result.setMessage( "Произошла ошибка при загрузке " + fileName + " Файл пуст.");
+            result.setMessage("Произошла ошибка при загрузке " + fileName + " Файл пуст.");
             return result;
         }
     }
@@ -357,5 +360,55 @@ public class AdminControllerImpl implements IAdminController {
         return result;
     }
 
+    //********************* FAQ ************************//
+
+    @RequestMapping("/faq")
+    public SimpleResponse getFaqPosts(@RequestParam(defaultValue = "") String term,
+                                      @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int pageSize) {
+        return faqProcessor.getFaqPostListPage(term, page, pageSize);
+    }
+
+    @RequestMapping(value = "/faq/{id}", method = RequestMethod.GET)
+    public SimpleResponse getFaqPost(@PathVariable Long id) {
+        return faqProcessor.getFaqPost(id);
+    }
+
+    @RequestMapping(value = "/faq/items/list", method = RequestMethod.GET)
+    public SimpleResponse getFaqItems(@RequestParam(defaultValue = "") String term,
+                                      @RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "10") int pageSize) {
+        return faqProcessor.getFaqItemsPage(term, page, pageSize);
+    }
+
+    @RequestMapping(value = "/faq/save", method = RequestMethod.POST)
+    public SimpleResponse saveFaqPost(@RequestBody List<FaqItem> item) {
+        return faqProcessor.saveFaqPostWithItems(item);
+    }
+
+    @RequestMapping(value = "/faq/{id}", method = RequestMethod.PUT)
+    public SimpleResponse getFaqPost(@PathVariable Long id, @RequestBody FaqPost item) {
+        return faqProcessor.updateFaqPost(id, item);
+    }
+
+    @RequestMapping(value = "/faq/{id}", method = RequestMethod.DELETE)
+    public SimpleResponse deleteFaqPost(@PathVariable Long id) {
+        return faqProcessor.deleteFaqPost(id);
+    }
+
+    @RequestMapping(value = "/faq/items/{id}/save", method = RequestMethod.POST)
+    public SimpleResponse saveFaqItem(@PathVariable Long id, @RequestBody FaqItem item) {
+        return faqProcessor.saveFaqItem(id, item);
+    }
+
+    @RequestMapping(value = "/faq/items/{id}", method = RequestMethod.PUT)
+    public SimpleResponse updateFaqItem(@PathVariable Long id, @RequestBody FaqItem item) {
+        return faqProcessor.updateFaqItem(id, item);
+    }
+
+    @RequestMapping(value = "/faq/items/{id}", method = RequestMethod.DELETE)
+    public SimpleResponse deleteFaqItem(@PathVariable Long id) {
+        return faqProcessor.deleteFaqItem(id);
+    }
 
 }
