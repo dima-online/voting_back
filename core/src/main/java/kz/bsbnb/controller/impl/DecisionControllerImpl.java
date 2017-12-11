@@ -50,7 +50,7 @@ public class DecisionControllerImpl implements IDecisionController {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
         if (dec != null) {
-            List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
             if (dec.getQuestionId() == null) {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
             } else if (dec.getVoterId() == null) {
@@ -60,9 +60,7 @@ public class DecisionControllerImpl implements IDecisionController {
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
             } else {
-                if (dec.getVoterId().getDateVoting() != null) {
-                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                } else if (!oldDecitions.isEmpty()) {
+               if (!oldDecitions.isEmpty()) {
                     return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
                     dec.setStatus("NEW");
@@ -88,7 +86,7 @@ public class DecisionControllerImpl implements IDecisionController {
             User admin = userRepository.findOne(bean.getConfirm().getUserId());
             Role role = userController.getRole(admin);
             if (role.equals(Role.ROLE_ADMIN)) {
-                List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+                List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
                 if (!oldDecitions.isEmpty()) {
                     boolean isFound = false;
                     for (Decision decision : oldDecitions) {
@@ -110,7 +108,6 @@ public class DecisionControllerImpl implements IDecisionController {
                         decision.setStatus("KILLED");
                         decision.setDateCreate(new Date());
                         decision.setAnswerId(dec.getAnswerId());
-                        decision.setQuestionId(dec.getQuestionId());
                         decision.setVoterId(dec.getVoterId());
                         decisionRepository.save(decision);
                     }
@@ -136,7 +133,7 @@ public class DecisionControllerImpl implements IDecisionController {
         List<Decision> oldDecisions = new ArrayList<>();
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
-            oldDecisions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            oldDecisions = decisionRepository.findByVoterId(dec.getVoterId());
         }
         List<Object> decisions = new ArrayList<>();
         String str = "";
@@ -161,9 +158,7 @@ public class DecisionControllerImpl implements IDecisionController {
                     str = "Очки не могут быть отрицательными";
                     hasError = true;
                 } else {
-                    if (dec.getVoterId().getDateVoting() != null) {
-                        return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                    } else if (!oldDecisions.isEmpty()) {
+                    if (!oldDecisions.isEmpty()) {
 //                    for (Decision decision : oldDecisions) {
 //                        decisionRepository.deleteByIds(decision.getId());
 //                    }
@@ -197,7 +192,7 @@ public class DecisionControllerImpl implements IDecisionController {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
         if (dec != null) {
-            List<Decision> oldDecitions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
             if (dec.getQuestionId() == null) {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
             } else if (dec.getVoterId() == null) {
@@ -207,9 +202,7 @@ public class DecisionControllerImpl implements IDecisionController {
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
             } else {
-                if (dec.getVoterId().getDateVoting() != null) {
-                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                } else if (!oldDecitions.isEmpty()) {
+                if (!oldDecitions.isEmpty()) {
                     return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
                     if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() == null && dec.getComments() == null) {
@@ -300,7 +293,7 @@ public class DecisionControllerImpl implements IDecisionController {
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
             dec.setComments(resComment);
-            oldDecisions = decisionRepository.findByQuestionIdAndVoterId(dec.getQuestionId(), dec.getVoterId());
+            oldDecisions = decisionRepository.findByVoterId(dec.getVoterId());
         }
 
         List<Object> decisions = new ArrayList<>();
@@ -329,9 +322,7 @@ public class DecisionControllerImpl implements IDecisionController {
                         str = "Очки не могут быть отрицательными";
                         check.setHasError(true);
                     } else {
-                        if (dec.getVoterId().getDateVoting() != null) {
-                            return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                        } else if (!oldDecisions.isEmpty()) {
+                        if (!oldDecisions.isEmpty()) {
 //                    for (Decision decision : oldDecisions) {
 //                        decisionRepository.deleteByIds(decision.getId());
 //                    }

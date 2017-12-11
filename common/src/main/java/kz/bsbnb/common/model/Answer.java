@@ -88,9 +88,10 @@ public class Answer implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+        int result = id.hashCode();
+        result = 31 * result + answer.hashCode();
+        result = 31 * result + questionId.hashCode();
+        return result;
     }
 
     @Override

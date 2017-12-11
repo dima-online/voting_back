@@ -82,6 +82,9 @@ public class Voting implements Serializable {
     private Long lastReestrId;
     @Column(name = "kvoroom")
     private Boolean kvoroom;
+    @Size(min = 1, max = 2000)
+    @Column(name = "description")
+    private String description;
     @Transient
     private Boolean hasQuestions;
 
@@ -106,6 +109,14 @@ public class Voting implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Long getLastReestrId() {

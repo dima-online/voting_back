@@ -18,6 +18,8 @@ public class ObjectMapperUtil {
         mapper.setPhone(userInfo.getPhone());
         mapper.setEmail(userInfo.getEmail());
         mapper.setStatus(userInfo.getStatus());
+        mapper.setEmailNotification(userInfo.getEmailNotification());
+        mapper.setSmsNotification(userInfo.getSmsNotification());
         return mapper;
     }
 }

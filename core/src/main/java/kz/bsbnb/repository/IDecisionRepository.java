@@ -16,9 +16,7 @@ import java.util.List;
 //@Transactional(readOnly = true)
 public interface IDecisionRepository extends PagingAndSortingRepository<Decision, Long> {
 
-    List<Decision> findByQuestionId(Question question);
-
-    List<Decision> findByQuestionIdAndVoterId(Question question, Voter voter);
+    List<Decision> findByVoterId(Voter voter);
 
     @Modifying
     @Transactional

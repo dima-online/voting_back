@@ -34,9 +34,6 @@ public class Decision implements Serializable {
     @JoinColumn(name = "answer_id", referencedColumnName = "id",nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Answer answerId;
-    @JoinColumn(name = "question_id", referencedColumnName = "id")
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Question questionId;
     @JoinColumn(name = "voter_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voter voterId;
@@ -46,8 +43,8 @@ public class Decision implements Serializable {
     private String status;
     @Column(name = "cancel_reason")
     private String cancelReason;
-    @Column(name = "signature")
-    private String signature;
+    @Column(name = "proxy_question_id")
+    private ProxyQuestion proxyQuestion;
 
     public Decision() {
     }
@@ -102,11 +99,7 @@ public class Decision implements Serializable {
     }
 
     public Question getQuestionId() {
-        return questionId;
-    }
-
-    public void setQuestionId(Question questionId) {
-        this.questionId = questionId;
+        return answerId.getQuestionId();
     }
 
     public Voter getVoterId() {
@@ -129,19 +122,25 @@ public class Decision implements Serializable {
         this.cancelReason = cancelReason;
     }
 
-    public String getSignature() {
-        return signature;
+    public ProxyQuestion getProxyQuestion() {
+        return proxyQuestion;
     }
 
-    public void setSignature(String signature) {
-        this.signature = signature;
+    public void setProxyQuestion(ProxyQuestion proxyQuestion) {
+        this.proxyQuestion = proxyQuestion;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+        int result = id.hashCode();
+        result = 31 * result + dateCreate.hashCode();
+        result = 31 * result + score.hashCode();
+        result = 31 * result + answerId.getAnswer().hashCode();
+        result = 31 * result + answerId.getQuestionId().getQuestion().hashCode();
+        result = 31 * result + voterId.getUserId().getIin().hashCode();
+        if(proxyQuestion != null)
+            result = 31 * result + proxyQuestion.getParentUser().getIin().hashCode();
+        return result;
     }
 
     @Override

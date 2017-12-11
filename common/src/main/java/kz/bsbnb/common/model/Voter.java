@@ -38,9 +38,6 @@ public class Voter implements Serializable {
     @NotNull
     @Column(name = "share_count")
     private Integer shareCount;
-    @Size(max = 2000)
-    @Column(name = "public_key")
-    private String publicKey;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voterId", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
@@ -51,9 +48,8 @@ public class Voter implements Serializable {
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting votingId;
-    @Column(name = "date_voting")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateVoting;
+    @Column(name = "is_shared")
+    private Boolean isShared;
     @Column(name = "has_gold_share")
     private Boolean hasGoldShare;
     @Column(name = "priv_share_count")
@@ -112,14 +108,6 @@ public class Voter implements Serializable {
         this.shareCount = shareCount;
     }
 
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     @XmlTransient
     public Set<Decision> getDecisionSet() { return decisionSet;}
 
@@ -140,10 +128,6 @@ public class Voter implements Serializable {
     public void setVotingId(Voting votingId) {
         this.votingId = votingId;
     }
-
-    public Date getDateVoting() {return dateVoting;}
-
-    public void setDateVoting(Date dateVoting) {this.dateVoting = dateVoting;}
 
     @Override
     public int hashCode() {

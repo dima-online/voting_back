@@ -56,9 +56,6 @@ public class Question implements Serializable {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
-    private Set<Decision> decisionSet;
-    @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voting votingId;
@@ -153,11 +150,6 @@ public class Question implements Serializable {
     public void setAnswerSet(Set<Answer> answerSet) {
         this.answerSet = answerSet;
     }
-
-    @XmlTransient
-    public Set<Decision> getDecisionSet() { return decisionSet;}
-
-    public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
 
     public Voting getVotingId() {
         return votingId;

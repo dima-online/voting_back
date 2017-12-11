@@ -58,6 +58,8 @@ public class User implements Serializable, UserDetails {
     @Size(max = 255)
     @Column(name="executiveIin")
     private String executiveOfficeIin;
+    @Column(name = "account_number")
+    private String accountNumber;
 
     public User() {
     }
@@ -179,6 +181,13 @@ public class User implements Serializable, UserDetails {
         return true;
     }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -576,13 +576,10 @@ public class UserControllerImpl implements IUserController {
             User user = userRepository.findOne(userId);
             Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
             if (voter != null) {
-                if (voter.getDateVoting() != null) {
-                    return new SimpleResponse("Вы уже проголосовали").ERROR_CUSTOM();
-                } else {
-                    voter.setDateVoting(bean.getDateConfirm() == null ? new Date() : bean.getDateConfirm());
+
                     voter = voterRepository.save(voter);
                     return new SimpleResponse(voter).SUCCESS();
-                }
+
             } else {
                 return new SimpleResponse("Не верные данные голосующего").ERROR_CUSTOM();
             }
@@ -595,20 +592,11 @@ public class UserControllerImpl implements IUserController {
     public List<SimpleDecisionBean> getDecisionsForQuestion(@PathVariable Long questionId) {
         Question question = questionRepository.findOne(questionId);
         Set<Answer> answers = question.getAnswerSet();
-        Set<Decision> decisions = question.getDecisionSet();
         Map<Answer, Integer> totalScores = new HashMap<>();
         for (Answer a : answers) {
             totalScores.put(a, new Integer(0));
         }
-        for (Decision d : decisions) {
-            //System.out.println(d.getAnswerId().getAnswer() +  " "  + d.getScore());
-            if (d.getStatus().equals("READY"))
-                if (totalScores.containsKey(d.getAnswerId())) {
-                    totalScores.replace(d.getAnswerId(), d.getScore() + totalScores.get(d.getAnswerId()));
-                } else {
-                    totalScores.put(d.getAnswerId(), d.getScore());
-                }
-        }
+
         List<SimpleDecisionBean> result = new ArrayList<>();
         for (Answer a : totalScores.keySet()) {
             if (a != null)
@@ -780,25 +768,15 @@ public class UserControllerImpl implements IUserController {
         }*/
         result.setQuestionFileSet(files);
         List<DecisionBean> beanSet = new ArrayList<>();
-        for (Decision decision : q.getDecisionSet()) {
-            if (decision.getVoterId().getUserId().equals(user)) {
-                DecisionBean bean = getBeanFromDecision(decision);
-                beanSet.add(bean);
-                result.setDecisionStatus(decision.getStatus());
-                result.setCancelReason(decision.getCancelReason());
-            }
-        }
         result.setDecisionSet(beanSet);
         return result;
     }
 
     @Override
     public boolean canVote(Voting voting, User user) {
-        boolean result = false;
+        boolean result = true;
         Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
-        if (voter != null && voter.getDateVoting() == null) {
-            result = true;
-        }
+
         return result;
     }
 

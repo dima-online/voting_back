@@ -17,6 +17,8 @@ public class UserInfoMapper implements IPersistable {
     private String email; //"ritchie@mail.ru",
     private String status;
     private Boolean isOrg;
+    private Boolean smsNotification;
+    private Boolean emailNotification;
 
 
     public UserInfoMapper() {
@@ -79,6 +81,22 @@ public class UserInfoMapper implements IPersistable {
 
     public String getEmail() {
         return email;
+    }
+
+    public Boolean getSmsNotification() {
+        return smsNotification;
+    }
+
+    public void setSmsNotification(Boolean smsNotification) {
+        this.smsNotification = smsNotification;
+    }
+
+    public Boolean getEmailNotification() {
+        return emailNotification;
+    }
+
+    public void setEmailNotification(Boolean emailNotification) {
+        this.emailNotification = emailNotification;
     }
 
     public void setEmail(String email) {

@@ -20,8 +20,8 @@ public class ProxyQuestion implements Serializable{
     @JoinColumn(name="question_id")
     private Question question;
     @ManyToOne
-    @JoinColumn(name="parent_voter_id")
-    private Voter parentVoter;
+    @JoinColumn(name="parent_user_id")
+    private User parentUser;
     @ManyToOne
     @JoinColumn(name="executive_voter_id")
     private Voter executiveVoter;
@@ -46,12 +46,12 @@ public class ProxyQuestion implements Serializable{
         this.question = question;
     }
 
-    public Voter getParentVoter() {
-        return parentVoter;
+    public User getParentUser() {
+        return parentUser;
     }
 
-    public void setParentVoter(Voter parentVoter) {
-        this.parentVoter = parentVoter;
+    public void setParentUser(User parentUser) {
+        this.parentUser = parentUser;
     }
 
     public Voter getExecutiveVoter() {
