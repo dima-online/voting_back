@@ -55,8 +55,9 @@ public class Organisation implements Serializable {
     @Size(max = 200)
     @Column(name = "executive_name",nullable = true)
     private String executiveName;
+    @Size(max = 5_000_000)
     @Column(name = "logo")
-    private Byte[] logo;
+    private String logo;
     @Column(name = "result_link")
     private String resultLink;
 
@@ -91,11 +92,11 @@ public class Organisation implements Serializable {
         this.organisationNum = organisationNum;
     }
 
-    public Byte[] getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(Byte[] logo) {
+    public void setLogo(String logo) {
         this.logo = logo;
     }
 

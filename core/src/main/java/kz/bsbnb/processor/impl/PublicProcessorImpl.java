@@ -67,6 +67,7 @@ public class PublicProcessorImpl implements PublicProcessor {
         votingBean.setShareCount(voting.getOrganisationId().getAllShareCount());
         votingBean.setSubject(voting.getSubject());
         votingBean.setStatus(voting.getStatus());
+        votingBean.setDescription(voting.getDescription());
         return votingBean;
     }
 }

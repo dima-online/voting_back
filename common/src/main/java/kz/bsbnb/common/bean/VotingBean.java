@@ -19,7 +19,8 @@ public class VotingBean {
     private boolean canVote;
     private Long organisationId;
     private String organisationName;
-    private Byte[] logo;
+    private String logo;
+    private String description;
     private Integer questionCount;
     private Long lastReestrId;
     private Long shareCount;
@@ -172,11 +173,19 @@ public class VotingBean {
         this.kvoroom = kvoroom;
     }
 
-    public Byte[] getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(Byte[] logo) {
+    public void setLogo(String logo) {
         this.logo = logo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
