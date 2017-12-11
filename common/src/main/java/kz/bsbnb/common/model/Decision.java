@@ -30,7 +30,7 @@ public class Decision implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreate;
     @Column(name = "score")
-    private Integer score;
+    private Long score;
     @JoinColumn(name = "answer_id", referencedColumnName = "id",nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Answer answerId;
@@ -82,11 +82,11 @@ public class Decision implements Serializable {
         this.dateCreate = dateCreate;
     }
 
-    public Integer getScore() {
+    public Long getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Long score) {
         this.score = score;
     }
 

@@ -103,6 +103,8 @@ public class Voting implements Serializable {
         this.status = status;
     }
 
+
+
     public Long getId() {
         return id;
     }

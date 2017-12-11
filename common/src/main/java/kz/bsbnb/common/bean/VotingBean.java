@@ -19,19 +19,20 @@ public class VotingBean {
     private boolean canVote;
     private Long organisationId;
     private String organisationName;
+    private Byte[] logo;
     private Integer questionCount;
     private Long lastReestrId;
-    private Integer shareCount;
+    private Long shareCount;
     private Boolean kvoroom;
 
     public VotingBean() {
     }
 
-    public Integer getShareCount() {
+    public Long getShareCount() {
         return shareCount;
     }
 
-    public void setShareCount(Integer shareCount) {
+    public void setShareCount(Long shareCount) {
         this.shareCount = shareCount;
     }
 
@@ -169,5 +170,13 @@ public class VotingBean {
 
     public void setKvoroom(Boolean kvoroom) {
         this.kvoroom = kvoroom;
+    }
+
+    public Byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(Byte[] logo) {
+        this.logo = logo;
     }
 }

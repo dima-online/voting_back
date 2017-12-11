@@ -1,9 +1,14 @@
 package kz.bsbnb.processor.impl;
 
+import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.processor.PublicProcessor;
 import kz.bsbnb.repository.IVotingRepository;
+import oracle.net.aso.c;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -11,6 +16,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,5 +42,31 @@ public class PublicProcessorImpl implements PublicProcessor {
         query.setParameter("dateEnd", dateEnd, TemporalType.TIMESTAMP);
         query.setParameter("status", status);
         return query.getResultList();
+    }
+
+    public List<VotingBean> getAllVotings(int page, int count) {
+        Page<Voting> list = votingRepo.findPublic(new PageRequest(page,count, new Sort(Sort.Direction.DESC,"id")));
+        List<VotingBean> result = new ArrayList<>();
+        for(Voting v: list) {
+            result.add(castToVotingBean(v));
+        }
+        return result;
+    }
+
+
+    private VotingBean castToVotingBean(Voting voting) {
+        VotingBean votingBean = new VotingBean();
+        votingBean.setDateBegin(voting.getDateBegin());
+        votingBean.setDateClose(voting.getDateClose());
+        votingBean.setDateCreate(voting.getDateCreate());
+        votingBean.setDateEnd(voting.getDateEnd());
+        votingBean.setId(voting.getId());
+        votingBean.setLogo(voting.getOrganisationId().getLogo());
+        votingBean.setOrganisationId(voting.getOrganisationId().getId());
+        votingBean.setOrganisationName(voting.getOrganisationId().getOrganisationName());
+        votingBean.setShareCount(voting.getOrganisationId().getAllShareCount());
+        votingBean.setSubject(voting.getSubject());
+        votingBean.setStatus(voting.getStatus());
+        return votingBean;
     }
 }

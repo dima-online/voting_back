@@ -654,7 +654,7 @@ public class VotingControllerImpl implements IVotingController {
                 voter = new Voter();
                 voter.setUserId(user);
                 voter.setVotingId(voting);
-                voter.setShareCount(regVoterBean.getShareCount() == null ? 0 : regVoterBean.getShareCount());
+                voter.setShareCount(regVoterBean.getShareCount() == null ? 0L : regVoterBean.getShareCount());
                 voter = voterRepository.save(voter);
                 regVoterBean.setId(voter.getId());
                 List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, voting.getOrganisationId());
@@ -1323,8 +1323,8 @@ public class VotingControllerImpl implements IVotingController {
         for (Answer answer : answers) {
             TotalDecision td = new TotalDecision();
             td.setAnswerText(answer.getAnswer());
-            td.setAnswerCount(0);
-            td.setAnswerScore(0);
+            td.setAnswerCount(0L);
+            td.setAnswerScore(0L);
             List<Decision> decs = (List<Decision>) decisionRepository.findAll();
             for (Decision decision : decs) {
                 if (decision.getStatus().equals("READY") && decision.getAnswerId() != null && decision.getAnswerId().equals(answer)) {

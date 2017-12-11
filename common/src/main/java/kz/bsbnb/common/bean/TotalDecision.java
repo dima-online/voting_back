@@ -6,8 +6,8 @@ package kz.bsbnb.common.bean;
 public class TotalDecision {
 
     private String answerText;
-    private Integer answerScore;
-    private Integer answerCount;
+    private Long answerScore;
+    private Long answerCount;
 
     public TotalDecision() {
     }
@@ -20,19 +20,19 @@ public class TotalDecision {
         this.answerText = answerText;
     }
 
-    public Integer getAnswerScore() {
+    public Long getAnswerScore() {
         return answerScore;
     }
 
-    public void setAnswerScore(Integer answerScore) {
+    public void setAnswerScore(Long answerScore) {
         this.answerScore = answerScore;
     }
 
-    public Integer getAnswerCount() {
+    public Long getAnswerCount() {
         return answerCount;
     }
 
-    public void setAnswerCount(Integer answerCount) {
+    public void setAnswerCount(Long answerCount) {
         this.answerCount = answerCount;
     }
 }

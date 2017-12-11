@@ -1,13 +1,13 @@
 package kz.bsbnb.controller.impl;
 
-import kz.bsbnb.common.model.User;
+import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.controller.IPublicViewController;
+import kz.bsbnb.processor.PublicProcessor;
 import kz.bsbnb.repository.IVotingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,12 +23,15 @@ public class PublicViewControllerImpl implements IPublicViewController {
     @Autowired
     IVotingRepository votingRepository;
 
+    @Autowired
+    PublicProcessor publicProcessor;
+
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public List<Voting> getVotings(@RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "20") int count) {
-        Page<Voting> list = votingRepository.findPublic(new PageRequest(page,count, new Sort(Sort.Direction.DESC,"id")));
-        return list.getContent();
+    public List<VotingBean> getVotings(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "20") int count) {
+        return publicProcessor.getAllVotings(page,count);
+
     }
 
     @Override

@@ -37,7 +37,7 @@ public class Voter implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "share_count")
-    private Integer shareCount;
+    private Long shareCount;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voterId", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
@@ -78,7 +78,7 @@ public class Voter implements Serializable {
         this.id = id;
     }
 
-    public Voter(Long id, Integer shareCount) {
+    public Voter(Long id, Long shareCount) {
         this.id = id;
         this.shareCount = shareCount;
     }
@@ -99,12 +99,12 @@ public class Voter implements Serializable {
         this.dateAdding = dateAdding;
     }
 
-    public Integer getShareCount() {
-        if (shareCount==null) {shareCount = 0;}
+    public Long getShareCount() {
+        if (shareCount==null) {shareCount = 0L;}
         return shareCount;
     }
 
-    public void setShareCount(Integer shareCount) {
+    public void setShareCount(Long shareCount) {
         this.shareCount = shareCount;
     }
 

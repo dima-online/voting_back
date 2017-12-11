@@ -8,7 +8,7 @@ import java.util.Date;
 public class DecisionBean {
     private Long id;
     private Date dateCreate;
-    private Integer score;
+    private Long score;
     private Long answerId;
     private Long questionId;
     private String comments;
@@ -43,12 +43,12 @@ public class DecisionBean {
         this.dateCreate = dateCreate;
     }
 
-    public Integer getScore() {
-        if (score==null) {score = 0;}
+    public Long getScore() {
+        if (score==null) {score = 0L;}
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(Long score) {
         this.score = score;
     }
 

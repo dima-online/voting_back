@@ -10,7 +10,7 @@ public class VoterBean {
     private Long id;
     private UserBean userId;
 //    private VotingBean voting;
-    private int shareCount;
+    private long shareCount;
     private double sharePercent;
     private Set<DecisionBean> decisions;
     private Boolean hasGoldShare;
@@ -59,11 +59,11 @@ public class VoterBean {
 //        this.voting = voting;
 //    }
 
-    public int getShareCount() {
+    public long getShareCount() {
         return shareCount;
     }
 
-    public void setShareCount(int shareCount) {
+    public void setShareCount(long shareCount) {
         this.shareCount = shareCount;
     }
 

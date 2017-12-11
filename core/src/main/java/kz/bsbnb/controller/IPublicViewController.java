@@ -1,5 +1,6 @@
 package kz.bsbnb.controller;
 
+import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  */
 public interface IPublicViewController {
 
-    List<Voting> getVotings(int page, int count);
+    List<VotingBean> getVotings(int page, int count);
 
     List<Voting> getWorkVotings(int page, int count);
 

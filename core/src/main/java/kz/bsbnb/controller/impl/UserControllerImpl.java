@@ -825,7 +825,7 @@ public class UserControllerImpl implements IUserController {
         if (vot != null) {
             result.setShareCount(vot.getShareCount());
         } else {
-            result.setShareCount(0);
+            result.setShareCount(0L);
         }
         if (role.equals(Role.ROLE_ADMIN)) {
             Set<VoterBean> voterBeanSet = new HashSet<>();
@@ -896,8 +896,8 @@ public class UserControllerImpl implements IUserController {
         return result;
     }
 
-    private Integer getVotingAllScore(Long votingId) {
-        Integer result = 0;
+    private Long getVotingAllScore(Long votingId) {
+        Long result = 0L;
         Voting voting = votingRepository.findOne(votingId);
         for (Voter voter : voting.getVoterSet()) {
             result = result + voter.getShareCount();
