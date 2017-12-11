@@ -110,6 +110,8 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     @Transactional
     private User firstLogin(User userBean) {
         userBean.setStatus("ACTIVE");
+        userBean.getUserInfoId().setEmailNotification(Boolean.FALSE);
+        userBean.getUserInfoId().setSmsNotification(Boolean.FALSE);
         userRepository.save(userBean);
         return userRepository.findByIin(userBean.getUsername());
     }
@@ -121,7 +123,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             Thread.sleep(BruteUtil.waitRandom() * 1000);
             user = login(user);
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.not.found"), false);
-            //isAllowedMobile(mobile, user);
+//            isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
 
         } catch (NullPointerException e) {
@@ -160,7 +162,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             loginOrder.setUser(user);
             user = login(loginOrder.getUser());
             Validator.checkObjectNotNull(user, messageProcessor.getMessage("error.user.username.not.correct"), false);
-            //isAllowedMobile(mobile, user);
+//            isAllowedMobile(mobile, user);
             return new SimpleResponse(userProcessor.userMapper(user)).SUCCESS();
         } catch (NullPointerException e) {
             return new SimpleResponse(e.getMessage()).ERROR();

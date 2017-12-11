@@ -20,6 +20,8 @@ public class UserProfileBean {
     private String voterIin;
     private String executiveOfficer;
     private String executiveOfficerName;
+    private Boolean smsNotification;
+    private Boolean emailNotification;
 
     public String getExecutiveOfficerName() {
         return executiveOfficerName;
@@ -35,6 +37,22 @@ public class UserProfileBean {
 
     public void setExecutiveOfficer(String executiveOfficer) {
         this.executiveOfficer = executiveOfficer;
+    }
+
+    public Boolean getSmsNotification() {
+        return smsNotification;
+    }
+
+    public void setSmsNotification(Boolean smsNotification) {
+        this.smsNotification = smsNotification;
+    }
+
+    public Boolean getEmailNotification() {
+        return emailNotification;
+    }
+
+    public void setEmailNotification(Boolean emailNotification) {
+        this.emailNotification = emailNotification;
     }
 
     public UserProfileBean() {

@@ -97,6 +97,8 @@ public class UserControllerImpl implements IUserController {
         if (user.getUserInfoId() != null) {
             userData.setPhone(user.getUserInfoId().getPhone());
             userData.setEmail(user.getUserInfoId().getEmail());
+            userData.setEmailNotification(user.getUserInfoId().getEmailNotification());
+            userData.setSmsNotification((user.getUserInfoId().getSmsNotification()));
             String fName = user.getUserInfoId().getLastName() == null ? " " : user.getUserInfoId().getLastName();
             fName = fName + " " + (user.getUserInfoId().getFirstName() == null ? " " : user.getUserInfoId().getFirstName());
             fName = fName + " " + (user.getUserInfoId().getMiddleName() == null ? " " : user.getUserInfoId().getMiddleName());
@@ -335,6 +337,12 @@ public class UserControllerImpl implements IUserController {
                 userInfo = user.getUserInfoId();
                 if (userBean.getEmail() != null) {
                     userInfo.setEmail(userBean.getEmail());
+                }
+                if (userBean.getEmailNotification() != null) {
+                    userInfo.setEmailNotification(userBean.getEmailNotification());
+                }
+                if (userBean.getSmsNotification() != null) {
+                    userInfo.setSmsNotification(userBean.getSmsNotification());
                 }
                 if (userBean.getPhone() != null) {
                     userInfo.setPhone(userBean.getPhone());
