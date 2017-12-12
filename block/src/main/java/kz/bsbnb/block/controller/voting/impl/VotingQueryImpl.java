@@ -2,7 +2,7 @@ package kz.bsbnb.block.controller.voting.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.bsbnb.block.controller.voting.IVotingQuery;
-import kz.bsbnb.block.model.HLCommand;
+import kz.bsbnb.block.model.command.HLCommand;
 import kz.bsbnb.block.processor.HLCommandProcessor;
 import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
@@ -33,7 +33,7 @@ public class VotingQueryImpl implements IVotingQuery {
         String[] args = {String.valueOf(voteId),String.valueOf(userId)};
         HLCommand command = commandProcessor.createQueryCommand(args,"user",1,null,1L);
         try {
-            return hyperLedgerProcessor.sendCommand(command);
+            return hyperLedgerProcessor.sendCommandOld(command);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return e.getMessage();
@@ -50,7 +50,7 @@ public class VotingQueryImpl implements IVotingQuery {
         String[] args = {String.valueOf(voteId),String.valueOf(userId),question};
         HLCommand command = commandProcessor.createQueryCommand(args,"answer",1,null,1L);
         try {
-            return hyperLedgerProcessor.sendCommand(command);
+            return hyperLedgerProcessor.sendCommandOld(command);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return e.getMessage();
@@ -67,7 +67,7 @@ public class VotingQueryImpl implements IVotingQuery {
         System.out.println(voteId + "  " + question);
         HLCommand command = commandProcessor.createQueryCommand(args,"question",1,null,1L);
         try {
-            return hyperLedgerProcessor.sendCommand(command);
+            return hyperLedgerProcessor.sendCommandOld(command);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return e.getMessage();

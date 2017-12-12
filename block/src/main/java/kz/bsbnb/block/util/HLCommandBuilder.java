@@ -1,10 +1,9 @@
 package kz.bsbnb.block.util;
 
-
-import kz.bsbnb.block.model.HLChainCodeID;
-import kz.bsbnb.block.model.HLCommand;
-import kz.bsbnb.block.model.HLCtorMsg;
-import kz.bsbnb.block.model.HLParameter;
+import kz.bsbnb.block.model.command.HLChainCodeID;
+import kz.bsbnb.block.model.command.HLCommand;
+import kz.bsbnb.block.model.command.HLCtorMsg;
+import kz.bsbnb.block.model.command.HLParameter;
 
 /**
  * Created by Olzhas.Pazyldayev on 23.08.2016.

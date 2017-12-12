@@ -15,8 +15,13 @@ public class HLMessage {
     private HLMessageResult result;
     private HLMessageError error;
     private Long id;
+    private String systemError;
 
     public HLMessage() {
+    }
+
+    public HLMessage(String systemError) {
+        this.systemError = systemError;
     }
 
     public String getJsonrpc() {
@@ -51,4 +56,11 @@ public class HLMessage {
         this.id = id;
     }
 
+    public String getSystemError() {
+        return systemError;
+    }
+
+    public void setSystemError(String systemError) {
+        this.systemError = systemError;
+    }
 }

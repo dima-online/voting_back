@@ -1,4 +1,4 @@
-package kz.bsbnb.block.model;
+package kz.bsbnb.block.model.command;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

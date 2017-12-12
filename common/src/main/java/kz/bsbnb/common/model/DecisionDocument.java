@@ -36,8 +36,8 @@ public class DecisionDocument implements Serializable {
     private String signature;
     @Column(name = "public_key")
     private String publicKey;
-
-
+    @Column(name = "block_transaction_id", length = 1024)
+    private String transactionId;
 
     public Long getId() {
         return id;
@@ -94,6 +94,14 @@ public class DecisionDocument implements Serializable {
 
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public String getMessageDigestFromDocument() {

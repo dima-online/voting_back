@@ -3,16 +3,15 @@ package kz.bsbnb.processor.impl;
 import kz.bsbnb.common.bean.UserMapper;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.User;
-import kz.bsbnb.common.model.UserRoles;
 import kz.bsbnb.common.model.UserSession;
 import kz.bsbnb.common.util.BruteUtil;
 import kz.bsbnb.common.util.Validator;
+import kz.bsbnb.common.util.exception.UserActiveException;
 import kz.bsbnb.digisign.model.DigisignResponse;
 import kz.bsbnb.digisign.processor.DigisignProcessor;
 import kz.bsbnb.digisign.processor.DigisignRestProcessor;
 import kz.bsbnb.digisign.util.DigiSignException;
 import kz.bsbnb.model.LoginOrder;
-import kz.bsbnb.processor.MessageProcessor;
 import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.processor.UserProcessor;
 import kz.bsbnb.repository.IUserRepository;
@@ -20,7 +19,7 @@ import kz.bsbnb.repository.IUserRoleRepository;
 import kz.bsbnb.repository.IUserSessionRepository;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
-import kz.bsbnb.common.util.exception.UserActiveException;
+import kz.bsbnb.util.processor.MessageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -95,7 +93,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     private User login(User userBean) {
 
         User user = userRepository.findByIin(userBean.getUsername());
-        if(user == null || user.getStatus().equals("NEW")) user  = firstLogin(userBean);
+        if (user == null || user.getStatus().equals("NEW")) user = firstLogin(userBean);
         logoutAllPreviousSessions(user.getUsername());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());

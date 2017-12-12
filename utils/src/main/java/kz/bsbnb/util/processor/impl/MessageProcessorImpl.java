@@ -1,6 +1,6 @@
-package kz.bsbnb.processor.impl;
+package kz.bsbnb.util.processor.impl;
 
-import kz.bsbnb.processor.MessageProcessor;
+import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;

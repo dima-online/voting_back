@@ -2,8 +2,8 @@ package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.controller.IMobileController;
 import kz.bsbnb.processor.FaqProcessor;
-import kz.bsbnb.processor.MessageProcessor;
 import kz.bsbnb.util.SimpleResponse;
+import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

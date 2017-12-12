@@ -1,4 +1,4 @@
-package kz.bsbnb.processor;
+package kz.bsbnb.util.processor;
 
 /**
  * Created by serik.mukashev on 21.11.2017.

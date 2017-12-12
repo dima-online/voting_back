@@ -2,7 +2,7 @@ package kz.bsbnb.block.controller.voting.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.bsbnb.block.controller.voting.IVotingDeploy;
-import kz.bsbnb.block.model.HLCommand;
+import kz.bsbnb.block.model.command.HLCommand;
 import kz.bsbnb.block.processor.HyperLedgerProcessor;
 import kz.bsbnb.block.util.BlockChainProperties;
 import kz.bsbnb.block.util.Constants;
@@ -55,7 +55,7 @@ public class VotingDeployImpl implements IVotingDeploy {
                 .args(" ")
                 .createCommand();
         try {
-            return hyperLedgerProcessor.sendCommand(command);
+            return hyperLedgerProcessor.sendCommandOld(command);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return e.getMessage();

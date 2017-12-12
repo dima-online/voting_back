@@ -62,6 +62,7 @@ subprojects {
         compile('org.springframework.boot:spring-boot-starter-data-rest')
         compile('org.springframework.boot:spring-boot-starter-security')
         compile("org.springframework.boot:spring-boot-starter-data-jpa")
+        compile('org.springframework.boot:spring-boot-starter-mail')
         compile('org.springframework.session:spring-session')
         compile('org.projectlombok:lombok')
         compile('com.google.guava:guava:19.0')

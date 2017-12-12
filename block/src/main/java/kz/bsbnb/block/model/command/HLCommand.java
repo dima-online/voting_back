@@ -1,6 +1,4 @@
-package kz.bsbnb.block.model;
-
-import kz.bsbnb.block.model.HLParameter;
+package kz.bsbnb.block.model.command;
 
 /**
  * Created by Olzhas.Pazyldayev on 23.08.2016.

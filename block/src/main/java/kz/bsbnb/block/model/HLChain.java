@@ -7,15 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HLChain {
-    private long height;
+    private Long height;
     private String currentBlockHash;
     private String previousBlockHash;
 
-    public long getHeight() {
+    public Long getHeight() {
         return height;
     }
 
-    public void setHeight(long height) {
+    public void setHeight(Long height) {
         this.height = height;
     }
 
