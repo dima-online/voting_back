@@ -2,7 +2,9 @@ package kz.bsbnb.controller;
 
 import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -15,4 +17,15 @@ public interface IPublicViewController {
     List<Voting> getWorkVotings(int page, int count);
 
     List<Voting> getOldVotings(int page, int count);
+
+    List<VotingBean> getFilteredVotings( int page,
+                                                int count,
+                                               String startDateFrom,
+                                               String startDateTo,
+                                               String endDateFrom,
+                                               String endDateTo,
+                                               String status,
+                                               String text,
+                                               String orgId
+    ) throws ParseException;
 }

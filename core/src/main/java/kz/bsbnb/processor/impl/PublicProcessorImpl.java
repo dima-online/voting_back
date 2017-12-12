@@ -4,7 +4,6 @@ import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.processor.PublicProcessor;
 import kz.bsbnb.repository.IVotingRepository;
-import oracle.net.aso.c;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,10 +13,9 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,14 +32,42 @@ public class PublicProcessorImpl implements PublicProcessor {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<Voting> getFilteredVotings(String orgId, Date dateBegin, Date dateEnd, String status) {
-        TypedQuery<Voting> query = entityManager.createQuery("SELECT v FROM Voting v WHERE v.organisationId = :organisation AND " +
-                "v.dateBegin BETWEEN :dateBegin AND :dateEnd AND v.status = :status", Voting.class);
-        query.setParameter("organisation",votingRepo.findOne(Long.parseLong(orgId)));
-        query.setParameter("dateBegin", dateBegin, TemporalType.TIMESTAMP);
-        query.setParameter("dateEnd", dateEnd, TemporalType.TIMESTAMP);
-        query.setParameter("status", status);
-        return query.getResultList();
+    public List<VotingBean> getFilteredVotings(String orgId, Date dateStartFrom, Date dateStartTo,Date dateFinishFrom, Date dateFinishTo, String status, String text, int page, int count) {
+
+        StringBuilder qlString = new StringBuilder("SELECT v FROM Voting v "+
+                "WHERE v.dateBegin BETWEEN :dateStartFrom AND :dateStartTo " +
+                "AND v.dateEnd BETWEEN :dateFinishFrom AND :dateFinishTo " +
+                "AND v.status LIKE :status " +
+                "AND (v.subject LIKE :text OR v.description LIKE :text)"
+                );
+
+        if(orgId != null && !orgId.equals("") && orgId != "") {
+            qlString.append("AND v.organisation.id = :organisation");
+        }
+
+        Query query = entityManager.createQuery(qlString.toString());
+        if(orgId != null && !orgId.equals("") && orgId != "") {
+            query.setParameter("organisation", Long.parseLong(orgId));
+        }
+        query.setParameter("dateStartFrom", dateStartFrom, TemporalType.TIMESTAMP);
+        query.setParameter("dateStartTo", dateStartTo, TemporalType.TIMESTAMP);
+        query.setParameter("dateFinishFrom", dateFinishFrom, TemporalType.TIMESTAMP);
+        query.setParameter("dateFinishTo", dateFinishTo, TemporalType.TIMESTAMP);
+        query.setParameter("status", transformStringParameter(status));
+        query.setParameter("text", transformStringParameter(text));
+        query.setFirstResult(page);
+        query.setMaxResults(count);
+        List<Voting> list = query.getResultList();
+        List<VotingBean> result = new ArrayList<>();
+        for(Voting v : list) {
+            result.add(castToVotingBean(v));
+        }
+        return result;
+    }
+
+    private String transformStringParameter (String text) {
+        if(text == null || text.equals("") || text == "") return "%";
+        return "%" + text + "%";
     }
 
     public List<VotingBean> getAllVotings(int page, int count) {
