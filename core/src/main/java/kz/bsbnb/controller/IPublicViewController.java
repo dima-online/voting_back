@@ -2,6 +2,7 @@ package kz.bsbnb.controller;
 
 import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.Voting;
+import kz.bsbnb.util.SimpleResponse;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
@@ -12,13 +13,13 @@ import java.util.List;
  */
 public interface IPublicViewController {
 
-    List<VotingBean> getVotings(int page, int count);
+    SimpleResponse getVotings(int page, int count);
 
-    List<Voting> getWorkVotings(int page, int count);
+    SimpleResponse getWorkVotings(int page, int count);
 
-    List<Voting> getOldVotings(int page, int count);
+    SimpleResponse getOldVotings(int page, int count);
 
-    List<VotingBean> getFilteredVotings( int page,
+    SimpleResponse getFilteredVotings( int page,
                                                 int count,
                                                String startDateFrom,
                                                String startDateTo,
