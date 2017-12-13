@@ -26,8 +26,8 @@ public class DecisionDocument implements Serializable {
     @JoinColumn(name = "voter_id")
     private Voter voter;
     @ManyToOne
-    @JoinColumn(name = "parent_user")
-    private User parentUser;
+    @JoinColumn(name = "parent_voter")
+    private Voter parentVoter;
     @Column(name = "json_document")
     @Size(max = 5_000_000)
     private String document;
@@ -64,12 +64,12 @@ public class DecisionDocument implements Serializable {
         this.voter = voter;
     }
 
-    public User getParentUser() {
-        return parentUser;
+    public Voter getParentVoter() {
+        return parentVoter;
     }
 
-    public void setParentUser(User parentUser) {
-        this.parentUser = parentUser;
+    public void setParentVoter(Voter parentVoter) {
+        this.parentVoter = parentVoter;
     }
 
     public String getDocument() {

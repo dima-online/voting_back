@@ -5,6 +5,7 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.consts.DocType;
 import kz.bsbnb.common.util.Constants;
@@ -62,6 +63,7 @@ public class UserInfo implements Serializable {
     private Boolean emailNotification;
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = Constants.DATE_FORMAT)
     private Date dateOfBirth;
     @Column(name = "document_number")
     private String documentNumber;
@@ -69,9 +71,11 @@ public class UserInfo implements Serializable {
     private String documentGivenAgency;
     @Column(name = "document_given_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = Constants.DATE_FORMAT)
     private Date documentGivenDate;
     @Column(name = "document_expire_date")
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(pattern = Constants.DATE_FORMAT)
     private Date documentExpireDate;
     @Column(name = "document_type")
     @Enumerated(EnumType.STRING)

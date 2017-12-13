@@ -45,7 +45,6 @@ public class User implements Serializable, UserDetails {
     @Size(max = 255)
     @Column(name = "password")
     private String password;
-    @Size(max = 255)
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;

@@ -94,7 +94,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
     private User login(User userBean) {
 
-        User user = userRepository.findByIin(userBean.getUsername());
+        User user = userRepository.findByIin(userBean.getIin());
         if (user == null || user.getStatus().equals(Status.NEW)) throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
         logoutAllPreviousSessions(user.getUsername());
 
@@ -230,6 +230,6 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         userBean.getUserInfo().setEmailNotification(Boolean.FALSE);
         userBean.getUserInfo().setSmsNotification(Boolean.FALSE);
         userRepository.save(userBean);
-        return userRepository.findByIin(userBean.getUsername());
+        return userRepository.findByIin(userBean.getIin());
     }
 }

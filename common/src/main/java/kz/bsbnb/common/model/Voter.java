@@ -34,6 +34,8 @@ public class Voter implements Serializable {
     @Column(name = "date_adding")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateAdding;
+    @Column(name = "account_number")
+    private String accountNumber;
     @Basic(optional = false)
     @NotNull
     @Column(name = "share_count")
@@ -135,6 +137,14 @@ public class Voter implements Serializable {
 
     public void setShared(Boolean shared) {
         isShared = shared;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     @Override

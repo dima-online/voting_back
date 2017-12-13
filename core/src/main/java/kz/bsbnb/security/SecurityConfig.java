@@ -24,7 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityConfigProperties securityConfigProperties;
 
-    private String[] unfilteredUrl = {"/", "/token", "/login", "/signed-login", "/logout",
+    private String[] unfilteredUrl = {"/", "/token", "/login", "/register", "/signed-login", "/logout",
             "/user/login", "/user/registration/**", "/user/remind", "/user/verifyIIN/{iin}", "/public/*",
             "/vote/**"
     };
