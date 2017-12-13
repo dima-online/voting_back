@@ -21,4 +21,6 @@ public interface SecurityProcessor {
     UserMapper getLoggedUserMapper();
 
     void logoutAllPreviousSessions(String username);
+
+    SimpleResponse register(LoginOrder loginOrder);
 }

@@ -21,4 +21,6 @@ public interface ILoginController {
     String findLoggedInUsername();
 
     SimpleResponse loggedUser();
+
+    SimpleResponse registerSignature(LoginOrder loginOrder);
 }

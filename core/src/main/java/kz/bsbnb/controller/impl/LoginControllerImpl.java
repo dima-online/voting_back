@@ -38,6 +38,12 @@ public class LoginControllerImpl implements ILoginController {
     }
 
     @Override
+    @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
+    public SimpleResponse registerSignature(@RequestBody @Valid LoginOrder loginOrder) {
+        return securityProcessor.register(loginOrder);
+    }
+
+    @Override
     @CrossOrigin
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public void logout(HttpSession session) {

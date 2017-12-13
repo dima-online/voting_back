@@ -39,6 +39,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -93,7 +94,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     private User login(User userBean) {
 
         User user = userRepository.findByIin(userBean.getUsername());
-        if (user == null || user.getStatus().equals("NEW")) user = firstLogin(userBean);
+        if (user == null || user.getStatus().equals("NEW")) throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
         logoutAllPreviousSessions(user.getUsername());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
@@ -105,14 +106,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         return user;
     }
 
-    @Transactional
-    private User firstLogin(User userBean) {
-        userBean.setStatus("ACTIVE");
-        userBean.getUserInfoId().setEmailNotification(Boolean.FALSE);
-        userBean.getUserInfoId().setSmsNotification(Boolean.FALSE);
-        userRepository.save(userBean);
-        return userRepository.findByIin(userBean.getUsername());
-    }
+
 
 
     @Override
@@ -137,6 +131,18 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         if (mobile && !user.getAuthorities().contains(new SimpleGrantedAuthority(Role.ROLE_USER.name()))) {
             throw new RuntimeException("System user cannot access throw mobile");
         }
+    }
+
+    public SimpleResponse register(LoginOrder loginOrder) {
+        User user = null;
+        try {
+            String document  = loginOrder.getJsonDocument();
+            user = (User) JsonUtil.fromJson(document, User.class);
+            user = login(firstLogin(user));
+        } catch (Exception e) {
+            return new SimpleResponse(e.getMessage()).ERROR();
+        }
+        return new SimpleResponse(user).SUCCESS();
     }
 
     public SimpleResponse login(LoginOrder loginOrder, boolean ncaLayer, boolean mobile) {
@@ -217,4 +223,12 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         }
     }
 
+    @Transactional
+    private User firstLogin(User userBean) {
+        userBean.setStatus("ACTIVE");
+        userBean.getUserInfoId().setEmailNotification(Boolean.FALSE);
+        userBean.getUserInfoId().setSmsNotification(Boolean.FALSE);
+        userRepository.save(userBean);
+        return userRepository.findByIin(userBean.getUsername());
+    }
 }

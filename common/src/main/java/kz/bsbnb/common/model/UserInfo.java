@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -61,6 +62,19 @@ public class UserInfo implements Serializable {
     private Boolean smsNotification;
     @Column(name = "email_notification")
     private Boolean emailNotification;
+    @Column(name = "date_of_birth")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateOfBirth;
+    @Column(name = "document_number")
+    private String documentNumber;
+    @Column(name = "document_given_agency")
+    private String documentGivenAgency;
+    @Column(name = "document_given_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date documentGivenDate;
+    @Column(name = "document_expire_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date documentExpireDate;
 
     //!!!Delete later!!!
     @Size(max = 12)
@@ -175,6 +189,46 @@ public class UserInfo implements Serializable {
     public Boolean getOrg() {return isOrg;}
 
     public void setOrg(Boolean org) {isOrg = org;}
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentGivenAgency() {
+        return documentGivenAgency;
+    }
+
+    public void setDocumentGivenAgency(String documentGivenAgency) {
+        this.documentGivenAgency = documentGivenAgency;
+    }
+
+    public Date getDocumentGivenDate() {
+        return documentGivenDate;
+    }
+
+    public void setDocumentGivenDate(Date documentGivenDate) {
+        this.documentGivenDate = documentGivenDate;
+    }
+
+    public Date getDocumentExpireDate() {
+        return documentExpireDate;
+    }
+
+    public void setDocumentExpireDate(Date documentExpireDate) {
+        this.documentExpireDate = documentExpireDate;
+    }
 
     @Override
     public int hashCode() {
