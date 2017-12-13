@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- *
  * @author ruslan
  */
 @Entity
@@ -31,7 +30,7 @@ public class Decision implements Serializable {
     private Date dateCreate;
     @Column(name = "score")
     private Long score;
-    @JoinColumn(name = "answer_id", referencedColumnName = "id",nullable = true)
+    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
     private Answer answer;
     @JoinColumn(name = "voter_id", referencedColumnName = "id")
@@ -110,9 +109,13 @@ public class Decision implements Serializable {
         this.voter = voter;
     }
 
-    public String getComments() {return comments;}
+    public String getComments() {
+        return comments;
+    }
 
-    public void setComments(String comments) {this.comments = comments;}
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
     public String getCancelReason() {
         return cancelReason;
@@ -135,10 +138,10 @@ public class Decision implements Serializable {
         int result = id.hashCode();
         result = 31 * result + dateCreate.hashCode();
         result = 31 * result + score.hashCode();
-        result = 31 * result + answer.getText().hashCode();
-        result = 31 * result + answer.getQuestion().getText().hashCode();
+        result = 31 * result + answer.getId().hashCode();
+        result = 31 * result + answer.getQuestion().getId().hashCode();
         result = 31 * result + voter.getUser().getIin().hashCode();
-        if(proxyQuestion != null)
+        if (proxyQuestion != null)
             result = 31 * result + proxyQuestion.getParentUser().getIin().hashCode();
         return result;
     }

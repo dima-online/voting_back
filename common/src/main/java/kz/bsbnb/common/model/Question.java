@@ -6,13 +6,17 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.util.Constants;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -29,17 +33,13 @@ public class Question implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2000)
-    @Column(name = "question")
-    private String text;
-    @Size(min = 1, max = 2000)
-    @Column(name = "question_rus")
-    private String questionRus;
-    @Size(min = 1, max = 2000)
-    @Column(name = "question_kaz")
-    private String questionKaz;
+
+    @BatchSize(size = 5)
+    @OneToMany(mappedBy = "question", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "questionMessages")
+    @OrderBy("locale ASC")
+    private Set<QuestionMessage> messages = new HashSet<>();
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 20)
@@ -80,11 +80,6 @@ public class Question implements Serializable {
         this.id = id;
     }
 
-    public Question(Long id, String text) {
-        this.id = id;
-        this.text = text;
-    }
-
     @XmlTransient
     public Set<QuestionFile> getQuestionFileSet() {
         return questionFileSet;
@@ -102,22 +97,12 @@ public class Question implements Serializable {
         this.id = id;
     }
 
-
-
-    public String getQuestionRus() {
-        return questionRus;
+    public Set<QuestionMessage> getMessages() {
+        return messages;
     }
 
-    public void setQuestionRus(String questionRus) {
-        this.questionRus = questionRus;
-    }
-
-    public String getQuestionKaz() {
-        return questionKaz;
-    }
-
-    public void setQuestionKaz(String questionKaz) {
-        this.questionKaz = questionKaz;
+    public void setMessages(Set<QuestionMessage> messages) {
+        this.messages = messages;
     }
 
     public Integer getNum() {
@@ -143,14 +128,6 @@ public class Question implements Serializable {
 
     public void setAnswerSet(Set<Answer> answerSet) {
         this.answerSet = answerSet;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public Voting getVoting() {
@@ -201,5 +178,16 @@ public class Question implements Serializable {
     public String toString() {
         return "kz.bsbnb.common.model.Question[ id=" + id + " ]";
     }
+
+    @JsonIgnore
+    public QuestionMessage getMessage(Locale locale) {
+        try {
+            return getMessages().parallelStream()
+                    .filter(questionMessage -> questionMessage.getLocale().equals(locale)).findFirst().get();
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
 
 }

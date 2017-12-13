@@ -1,6 +1,9 @@
 package kz.bsbnb.common.bean;
 
+import kz.bsbnb.common.model.VotingMessage;
+
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by ruslan on 15.11.16.
@@ -9,7 +12,7 @@ public class RegVotingBean {
 
     private Long id;
     private String votingType;
-    private String subject;
+    private Set<VotingMessage> messages;
     private Date dateCreate;
     private Date dateBegin;
     private Date dateEnd;
@@ -35,12 +38,12 @@ public class RegVotingBean {
         this.votingType = votingType;
     }
 
-    public String getSubject() {
-        return subject;
+    public Set<VotingMessage> getMessages() {
+        return messages;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setMessages(Set<VotingMessage> messages) {
+        this.messages = messages;
     }
 
     public Date getDateCreate() {
