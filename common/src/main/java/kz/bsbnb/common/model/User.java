@@ -6,6 +6,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import kz.bsbnb.common.util.Constants;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ import org.springframework.security.core.GrantedAuthority;
  */
 @Entity
 @Table(name = "user", schema = Constants.DB_SCHEMA_CORE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 1L;

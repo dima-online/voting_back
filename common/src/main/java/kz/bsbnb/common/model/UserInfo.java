@@ -7,6 +7,7 @@ package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import kz.bsbnb.common.consts.DocType;
 import kz.bsbnb.common.util.Constants;
 
@@ -23,6 +24,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user_info", schema = Constants.DB_SCHEMA_CORE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;

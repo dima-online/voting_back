@@ -96,14 +96,14 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
         User user = userRepository.findByIin(userBean.getIin());
         if (user == null || user.getStatus().equals(Status.NEW)) throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
-        logoutAllPreviousSessions(user.getUsername());
+        logoutAllPreviousSessions(user.getIin());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
         if (authentication instanceof AnonymousAuthenticationToken) {
             throw new UsernameNotFoundException(messageProcessor.getMessage("error.user.username.not.correct"));
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info(String.format("user with iin:%s authenticated", user.getUsername()));
+        logger.info(String.format("user with iin:%s authenticated", user.getIin()));
         return user;
     }
 

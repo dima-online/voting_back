@@ -202,7 +202,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
 
     private RegOrgBean castToBean(Organisation org) {
         RegOrgBean result = new RegOrgBean();
-        result.setStatus(org.getStatus() == null ? "NEW" : org.getStatus());
+        result.setStatus(org.getStatus() == null ? "NEW" : org.getStatus().toString());
         result.setOrganisationNum(org.getOrganisationNum());
         result.setOrganisationName(org.getOrganisationName());
         result.setExternalId(org.getExternalId());

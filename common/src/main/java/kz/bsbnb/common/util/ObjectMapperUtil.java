@@ -13,7 +13,7 @@ public class ObjectMapperUtil {
         mapper.setFirstName(userInfo.getFirstName());
         mapper.setLastName(userInfo.getLastName());
         mapper.setMiddleName(userInfo.getMiddleName());
-
+        mapper.setDocumentNumber(userInfo.getDocumentNumber());
         mapper.setIdn(userInfo.getIdn());
         mapper.setPhone(userInfo.getPhone());
         mapper.setEmail(userInfo.getEmail());
