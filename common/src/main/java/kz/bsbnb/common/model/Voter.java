@@ -39,15 +39,15 @@ public class Voter implements Serializable {
     @Column(name = "share_count")
     private Long shareCount;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "voterId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "voter", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private User userId;
+    private User user;
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Voting votingId;
+    private Voting voting;
     @Column(name = "is_shared")
     private Boolean isShared;
     @Column(name = "has_gold_share")
@@ -113,20 +113,28 @@ public class Voter implements Serializable {
 
     public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Voting getVotingId() {
-        return votingId;
+    public Voting getVoting() {
+        return voting;
     }
 
-    public void setVotingId(Voting votingId) {
-        this.votingId = votingId;
+    public void setVoting(Voting voting) {
+        this.voting = voting;
+    }
+
+    public Boolean getShared() {
+        return isShared;
+    }
+
+    public void setShared(Boolean shared) {
+        isShared = shared;
     }
 
     @Override

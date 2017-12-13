@@ -25,11 +25,11 @@ public class QuestionFile implements Serializable {
     private Long id;
     @JoinColumn(name = "files_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Files filesId;
+    private Files files;
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Question questionId;
+    private Question question;
 
     public QuestionFile() {
     }
@@ -46,20 +46,20 @@ public class QuestionFile implements Serializable {
         this.id = id;
     }
 
-    public Files getFilesId() {
-        return filesId;
+    public Files getFiles() {
+        return files;
     }
 
-    public void setFilesId(Files filesId) {
-        this.filesId = filesId;
+    public void setFiles(Files files) {
+        this.files = files;
     }
 
-    public Question getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Question questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     @Override

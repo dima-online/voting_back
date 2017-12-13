@@ -20,13 +20,13 @@ public interface IVotingRepository extends PagingAndSortingRepository<Voting, Lo
 
     List<Voting> getByOrganisationId(Organisation organisation, Pageable pageable);
 
-    @Query(value = "SELECT v from Voting v where v.id in (select vo.votingId from Voter vo where vo.userId=?1)")
+    @Query(value = "SELECT v from Voting v where v.id in (select vo.voting from Voter vo where vo.user=?1)")
     Page<Voting> findByUser(User user, Pageable pageable);
 
-    @Query(value = "SELECT v from Voting v where v.id in (select vo.votingId from Voter vo where vo.userId=?1) and v.dateClose is null and v.status in ('STARTED') order by v.dateBegin desc  ")
+    @Query(value = "SELECT v from Voting v where v.id in (select vo.voting from Voter vo where vo.user=?1) and v.dateClose is null and v.status in ('STARTED') order by v.dateBegin desc  ")
     List<Voting> findWorkingForUser(User user);
 
-    @Query(value = "SELECT v from Voting v where v.id in (select vo.votingId from Voter vo where vo.userId=?1) and v.dateClose is not null order by v.dateBegin desc  ")
+    @Query(value = "SELECT v from Voting v where v.id in (select vo.voting from Voter vo where vo.user=?1) and v.dateClose is not null order by v.dateBegin desc  ")
     List<Voting> findOldForUser(User user);
 
     @Query(value = "SELECT v from Voting v where v.dateEnd is not null and v.dateEnd<?1 and v.status not in ('STOPED','CLOSED')")

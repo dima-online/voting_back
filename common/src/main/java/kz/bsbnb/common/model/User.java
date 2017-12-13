@@ -50,12 +50,12 @@ public class User implements Serializable, UserDetails {
     @Enumerated(EnumType.STRING)
     private Status status;
     @JsonIgnore
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "userId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserRoles> userRolesSet;
 //    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
     @OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private UserInfo userInfoId;
+    private UserInfo userInfo;
     @Size(max = 255)
     @Column(name="executiveIin")
     private String executiveOfficeIin;
@@ -118,12 +118,12 @@ public class User implements Serializable, UserDetails {
         this.userRolesSet = userRolesSet;
     }
 
-    public UserInfo getUserInfoId() {
-        return userInfoId;
+    public UserInfo getUserInfo() {
+        return userInfo;
     }
 
-    public void setUserInfoId(UserInfo userInfoId) {
-        this.userInfoId = userInfoId;
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
     public String getExecutiveOfficeIin() {
@@ -151,7 +151,7 @@ public class User implements Serializable, UserDetails {
         if (!iin.equals(user.iin)) return false;
         if (!username.equals(user.username)) return false;
         if (!status.equals(user.status)) return false;
-        return userInfoId.equals(user.userInfoId);
+        return userInfo.equals(user.userInfo);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class User implements Serializable, UserDetails {
                 "id=" + id +
                 ", iin='" + iin + '\'' +
                 ", username='" + username + '\'' +
-                ", userInfoId=" + userInfoId +
+                ", userInfo=" + userInfo +
                 '}';
     }
 

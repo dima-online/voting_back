@@ -77,10 +77,10 @@ public class OrganisationControllerImpl implements IOrganisationController {
     public List<RegOrgBean> getRegOrganisationByOperId(@PathVariable Long operId) {
         User user = userRepository.findOne(operId);
         List<RegOrgBean> result = new ArrayList<>();
-        List<UserRoles> userRolesList = userRoleRepository.findByUserId(user);
+        List<UserRoles> userRolesList = userRoleRepository.findByUser(user);
         for (UserRoles userRoles : userRolesList) {
             if (userRoles.getRole().equals(Role.ROLE_OPER)) {
-                RegOrgBean regOrgBean = castToBean(userRoles.getOrgId());
+                RegOrgBean regOrgBean = castToBean(userRoles.getOrganisation());
                 result.add(regOrgBean);
             }
         }
@@ -102,14 +102,14 @@ public class OrganisationControllerImpl implements IOrganisationController {
 //                    List<User> admins = new ArrayList<>();
 //                    List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
 //                    for (UserRoles userRole : roles) {
-//                        admins.add(userRole.getUserId());
+//                        admins.add(userRole.getUser());
 //                    }
 //            User user = userRepository.findOne(1L);
 //                    if (!admins.isEmpty()) {
 //                        for (User user : admins) {
 //                            UserRoles userRoles = new UserRoles();
-//                            userRoles.setOrgId(org);
-//                            userRoles.setUserId(user);
+//                            userRoles.setOrganisation(org);
+//                            userRoles.setUser(user);
 //                            userRoles.setRole(Role.ROLE_ADMIN);
 //                            userRoles.setShareCount(0);
 //                            userRoles.setCannotVote(1);
@@ -148,14 +148,14 @@ public class OrganisationControllerImpl implements IOrganisationController {
 //                    List<User> admins = new ArrayList<>();
 //                    List<UserRoles> roles = userRoleRepository.findByRole(Role.ROLE_ADMIN);
 //                    for (UserRoles userRole : roles) {
-//                        admins.add(userRole.getUserId());
+//                        admins.add(userRole.getUser());
 //                    }
 //            User user = userRepository.findOne(1L);
 //                    if (!admins.isEmpty()) {
 //                        for (User user : admins) {
 //                            UserRoles userRoles = new UserRoles();
-//                            userRoles.setOrgId(org);
-//                            userRoles.setUserId(user);
+//                            userRoles.setOrganisation(org);
+//                            userRoles.setUser(user);
 //                            userRoles.setRole(Role.ROLE_ADMIN);
 //                            userRoles.setShareCount(0);
 //                            userRoles.setCannotVote(1);
@@ -291,7 +291,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         userBean.setShareCount(0);
                     } else {
                         for (UserBean bean : result) {
-                            if (bean.getId().equals(userRoles.getUserId().getId())) {
+                            if (bean.getId().equals(userRoles.getUser().getId())) {
                                 userBean = bean;
                                 isFound = true;
                             }
@@ -309,18 +309,18 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         userBean.addRole(userRoles.getRole());
                     }
                     if (!isFound) {
-                        userBean.setId(userRoles.getUserId().getId());
-                        userBean.setLogin(userRoles.getUserId().getUsername());
-                        userBean.setIin(userRoles.getUserId().getIin());
-                        if (userRoles.getUserId().getUserInfoId() != null) {
-                            userBean.setEmail(userRoles.getUserId().getUserInfoId().getEmail());
-                            String fName = userRoles.getUserId().getUserInfoId().getLastName() == null ? " " : userRoles.getUserId().getUserInfoId().getLastName();
-                            fName = fName + " " + (userRoles.getUserId().getUserInfoId().getFirstName() == null ? " " : userRoles.getUserId().getUserInfoId().getFirstName());
-                            fName = fName + " " + (userRoles.getUserId().getUserInfoId().getMiddleName() == null ? " " : userRoles.getUserId().getUserInfoId().getMiddleName());
+                        userBean.setId(userRoles.getUser().getId());
+                        userBean.setLogin(userRoles.getUser().getUsername());
+                        userBean.setIin(userRoles.getUser().getIin());
+                        if (userRoles.getUser().getUserInfo() != null) {
+                            userBean.setEmail(userRoles.getUser().getUserInfo().getEmail());
+                            String fName = userRoles.getUser().getUserInfo().getLastName() == null ? " " : userRoles.getUser().getUserInfo().getLastName();
+                            fName = fName + " " + (userRoles.getUser().getUserInfo().getFirstName() == null ? " " : userRoles.getUser().getUserInfo().getFirstName());
+                            fName = fName + " " + (userRoles.getUser().getUserInfo().getMiddleName() == null ? " " : userRoles.getUser().getUserInfo().getMiddleName());
                             userBean.setFullName(fName.trim());
-                            userBean.setPhone(userRoles.getUserId().getUserInfoId().getPhone());
-                            userBean.setVoterIin(userRoles.getUserId().getUserInfoId().getVoterIin());
-                            userBean.setVoterIin(userRoles.getUserId().getUserInfoId().getVoterIin());
+                            userBean.setPhone(userRoles.getUser().getUserInfo().getPhone());
+                            userBean.setVoterIin(userRoles.getUser().getUserInfo().getVoterIin());
+                            userBean.setVoterIin(userRoles.getUser().getUserInfo().getVoterIin());
                         }
                         userBean.setOrganisationId(organisation.getId());
                         result.add(userBean);
@@ -358,7 +358,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
 //            user = userRepository.save(user);
             return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
         } else {
-            UserInfo userInfo = user.getUserInfoId();
+            UserInfo userInfo = user.getUserInfo();
             if (userInfo == null) {
                 userInfo = new UserInfo();
                 userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
@@ -369,7 +369,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 userInfo.setFirstName(userBean.getFirstName());
                 userInfo.setLastName(userBean.getLastName());
                 userInfo = userInfoRepository.save(userInfo);
-                user.setUserInfoId(userInfo);
+                user.setUserInfo(userInfo);
                 user = userRepository.save(user);
             }
             if (needSendEmail) {
@@ -381,7 +381,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                     EmailUtil.send(rec, "Доступ до сервера Голосования", "Ваш пароль для входа " + pswd);
                 }
             }
-            List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, organisation);
+            List<UserRoles> userRoles = userRoleRepository.findByUserAndOrganisation(user, organisation);
             boolean isFound = false;
             UserRoles userRole = null;
             for (UserRoles userRol : userRoles) {
@@ -392,9 +392,9 @@ public class OrganisationControllerImpl implements IOrganisationController {
             }
             if (userRoles.isEmpty() || !isFound) {
                 userRole = new UserRoles();
-                userRole.setOrgId(organisation);
+                userRole.setOrganisation(organisation);
                 userRole.setRole(Role.ROLE_USER);
-                userRole.setUserId(user);
+                userRole.setUser(user);
             }
             userRole.setShareCount(userBean.getShareCount() == null ? 0 : userBean.getShareCount());
             userRole = userRoleRepository.save(userRole);
@@ -422,7 +422,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
             } else {
                 if (admin != null && confirmationService.check(regRoleBean.getConfirmBean())) {
-                    List<UserRoles> admins = userRoleRepository.findByUserId(admin);
+                    List<UserRoles> admins = userRoleRepository.findByUser(admin);
                     boolean isAdmin = false;
                     for (UserRoles userRole : admins) {
                         if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
@@ -433,7 +433,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         if (regRoleBean.getRole().equals(Role.ROLE_USER.name())) {
                             return new SimpleResponse("Вы не можете добавлять акционеров").ERROR_CUSTOM();
                         } else {
-                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(user, org);
+                            List<UserRoles> users = userRoleRepository.findByUserAndOrganisation(user, org);
                             boolean isUser = false;
                             for (UserRoles userRole : users) {
                                 if (userRole.getRole().name().equals(regRoleBean.getRole())) {
@@ -444,11 +444,11 @@ public class OrganisationControllerImpl implements IOrganisationController {
                                 if (!isUser) {
                                     UserRoles userRoles = new UserRoles();
                                     userRoles.setCannotVote(1);
-                                    userRoles.setOrgId(org);
+                                    userRoles.setOrganisation(org);
                                     userRoles.setRole(Role.valueOf(regRoleBean.getRole()));
                                     userRoles.setShareCount(0);
                                     userRoles.setSharePercent(0.0);
-                                    userRoles.setUserId(user);
+                                    userRoles.setUser(user);
                                     userRoleRepository.save(userRoles);
                                 }
                                 return new SimpleResponse("Права установлены успешно").SUCCESS();
@@ -479,7 +479,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
             } else {
                 if (admin != null && confirmationService.check(regRoleBean.getConfirmBean())) {
-                    List<UserRoles> admins = userRoleRepository.findByUserId(admin);
+                    List<UserRoles> admins = userRoleRepository.findByUser(admin);
                     boolean isAdmin = false;
                     for (UserRoles userRole : admins) {
                         if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
@@ -490,7 +490,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
                         if (regRoleBean.getRole().equals(Role.ROLE_USER.name())) {
                             return new SimpleResponse("Вы не можете удалить акционеров").ERROR_CUSTOM();
                         } else {
-                            List<UserRoles> users = userRoleRepository.findByUserIdAndOrgId(user, org);
+                            List<UserRoles> users = userRoleRepository.findByUserAndOrganisation(user, org);
                             boolean isUser = false;
                             UserRoles userRole = null;
                             for (UserRoles next : users) {

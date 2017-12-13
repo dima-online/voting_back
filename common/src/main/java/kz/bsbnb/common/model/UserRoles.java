@@ -37,11 +37,11 @@ public class UserRoles implements Serializable {
     @JsonIgnore
     @JoinColumn(name = "org_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Organisation orgId;
+    private Organisation organisation;
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
-    private User userId;
+    private User user;
     @Column(name = "share_count")
     private Integer shareCount;
     @Column(name = "share_percent")
@@ -95,20 +95,20 @@ public class UserRoles implements Serializable {
         this.role = role;
     }
 
-    public Organisation getOrgId() {
-        return orgId;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrgId(Organisation orgId) {
-        this.orgId = orgId;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getShareCount() {return shareCount;}

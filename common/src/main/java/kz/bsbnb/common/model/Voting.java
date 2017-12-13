@@ -65,18 +65,18 @@ public class Voting implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastChanged;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "votingId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "voting", fetch = FetchType.EAGER)
     private Set<Question> questionSet;
     @JsonIgnore
     @JoinColumn(name = "organisation_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Organisation organisationId;
+    private Organisation organisation;
     @JsonIgnore
     @JoinColumn(name = "who_changed", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User whoChanged;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "votingId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "voting", fetch = FetchType.EAGER)
     private Set<Voter> voterSet;
     @Column(name = "last_reestr_id")
     private Long lastReestrId;
@@ -202,12 +202,12 @@ public class Voting implements Serializable {
         this.questionSet = questionSet;
     }
 
-    public Organisation getOrganisationId() {
-        return organisationId;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationId(Organisation organisationId) {
-        this.organisationId = organisationId;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
     public User getWhoChanged() {

@@ -18,12 +18,12 @@ import java.util.Set;
 public interface IUserRoleRepository extends PagingAndSortingRepository<UserRoles, Long> {
     List<UserRoles> findByRole(Role role);
 
-    List<UserRoles> findByUserIdAndOrgId(User user, Organisation organisation);
+    List<UserRoles> findByUserAndOrganisation(User user, Organisation organisation);
 
     @Modifying
     @Transactional
     @Query("delete from UserRoles d where d.id = ?1")
     void deleteByIds(Long id);
 
-    List<UserRoles> findByUserId(User user);
+    List<UserRoles> findByUser(User user);
 }

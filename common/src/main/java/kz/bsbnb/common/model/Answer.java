@@ -34,13 +34,13 @@ public class Answer implements Serializable {
     @NotNull
     @Size(min = 1, max = 2000)
     @Column(name = "answer")
-    private String answer;
+    private String text;
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Question questionId;
+    private Question question;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answerId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answer", fetch = FetchType.LAZY)
     private Set<Decision> decisionSet;
 
     public Answer() {
@@ -50,9 +50,9 @@ public class Answer implements Serializable {
         this.id = id;
     }
 
-    public Answer(Long id, String answer) {
+    public Answer(Long id, String text) {
         this.id = id;
-        this.answer = answer;
+        this.text = text;
     }
 
     public Long getId() {
@@ -63,22 +63,20 @@ public class Answer implements Serializable {
         this.id = id;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getText() {
+        return text;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setText(String text) {
+        this.text = text;
     }
 
-
-
-    public Question getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Question questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     @XmlTransient
@@ -89,8 +87,8 @@ public class Answer implements Serializable {
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + answer.hashCode();
-        result = 31 * result + questionId.hashCode();
+        result = 31 * result + text.hashCode();
+        result = 31 * result + question.hashCode();
         return result;
     }
 

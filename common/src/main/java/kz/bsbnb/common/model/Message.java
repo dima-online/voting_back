@@ -54,10 +54,10 @@ public class Message implements Serializable {
     private Message parentId;
     @JoinColumn(name = "organisation_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Organisation organisationId;
+    private Organisation organisation;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private User userId;
+    private User user;
     @Column(name = "from_user")
     private Boolean fromUser;
 
@@ -130,20 +130,20 @@ public class Message implements Serializable {
         this.parentId = parentId;
     }
 
-    public Organisation getOrganisationId() {
-        return organisationId;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationId(Organisation organisationId) {
-        this.organisationId = organisationId;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Boolean getFromUser() {

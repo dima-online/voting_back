@@ -53,7 +53,7 @@ public class MessageControllerImpl implements IMessageController {
         if (message.getOrganisationId() != null) {
             organisation = organisationRepository.findOne(message.getOrganisationId());
         }
-        mess.setOrganisationId(organisation);
+        mess.setOrganisation(organisation);
         mess.setSubject(message.getSubject());
         User user;
         if (message.getUserId() != null) {
@@ -64,7 +64,7 @@ public class MessageControllerImpl implements IMessageController {
         if (user == null) {
             return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
         }
-        mess.setUserId(user);
+        mess.setUser(user);
         mess = messageRepository.save(mess);
         message.setId(mess.getId());
         //System.out.println("newThread end "+new Date().toString());
@@ -88,17 +88,17 @@ public class MessageControllerImpl implements IMessageController {
         if (message.getOrganisationId() != null) {
             organisation = organisationRepository.findOne(message.getOrganisationId());
         } else {
-            organisation = parent.getOrganisationId();
+            organisation = parent.getOrganisation();
         }
-        mess.setOrganisationId(organisation);
+        mess.setOrganisation(organisation);
         mess.setSubject(message.getSubject() == null ? parent.getSubject() : message.getSubject());
         User user;
         if (message.getUserId() != null) {
             user = userRepository.findOne(message.getUserId());
         } else {
-            user = parent.getUserId();
+            user = parent.getUser();
         }
-        mess.setUserId(user);
+        mess.setUser(user);
         parent.setDateRead(null);
         messageRepository.save(parent);
         mess = messageRepository.save(mess);
@@ -148,7 +148,7 @@ public class MessageControllerImpl implements IMessageController {
             for (UserRoles userRole : user.getUserRolesSet()) {
                 Role temp = userRole.getRole();
                 if (temp.equals(Role.ROLE_OPER)) {
-                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrganisation());
                     for (Message m : messages) {
                         if (m.getParentId() == null) {
                             ThreadBean t = castToThreadBean(m);
@@ -253,7 +253,7 @@ public class MessageControllerImpl implements IMessageController {
             for (UserRoles userRole : user.getUserRolesSet()) {
                 Role temp = userRole.getRole();
                 if (temp.equals(Role.ROLE_OPER)) {
-                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrgId());
+                    List<Message> messages = messageRepository.findByOrganisationId(userRole.getOrganisation());
                     for (Message m : messages) {
                         if (m.getParentId() != null && m.getDateRead() == null && m.getFromUser()) {
                             result++;
@@ -284,7 +284,7 @@ public class MessageControllerImpl implements IMessageController {
         List<MessageBean> result = new ArrayList<>();
         if (message != null) {
             if (role.equals(Role.ROLE_USER)) {
-                if (message.getUserId().equals(user)) {
+                if (message.getUser().equals(user)) {
                     Message temp = message;
                     for (Message m : message.getMessageSet()) {
                         if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -307,11 +307,11 @@ public class MessageControllerImpl implements IMessageController {
                     return result;
                 }
             } else if (role.equals(Role.ROLE_OPER)) {
-                if (message.getOrganisationId() == null && !message.getUserId().equals(user)) {
+                if (message.getOrganisation() == null && !message.getUser().equals(user)) {
                     return result;
                 } else {
-                    if (message.getOrganisationId() != null) {
-                        if (message.getUserId().equals(user)) {
+                    if (message.getOrganisation() != null) {
+                        if (message.getUser().equals(user)) {
                             Message temp = message;
                             for (Message m : message.getMessageSet()) {
                                 if (m.getDateCreate().after(temp.getDateCreate())) {
@@ -331,7 +331,7 @@ public class MessageControllerImpl implements IMessageController {
                             }
 
                         } else {
-                            List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, message.getOrganisationId());
+                            List<UserRoles> userRoles = userRoleRepository.findByUserAndOrganisation(user, message.getOrganisation());
                             boolean isOper = false;
                             for (UserRoles userRole : userRoles) {
                                 if (userRole.getRole().equals(role)) {
@@ -387,7 +387,7 @@ public class MessageControllerImpl implements IMessageController {
                         temp = m;
                     }
                 }
-                if (temp.getDateRead() == null && temp.getFromUser() && message.getOrganisationId() == null) {
+                if (temp.getDateRead() == null && temp.getFromUser() && message.getOrganisation() == null) {
                     message.setDateRead(new Date());
                     temp.setDateRead(new Date());
                     messageRepository.save(temp);
@@ -454,14 +454,14 @@ public class MessageControllerImpl implements IMessageController {
         result.setDateCreate(message.getDateCreate());
         result.setFromUser(message.getFromUser());
 
-        if (message.getOrganisationId() != null) {
-            result.setOrganisationId(message.getOrganisationId().getId());
-            result.setOrganisationName(message.getOrganisationId().getOrganisationName());
+        if (message.getOrganisation() != null) {
+            result.setOrganisationId(message.getOrganisation().getId());
+            result.setOrganisationName(message.getOrganisation().getOrganisationName());
         }
-        if (message.getUserId() != null) {
-            result.setUserId(message.getUserId().getId());
-            if (message.getUserId().getUserInfoId() != null) {
-                result.setUserName(userController.getFullName(message.getUserId().getUserInfoId()));
+        if (message.getUser() != null) {
+            result.setUserId(message.getUser().getId());
+            if (message.getUser().getUserInfo() != null) {
+                result.setUserName(userController.getFullName(message.getUser().getUserInfo()));
             }
         }
         //System.out.println("castToBean end "+new Date().toString());
@@ -478,12 +478,12 @@ public class MessageControllerImpl implements IMessageController {
         result.setDateCreate(message.getDateCreate());
         result.setFromUser(message.getFromUser());
         result.setMessageCount(1+(message.getMessageSet() == null ? 0 : message.getMessageSet().size()));
-        if (message.getOrganisationId() != null) {
-            result.setOrganisationId(message.getOrganisationId().getId());
-            result.setOrganisationName(message.getOrganisationId().getOrganisationName());
+        if (message.getOrganisation() != null) {
+            result.setOrganisationId(message.getOrganisation().getId());
+            result.setOrganisationName(message.getOrganisation().getOrganisationName());
         }
-        if (message.getUserId() != null) {
-            result.setUserId(message.getUserId().getId());
+        if (message.getUser() != null) {
+            result.setUserId(message.getUser().getId());
         }
         //System.out.println("castToThreadBean end "+new Date().toString());
         return result;

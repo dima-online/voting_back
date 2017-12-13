@@ -151,7 +151,7 @@ public class ReestrControllerImpl implements IReestrController {
     public SimpleResponse getHeadList(@PathVariable Long votingId) {
         Voting voting = votingRepository.findOne(votingId);
         if (voting != null) {
-            String iin = voting.getOrganisationId().getOrganisationNum();
+            String iin = voting.getOrganisation().getOrganisationNum();
             List<ReestrHead> reestrHeads = reestrHeadRepository.findByIin(iin);
             if (!reestrHeads.isEmpty()) {
                 return new SimpleResponse(reestrHeads).SUCCESS();
@@ -174,11 +174,11 @@ public class ReestrControllerImpl implements IReestrController {
     private SimpleResponse getList(ReestrHead reestrHead, Voting voting) {
         if (reestrHead != null) {
             if (voting != null) {
-                if (reestrHead.getIin().equals(voting.getOrganisationId().getOrganisationNum())) {
+                if (reestrHead.getIin().equals(voting.getOrganisation().getOrganisationNum())) {
                     if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                         if (reestrHead.getStatus().equals("READY")) {
                             //удаляем старых акционеров
-                            for (UserRoles roles : voting.getOrganisationId().getUserRolesSet()) {
+                            for (UserRoles roles : voting.getOrganisation().getUserRolesSet()) {
                                 if (roles.getRole().equals(Role.ROLE_USER)) {
                                     userRoleRepository.deleteByIds(roles.getId());
                                 }
@@ -202,7 +202,7 @@ public class ReestrControllerImpl implements IReestrController {
                                 boolean isFound = false;
                                 UserRoles userRoles = null;
                                 for (UserRoles next : newRoles) {
-                                    if (next.getUserId().equals(user)) {
+                                    if (next.getUser().equals(user)) {
                                         isFound = true;
                                         userRoles = next;
                                         break;
@@ -210,13 +210,13 @@ public class ReestrControllerImpl implements IReestrController {
                                 }
                                 if (!isFound) {
                                     userRoles = new UserRoles();
-                                    userRoles.setUserId(user);
+                                    userRoles.setUser(user);
                                     userRoles.setShareCount(reestr.getShareCount());
                                     userRoles.setRole(Role.ROLE_USER);
                                     userRoles.setSharePercent(reestr.getSharePercent());
                                     userRoles.setShareDate(reestrHead.getDateCreate());
                                     userRoles.setCannotVote(0);
-                                    userRoles.setOrgId(voting.getOrganisationId());
+                                    userRoles.setOrganisation(voting.getOrganisation());
                                     try {
                                         userRoles = userRoleRepository.save(userRoles);
                                     }catch(Exception e) {
@@ -250,7 +250,7 @@ public class ReestrControllerImpl implements IReestrController {
                                 boolean isFound = false;
                                 Voter voter = null;
                                 for (Voter next : newVoter) {
-                                    if (next.getUserId().equals(user)) {
+                                    if (next.getUser().equals(user)) {
                                         isFound = true;
                                         voter = next;
                                     }
@@ -263,9 +263,9 @@ public class ReestrControllerImpl implements IReestrController {
                                     } else {
                                         voter.setPrivShareCount(voter.getPrivShareCount() == null ? 0L : voter.getPrivShareCount() + (long) count);
                                     }
-                                    voter.setUserId(user);
+                                    voter.setUser(user);
                                     voter.setDateAdding(new Date());
-                                    voter.setVotingId(voting);
+                                    voter.setVoting(voting);
                                     voter = voterRepository.save(voter);
                                     newVoter.add(voter);
                                 } else {
@@ -297,7 +297,7 @@ public class ReestrControllerImpl implements IReestrController {
     public SimpleResponse checkRegistry(@PathVariable Long votingId, @RequestParam(defaultValue = "01/01/2000") String regDate) {
         Voting voting = votingRepository.findOne(votingId);
         if (voting != null) {
-            String bin = voting.getOrganisationId().getOrganisationNum();
+            String bin = voting.getOrganisation().getOrganisationNum();
             IERCBVotingServicesservice service = new IERCBVotingServicesserviceLocator();
             try {
                 IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
@@ -324,7 +324,7 @@ public class ReestrControllerImpl implements IReestrController {
     public SimpleResponse getRegistry(@PathVariable Long votingId, @RequestParam(defaultValue = "01/01/2000") String regDate) {
         Voting voting = votingRepository.findOne(votingId);
         if (voting != null) {
-            String bin = voting.getOrganisationId().getOrganisationNum();
+            String bin = voting.getOrganisation().getOrganisationNum();
             IERCBVotingServicesservice service = new IERCBVotingServicesserviceLocator();
 
             try {

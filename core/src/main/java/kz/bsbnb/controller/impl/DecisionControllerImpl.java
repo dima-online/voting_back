@@ -50,12 +50,12 @@ public class DecisionControllerImpl implements IDecisionController {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
         if (dec != null) {
-            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
-            if (dec.getQuestionId() == null) {
+            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoter());
+            if (dec.getQuestion() == null) {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId() == null) {
+            } else if (dec.getVoter() == null) {
                 result.setData("Голосующий не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < bean.getScore()) {
+            } else if (dec.getVoter().getShareCount() * (dec.getQuestion().getMaxCount() == null ? 1 : dec.getQuestion().getMaxCount()) < bean.getScore()) {
                 result.setData("Очки больше доступного").ERROR_CUSTOM();
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
@@ -81,17 +81,17 @@ public class DecisionControllerImpl implements IDecisionController {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
         System.out.println(bean.getCancelReason());
-        //Decision dec = (Decision) decisionRepository.findByQuestionIdAndVoterId(questionRepository.findOne(bean.getQuestionId()), voterRepository.findOne(bean.getUserId()));
+        //Decision dec = (Decision) decisionRepository.findByQuestionIdAndVoterId(questionRepository.findOne(bean.getQuestion()), voterRepository.findOne(bean.getUserId()));
         if (bean.getConfirm() != null && bean.getConfirm().getUserId() != null) {
             User admin = userRepository.findOne(bean.getConfirm().getUserId());
             Role role = userController.getRole(admin);
             if (role.equals(Role.ROLE_ADMIN)) {
-                List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
+                List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoter());
                 if (!oldDecitions.isEmpty()) {
                     boolean isFound = false;
                     for (Decision decision : oldDecitions) {
                         if (bean.getCancelReason() != null && !"".equals(bean.getCancelReason())) {
-                            if (decision.getAnswerId() == null) {
+                            if (decision.getAnswer() == null) {
                                 decision.setCancelReason(bean.getCancelReason());
                                 isFound = true;
                             }
@@ -107,11 +107,11 @@ public class DecisionControllerImpl implements IDecisionController {
                         decision.setCancelReason(bean.getCancelReason());
                         decision.setStatus("KILLED");
                         decision.setDateCreate(new Date());
-                        decision.setAnswerId(dec.getAnswerId());
-                        decision.setVoterId(dec.getVoterId());
+                        decision.setAnswer(dec.getAnswer());
+                        decision.setVoter(dec.getVoter());
                         decisionRepository.save(decision);
                     }
-                    votingController.updateQuestionDecisions(dec.getQuestionId().getId());
+                    votingController.updateQuestionDecisions(dec.getQuestion().getId());
                     result.setData("Решение отменено").SUCCESS();
                 } else {
                     result.setData("Решение не найдено").ERROR_CUSTOM();
@@ -133,7 +133,7 @@ public class DecisionControllerImpl implements IDecisionController {
         List<Decision> oldDecisions = new ArrayList<>();
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
-            oldDecisions = decisionRepository.findByVoterId(dec.getVoterId());
+            oldDecisions = decisionRepository.findByVoterId(dec.getVoter());
         }
         List<Object> decisions = new ArrayList<>();
         String str = "";
@@ -141,15 +141,15 @@ public class DecisionControllerImpl implements IDecisionController {
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
             if (dec != null) {
-                if (dec.getQuestionId() == null) {
+                if (dec.getQuestion() == null) {
                     decisions.add("Вопрос не найден");
                     str = "Вопрос не найден";
                     hasError = true;
-                } else if (dec.getVoterId() == null) {
+                } else if (dec.getVoter() == null) {
                     decisions.add("Голосующий не найден");
                     str = "Голосующий не найден";
                     hasError = true;
-                } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                } else if (dec.getVoter().getShareCount() * (dec.getQuestion().getMaxCount() == null ? 1 : dec.getQuestion().getMaxCount()) < getAllScore(dec.getVoter(), dec.getQuestion(), beans)) {
                     decisions.add("Очки больше доступного");
                     str = "Очки больше доступного";
                     hasError = true;
@@ -192,12 +192,12 @@ public class DecisionControllerImpl implements IDecisionController {
         SimpleResponse result = new SimpleResponse();
         Decision dec = votingController.getDecisionFromBean(bean);
         if (dec != null) {
-            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoterId());
-            if (dec.getQuestionId() == null) {
+            List<Decision> oldDecitions = decisionRepository.findByVoterId(dec.getVoter());
+            if (dec.getQuestion() == null) {
                 result.setData("Вопрос не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId() == null) {
+            } else if (dec.getVoter() == null) {
                 result.setData("Голосующий не найден").ERROR_CUSTOM();
-            } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < bean.getScore()) {
+            } else if (dec.getVoter().getShareCount() * (dec.getQuestion().getMaxCount() == null ? 1 : dec.getQuestion().getMaxCount()) < bean.getScore()) {
                 result.setData("Очки больше доступного").ERROR_CUSTOM();
             } else if (bean.getScore() < 0) {
                 result.setData("Очки не могут быть отрицательными").ERROR_CUSTOM();
@@ -205,7 +205,7 @@ public class DecisionControllerImpl implements IDecisionController {
                 if (!oldDecitions.isEmpty()) {
                     return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                 } else {
-                    if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() == null && dec.getComments() == null) {
+                    if (dec.getQuestion().getQuestionType().equals("ORDINARY") && dec.getAnswer() == null && dec.getComments() == null) {
                         result.setData("Ваше решение - пустое").ERROR_CUSTOM();
                     } else {
                         CheckDecision check = new CheckDecision(false);
@@ -215,8 +215,8 @@ public class DecisionControllerImpl implements IDecisionController {
                             result.setData(obj).ERROR_CUSTOM();
                         } else {
                             dec = (Decision) obj;
-                            if (dec.getQuestionId().getQuestionType().equals("ORDINARY") && dec.getAnswerId() != null) {
-                                dec.setScore(dec.getVoterId().getShareCount());
+                            if (dec.getQuestion().getQuestionType().equals("ORDINARY") && dec.getAnswer() != null) {
+                                dec.setScore(dec.getVoter().getShareCount());
                             }
                             decisionRepository.save(dec);
                             result.setData(dec).SUCCESS();
@@ -293,7 +293,7 @@ public class DecisionControllerImpl implements IDecisionController {
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
             dec.setComments(resComment);
-            oldDecisions = decisionRepository.findByVoterId(dec.getVoterId());
+            oldDecisions = decisionRepository.findByVoterId(dec.getVoter());
         }
 
         List<Object> decisions = new ArrayList<>();
@@ -301,19 +301,19 @@ public class DecisionControllerImpl implements IDecisionController {
         CheckDecision check = new CheckDecision(false);
         for (DecisionBean bean : beans) {
             Decision dec = votingController.getDecisionFromBean(bean);
-//          System.out.println("bean=[" + "{answer=" + bean.getAnswerId() + "}{id=" + bean.getId() + "}{question=" + bean.getQuestionId() + "}{user=" + bean.getUserId() + "}{score=" + bean.getScore() + "}]");
+//          System.out.println("bean=[" + "{answer=" + bean.getAnswer() + "}{id=" + bean.getId() + "}{question=" + bean.getQuestion() + "}{user=" + bean.getUserId() + "}{score=" + bean.getScore() + "}]");
             if (dec != null) {
                 dec.setComments(resComment);
                 if (!check.isHasError()) {
-                    if (dec.getQuestionId() == null) {
+                    if (dec.getQuestion() == null) {
                         decisions.add("Вопрос не найден");
                         str = "Вопрос не найден";
                         check.setHasError(true);
-                    } else if (dec.getVoterId() == null) {
+                    } else if (dec.getVoter() == null) {
                         decisions.add("Голосующий не найден");
                         str = "Голосующий не найден";
                         check.setHasError(true);
-                    } else if (dec.getVoterId().getShareCount() * (dec.getQuestionId().getMaxCount() == null ? 1 : dec.getQuestionId().getMaxCount()) < getAllScore(dec.getVoterId(), dec.getQuestionId(), beans)) {
+                    } else if (dec.getVoter().getShareCount() * (dec.getQuestion().getMaxCount() == null ? 1 : dec.getQuestion().getMaxCount()) < getAllScore(dec.getVoter(), dec.getQuestion(), beans)) {
                         decisions.add("Очки больше доступного");
                         str = "Очки больше доступного";
                         check.setHasError(true);
@@ -329,7 +329,7 @@ public class DecisionControllerImpl implements IDecisionController {
                             return new SimpleResponse("Вы уже проголосовали за это вопрос").ERROR_CUSTOM();
                         } else {
 
-                            if (dec.getAnswerId() != null) {
+                            if (dec.getAnswer() != null) {
                                 Object obj = checkAndSave(bean, dec, check);
                                 if (check.isHasError()) {
                                     str = (String) obj;
@@ -369,7 +369,7 @@ public class DecisionControllerImpl implements IDecisionController {
     private int getAllScore(Voter voterId, Question questionId, List<DecisionBean> beans) {
         int result = 0;
         for (DecisionBean bean : beans) {
-            if (bean.getUserId().equals(voterId.getUserId().getId()) && bean.getQuestionId().equals(questionId.getId())) {
+            if (bean.getUserId().equals(voterId.getUser().getId()) && bean.getQuestionId().equals(questionId.getId())) {
                 result += bean.getScore();
             }
         }

@@ -40,7 +40,7 @@ public class Files implements Serializable {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting votingId;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "filesId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "files", fetch = FetchType.EAGER)
     private Set<QuestionFile> questionFileSet;
     @Column(name = "description")
     private String description;

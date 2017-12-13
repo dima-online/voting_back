@@ -87,10 +87,10 @@ public class PublicProcessorImpl implements PublicProcessor {
         votingBean.setDateCreate(voting.getDateCreate());
         votingBean.setDateEnd(voting.getDateEnd());
         votingBean.setId(voting.getId());
-        votingBean.setLogo(voting.getOrganisationId().getLogo());
-        votingBean.setOrganisationId(voting.getOrganisationId().getId());
-        votingBean.setOrganisationName(voting.getOrganisationId().getOrganisationName());
-        votingBean.setShareCount(voting.getOrganisationId().getAllShareCount());
+        votingBean.setLogo(voting.getOrganisation().getLogo());
+        votingBean.setOrganisationId(voting.getOrganisation().getId());
+        votingBean.setOrganisationName(voting.getOrganisation().getOrganisationName());
+        votingBean.setShareCount(voting.getOrganisation().getAllShareCount());
         votingBean.setSubject(voting.getSubject());
         votingBean.setStatus(voting.getStatus());
         votingBean.setDescription(voting.getDescription());

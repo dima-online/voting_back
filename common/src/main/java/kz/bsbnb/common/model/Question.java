@@ -33,7 +33,7 @@ public class Question implements Serializable {
     @NotNull
     @Size(min = 1, max = 2000)
     @Column(name = "question")
-    private String question;
+    private String text;
     @Size(min = 1, max = 2000)
     @Column(name = "question_rus")
     private String questionRus;
@@ -53,14 +53,14 @@ public class Question implements Serializable {
     @Column(name = "decision")
     private String decision;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "question", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
     @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Voting votingId;
+    private Voting voting;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "questionId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "question", fetch = FetchType.EAGER)
     private Set<QuestionFile> questionFileSet;
     @Column(name = "priv_can_vote")
     private Boolean privCanVote;
@@ -80,9 +80,9 @@ public class Question implements Serializable {
         this.id = id;
     }
 
-    public Question(Long id, String question) {
+    public Question(Long id, String text) {
         this.id = id;
-        this.question = question;
+        this.text = text;
     }
 
     @XmlTransient
@@ -102,13 +102,7 @@ public class Question implements Serializable {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
-    }
 
-    public void setQuestion(String question) {
-        this.question = question;
-    }
 
     public String getQuestionRus() {
         return questionRus;
@@ -151,12 +145,20 @@ public class Question implements Serializable {
         this.answerSet = answerSet;
     }
 
-    public Voting getVotingId() {
-        return votingId;
+    public String getText() {
+        return text;
     }
 
-    public void setVotingId(Voting votingId) {
-        this.votingId = votingId;
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Voting getVoting() {
+        return voting;
+    }
+
+    public void setVoting(Voting voting) {
+        this.voting = voting;
     }
 
     public String getQuestionType() {

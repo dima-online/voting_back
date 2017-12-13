@@ -33,10 +33,10 @@ public class Decision implements Serializable {
     private Long score;
     @JoinColumn(name = "answer_id", referencedColumnName = "id",nullable = true)
     @ManyToOne(fetch = FetchType.EAGER)
-    private Answer answerId;
+    private Answer answer;
     @JoinColumn(name = "voter_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Voter voterId;
+    private Voter voter;
     @Column(name = "comments")
     private String comments;
     @Column(name = "status")
@@ -90,24 +90,24 @@ public class Decision implements Serializable {
         this.score = score;
     }
 
-    public Answer getAnswerId() {
-        return answerId;
+    public Answer getAnswer() {
+        return answer;
     }
 
-    public void setAnswerId(Answer answerId) {
-        this.answerId = answerId;
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
     }
 
-    public Question getQuestionId() {
-        return answerId.getQuestionId();
+    public Question getQuestion() {
+        return answer.getQuestion();
     }
 
-    public Voter getVoterId() {
-        return voterId;
+    public Voter getVoter() {
+        return voter;
     }
 
-    public void setVoterId(Voter voterId) {
-        this.voterId = voterId;
+    public void setVoter(Voter voter) {
+        this.voter = voter;
     }
 
     public String getComments() {return comments;}
@@ -135,9 +135,9 @@ public class Decision implements Serializable {
         int result = id.hashCode();
         result = 31 * result + dateCreate.hashCode();
         result = 31 * result + score.hashCode();
-        result = 31 * result + answerId.getAnswer().hashCode();
-        result = 31 * result + answerId.getQuestionId().getQuestion().hashCode();
-        result = 31 * result + voterId.getUserId().getIin().hashCode();
+        result = 31 * result + answer.getText().hashCode();
+        result = 31 * result + answer.getQuestion().getText().hashCode();
+        result = 31 * result + voter.getUser().getIin().hashCode();
         if(proxyQuestion != null)
             result = 31 * result + proxyQuestion.getParentUser().getIin().hashCode();
         return result;

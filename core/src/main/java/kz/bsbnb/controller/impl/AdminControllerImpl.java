@@ -286,7 +286,7 @@ public class AdminControllerImpl implements IAdminController {
         if (question == null) {
             return new SimpleResponse("Вопрос не найден!").ERROR_CUSTOM();
         } else {
-            if (question.getVotingId().equals(voting)) {
+            if (question.getVoting().equals(voting)) {
                 Files files = filesRepository.findOne(filesId);
                 if (files == null) {
                     return new SimpleResponse("Файл не найден!").ERROR_CUSTOM();
@@ -294,8 +294,8 @@ public class AdminControllerImpl implements IAdminController {
                     QuestionFile questionFile = questionFileRepository.findByFilesIdAndQuestionId(files, question);
                     if (questionFile == null) {
                         questionFile = new QuestionFile();
-                        questionFile.setFilesId(files);
-                        questionFile.setQuestionId(question);
+                        questionFile.setFiles(files);
+                        questionFile.setQuestion(question);
                         questionFileRepository.save(questionFile);
                     }
                     return new SimpleResponse("Файл добавлен!").SUCCESS();
@@ -314,7 +314,7 @@ public class AdminControllerImpl implements IAdminController {
         if (question == null) {
             return new SimpleResponse("Вопрос не найден!").ERROR_CUSTOM();
         } else {
-            if (question.getVotingId().equals(voting)) {
+            if (question.getVoting().equals(voting)) {
                 Files files = filesRepository.findOne(filesId);
                 if (files == null) {
                     return new SimpleResponse("Файл не найден!").ERROR_CUSTOM();

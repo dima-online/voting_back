@@ -232,7 +232,7 @@ public class VotingControllerImpl implements IVotingController {
         result.setDateCreate(voting.getDateCreate());
         result.setDateEnd(voting.getDateEnd());
         result.setId(voting.getId());
-        result.setOrganisationId(voting.getOrganisationId().getId());
+        result.setOrganisationId(voting.getOrganisation().getId());
         result.setSubject(voting.getSubject());
         result.setVotingType(voting.getVotingType());
         return result;
@@ -249,7 +249,7 @@ public class VotingControllerImpl implements IVotingController {
         result.setWhoChanged(user);
         result.setLastChanged(new Date());
         Organisation org = organisationRepository.findOne(votingBean.getOrganisationId());
-        result.setOrganisationId(org);
+        result.setOrganisation(org);
         return result;
     }
 
@@ -342,7 +342,7 @@ public class VotingControllerImpl implements IVotingController {
         List<QuestionBean> result = new ArrayList<>();
         if (voting != null && user != null) {
             List<Question> question = questionRepository.findByVotingId(voting);
-            boolean notUser = !userController.getRole(user, voting.getOrganisationId()).equals(Role.ROLE_USER);
+            boolean notUser = !userController.getRole(user, voting.getOrganisation()).equals(Role.ROLE_USER);
             for (Question q : question) {
                 QuestionBean bean = userController.castFromQuestion(q, user, notUser);
                 result.add(bean);
@@ -469,10 +469,10 @@ public class VotingControllerImpl implements IVotingController {
         } else if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
 
             Question result = new Question();
-            result.setQuestion(question.getQuestion());
+            result.setText(question.getQuestion());
             result.setQuestionType(question.getQuestionType());
             result.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
-            result.setVotingId(voting);
+            result.setVoting(voting);
             result.setPrivCanVote(question.getPrivCanVote());
             //result.setNum(questionRepository.getMaxNumForQuestion(votingId) + 1);
             List<Question> list = questionRepository.findByVotingId(voting);
@@ -491,8 +491,8 @@ public class VotingControllerImpl implements IVotingController {
                     Files file = filesRepository.findOne(fileId);
                     if (file != null) {
                         QuestionFile questionFile = new QuestionFile();
-                        questionFile.setQuestionId(result);
-                        questionFile.setFilesId(file);
+                        questionFile.setQuestion(result);
+                        questionFile.setFiles(file);
                         questionFileRepository.save(questionFile);
                     }
                 }
@@ -514,9 +514,9 @@ public class VotingControllerImpl implements IVotingController {
             return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
         } else if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
             Question ques = questionRepository.findOne(question.getId());
-            ques.setQuestion(question.getQuestion());
+            ques.setText(question.getQuestion());
             ques.setMaxCount(question.getMaxCount() == null ? ques.getMaxCount() : question.getMaxCount());
-            ques.setVotingId(voting);
+            ques.setVoting(voting);
             ques = questionRepository.save(ques);
             for (QuestionFile file : ques.getQuestionFileSet()) {
                 questionFileRepository.deleteByIds(file.getId());
@@ -525,8 +525,8 @@ public class VotingControllerImpl implements IVotingController {
                 Files file = filesRepository.findOne(fileId);
                 if (file != null) {
                     QuestionFile questionFile = new QuestionFile();
-                    questionFile.setQuestionId(ques);
-                    questionFile.setFilesId(file);
+                    questionFile.setQuestion(ques);
+                    questionFile.setFiles(file);
                     questionFileRepository.save(questionFile);
                 }
             }
@@ -545,8 +545,8 @@ public class VotingControllerImpl implements IVotingController {
             return new SimpleResponse("Голосование с id (" + votingId + ") не найдено").ERROR_NOT_FOUND();
         } else {
             Question ques = questionRepository.findOne(question.getId());
-            if (ques != null && ques.getVotingId().equals(voting)) {
-                if (ques.getVotingId().getDateBegin().after(new Date())) {
+            if (ques != null && ques.getVoting().equals(voting)) {
+                if (ques.getVoting().getDateBegin().after(new Date())) {
                     deleteVotingAnswers(question);
                     questionRepository.deleteByIds(ques.getId());
                 } else {
@@ -576,8 +576,8 @@ public class VotingControllerImpl implements IVotingController {
             return new SimpleResponse("question with id (" + questionId + ") not found").ERROR_NOT_FOUND();
         } else {
             Answer result = new Answer();
-            result.setAnswer(answer.getAnswer());
-            result.setQuestionId(question);
+            result.setText(answer.getText());
+            result.setQuestion(question);
             result = answerRepository.save(result);
             //TODO Добавить обращение у HL
             return new SimpleResponse(result).SUCCESS();
@@ -593,7 +593,7 @@ public class VotingControllerImpl implements IVotingController {
             return new SimpleResponse("question with id (" + questionId + ") not found").ERROR_NOT_FOUND();
         } else {
             Answer result = answerRepository.findOne(answer.getId());
-            result.setAnswer(answer.getAnswer());
+            result.setText(answer.getText());
             result = answerRepository.save(result);
             //TODO Добавить обращение у HL
             return new SimpleResponse(result).SUCCESS();
@@ -652,19 +652,19 @@ public class VotingControllerImpl implements IVotingController {
                 return new SimpleResponse("Голосующий уже создан").ERROR_CUSTOM();
             } else {
                 voter = new Voter();
-                voter.setUserId(user);
-                voter.setVotingId(voting);
+                voter.setUser(user);
+                voter.setVoting(voting);
                 voter.setShareCount(regVoterBean.getShareCount() == null ? 0L : regVoterBean.getShareCount());
                 voter = voterRepository.save(voter);
                 regVoterBean.setId(voter.getId());
-                List<UserRoles> userRoles = userRoleRepository.findByUserIdAndOrgId(user, voting.getOrganisationId());
+                List<UserRoles> userRoles = userRoleRepository.findByUserAndOrganisation(user, voting.getOrganisation());
                 if (userRoles.isEmpty()) {
                     UserRoles userRole = new UserRoles();
                     userRole.setCannotVote(0);
-                    userRole.setOrgId(voting.getOrganisationId());
+                    userRole.setOrganisation(voting.getOrganisation());
                     userRole.setShareCount(regVoterBean.getShareCount() == null ? 0 : regVoterBean.getShareCount());
                     userRole.setRole(Role.ROLE_USER);
-                    userRole.setUserId(user);
+                    userRole.setUser(user);
                     userRoleRepository.save(userRole);
                 } else {
                     for (UserRoles userRole : userRoles) {
@@ -683,8 +683,8 @@ public class VotingControllerImpl implements IVotingController {
     private void addListAnswer(Question question, List<Answer> answers) {
         for (Answer next : answers) {
             Answer result = new Answer();
-            result.setAnswer(next.getAnswer());
-            result.setQuestionId(question);
+            result.setText(next.getText());
+            result.setQuestion(question);
             //TODO Добавить обращение у HL
             answerRepository.save(result);
         }
@@ -693,16 +693,16 @@ public class VotingControllerImpl implements IVotingController {
     private void addOrdinaryAnswer(Question question) {
         List<Answer> answers = new ArrayList<>();
         Answer answerYes = new Answer();
-        answerYes.setQuestionId(question);
-        answerYes.setAnswer("За");//Yes
+        answerYes.setQuestion(question);
+        answerYes.setText("За");//Yes
         answers.add(answerYes);
         Answer answerNo = new Answer();
-        answerNo.setQuestionId(question);
-        answerNo.setAnswer("Против");//No
+        answerNo.setQuestion(question);
+        answerNo.setText("Против");//No
         answers.add(answerNo);
         Answer answerAbstained = new Answer();
-        answerAbstained.setQuestionId(question);
-        answerAbstained.setAnswer("Воздержался");//Abstained
+        answerAbstained.setQuestion(question);
+        answerAbstained.setText("Воздержался");//Abstained
         answers.add(answerAbstained);
         addListAnswer(question, answers);
     }
@@ -717,25 +717,25 @@ public class VotingControllerImpl implements IVotingController {
             answer = answerRepository.findOne(bean.getAnswerId());
         }
         User user = userRepository.findOne(bean.getUserId());
-        Voter voter = voterRepository.findByVotingIdAndUserId(question.getVotingId(), user);
+        Voter voter = voterRepository.findByVotingIdAndUserId(question.getVoting(), user);
         Date d = bean.getDateCreate();
         if (d == null) {
             d = new Date();
         }
         if (bean.getId() == null) {
-            result.setAnswerId(answer);
+            result.setAnswer(answer);
             result.setComments(bean.getComments());
 
             result.setDateCreate(d);
             result.setScore(bean.getScore());
-            result.setVoterId(voter);
+            result.setVoter(voter);
         } else {
             result = decisionRepository.findOne(bean.getId());
-            result.setAnswerId(answer);
+            result.setAnswer(answer);
             result.setComments(bean.getComments());
             result.setDateCreate(d);
             result.setScore(bean.getScore());
-            result.setVoterId(voter);
+            result.setVoter(voter);
         }
         return result;
     }
@@ -754,8 +754,8 @@ public class VotingControllerImpl implements IVotingController {
             repVotingBeen.setDateBegin(voting.getDateBegin());
             repVotingBeen.setDateClose(voting.getDateClose());
             repVotingBeen.setDateEnd(voting.getDateEnd());
-            repVotingBeen.setOrganisationId(voting.getOrganisationId().getId());
-            repVotingBeen.setOrganisationName(voting.getOrganisationId().getOrganisationName());
+            repVotingBeen.setOrganisationId(voting.getOrganisation().getId());
+            repVotingBeen.setOrganisationName(voting.getOrganisation().getOrganisationName());
             repVotingBeen.setStatus(voting.getStatus());
             repVotingBeen.setLastReestrId(voting.getLastReestrId());
             repVotingBeen.setSubject(voting.getSubject());
@@ -765,7 +765,7 @@ public class VotingControllerImpl implements IVotingController {
             for (Question question : voting.getQuestionSet()) {
                 RepQuestionBean repQuestionBean = new RepQuestionBean();
                 repQuestionBean.setId(question.getId());
-                repQuestionBean.setQuestion(question.getQuestion());
+                repQuestionBean.setQuestion(question.getText());
                 repQuestionBean.setPrivCanVote(question.getPrivCanVote());
                 repQuestionBean.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
                 repQuestionBean.setRepAnswerBeanList(new ArrayList<>());
@@ -782,7 +782,7 @@ public class VotingControllerImpl implements IVotingController {
                     RepAnswerBean repAnswerBean = new RepAnswerBean();
                     repAnswerBean.setId(answer.getId());
                     repAnswerBean.setScore(0);
-                    repAnswerBean.setAnswerText(answer.getAnswer());
+                    repAnswerBean.setAnswerText(answer.getText());
                     repQuestionBean.getRepAnswerBeanList().add(repAnswerBean);
                 }
 
@@ -800,10 +800,10 @@ public class VotingControllerImpl implements IVotingController {
     public SimpleResponse reportVotingQuestion(@PathVariable Long votingId, @PathVariable Long questionId, @RequestBody @Valid ConfirmBean confirmBean) {
         Question question = questionRepository.findOne(questionId);
         if (question != null) {
-            if (question.getVotingId().getId().equals(votingId)) {
-                if (question.getVotingId().getStatus().equals("STARTED")
-                        || question.getVotingId().getStatus().equals("CLOSED")
-                        || question.getVotingId().getStatus().equals("STOPED")) {
+            if (question.getVoting().getId().equals(votingId)) {
+                if (question.getVoting().getStatus().equals("STARTED")
+                        || question.getVoting().getStatus().equals("CLOSED")
+                        || question.getVoting().getStatus().equals("STOPED")) {
                     List<RepVoterBean> repVoterBeens = new ArrayList<>();
 //                    for (Decision decision : question.getDecisionSet()) {
 ////                        if (!decision.getStatus().equals("KILLED"))
@@ -819,7 +819,7 @@ public class VotingControllerImpl implements IVotingController {
 //                            if (!isFound) {
 //                                bean = new RepVoterBean();
 //                                bean.setVoterId(decision.getVoterId().getId());
-//                                bean.setQuestionId(questionId);
+//                                bean.setQuestion(questionId);
 //                                bean.setPrivShareCount(decision.getVoterId().getPrivShareCount());
 //                                bean.setHasGoldShare(decision.getVoterId().getHasGoldShare());
 //                                bean.setUserId(decision.getVoterId().getUserId().getId());
@@ -830,8 +830,8 @@ public class VotingControllerImpl implements IVotingController {
 //                                repVoterBeens.add(bean);
 //                            }
 //                            RepDecisionBean repDecisionBean = new RepDecisionBean();
-//                            repDecisionBean.setAnswer(decision.getAnswerId() != null);
-//                            repDecisionBean.setAnswerText(decision.getAnswerId() == null ? "Комментарий" : decision.getAnswerId().getAnswer());
+//                            repDecisionBean.setText(decision.getAnswerId() != null);
+//                            repDecisionBean.setTextText(decision.getAnswerId() == null ? "Комментарий" : decision.getAnswerId().getAnswer());
 //                            repDecisionBean.setComment(decision.getComments());
 //                            repDecisionBean.setStatus(decision.getStatus());
 //                            repDecisionBean.setScore(decision.getScore());
@@ -857,7 +857,7 @@ public class VotingControllerImpl implements IVotingController {
         List<VotingBean> result = new ArrayList<>();
         if (user != null) {
             for (UserRoles userRoles : user.getUserRolesSet()) {
-                List<Voting> vots = votingRepository.getByOrganisationId(userRoles.getOrgId());
+                List<Voting> vots = votingRepository.getByOrganisationId(userRoles.getOrganisation());
                 for (Voting voting : vots) {
 //                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                     boolean isFound = false;
@@ -885,8 +885,8 @@ public class VotingControllerImpl implements IVotingController {
         Voting voting = votingRepository.findOne(votingId);
         if (voting != null && voting.getDateClose() != null) {
             Map<String, String> map = new HashMap<>();
-            map.put("organization_name", voting.getOrganisationId().getOrganisationName());
-            List<Attribute> attrs = attributeRepository.findByObjectAndObjectId("ORG", voting.getOrganisationId().getId());
+            map.put("organization_name", voting.getOrganisation().getOrganisationName());
+            List<Attribute> attrs = attributeRepository.findByObjectAndObjectId("ORG", voting.getOrganisation().getId());
             String addr = attributeProcessor.getValue(attrs, "ADDRESS");
 
             map.put("organization_address", addr == null ? "Адрес не указан" : addr);
@@ -923,7 +923,7 @@ public class VotingControllerImpl implements IVotingController {
 
 
             if (voting.getKvoroom() != null && voting.getKvoroom()) {
-                voterCount = voting.getOrganisationId().getAllShareCount();
+                voterCount = voting.getOrganisation().getAllShareCount();
             }
 
             map.put("total_count", StringUtil.parseToStr(voterCount));
@@ -932,7 +932,7 @@ public class VotingControllerImpl implements IVotingController {
             map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
 
             map.put("real_count_text", ConvertUtil.digits2Text(votingShares.doubleValue()));
-            map.put("prc_count", (int)( votingShares.doubleValue() / voting.getOrganisationId().getAllShareCount().doubleValue() * 100) + "");
+            map.put("prc_count", (int)( votingShares.doubleValue() / voting.getOrganisation().getAllShareCount().doubleValue() * 100) + "");
 
             String str = "";
             /*
@@ -966,7 +966,7 @@ public class VotingControllerImpl implements IVotingController {
             for (Question question : voting.getQuestionSet()) {
                 str = str + "\n" + question.getNum().toString();
                 str = str + "\nФормулировка решения, поставленного на голосование:\n";
-                str = str + "\"" + question.getQuestion() + "\".\n";
+                str = str + "\"" + question.getText() + "\".\n";
                 str = str + "Итоги голосования:\n";
                 List<SimpleDecisionBean> totalDecisions = userController.getDecisionsForQuestion(question.getId());
                 for(SimpleDecisionBean res : totalDecisions) {
@@ -1155,7 +1155,7 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     private Boolean calcKvoroom(Voting voting) {
-        Long all = voting.getOrganisationId().getAllShareCount();
+        Long all = voting.getOrganisation().getAllShareCount();
         Long vote = 0L;
         if (voting.getVoterSet() != null) {
             for (Voter voter : voting.getVoterSet()) {
@@ -1181,16 +1181,16 @@ public class VotingControllerImpl implements IVotingController {
         List<AccQuestion> accQuestions = new ArrayList<>();
 
         for (Decision decision : decisionList) {
-            if (decision.getAnswerId() != null) {
-                if (decision.getQuestionId().getQuestionType().equals("ORDINARY")) {
-                    String gues = String.valueOf(decision.getQuestionId().getId());
+            if (decision.getAnswer() != null) {
+                if (decision.getQuestion().getQuestionType().equals("ORDINARY")) {
+                    String gues = String.valueOf(decision.getQuestion().getId());
                     String ans = "NOVOTE";
-                    if (decision.getAnswerId().getAnswer().equals("Да")) {
+                    if (decision.getAnswer().getText().equals("Да")) {
                         ans = "YES";
-                    } else if (decision.getAnswerId().getAnswer().equals("Нет")) {
+                    } else if (decision.getAnswer().getText().equals("Нет")) {
                         ans = "NO";
                     }
-                    Object o = votingInvoke.vote(decision.getVoterId().getVotingId().getId(), decision.getVoterId().getUserId().getId(), gues, "simple", ans);
+                    Object o = votingInvoke.vote(decision.getVoter().getVoting().getId(), decision.getVoter().getUser().getId(), gues, "simple", ans);
                     if (o instanceof HLMessage) {
                         HLMessage m = (HLMessage) o;
                         if (m.getError() != null) {
@@ -1206,21 +1206,21 @@ public class VotingControllerImpl implements IVotingController {
                 } else {
                     AccQuestion tempQuestion = null;
                     for (AccQuestion accQuestion : accQuestions) {
-                        if (accQuestion.getId().equals(String.valueOf(decision.getQuestionId().getId())) && accQuestion.getUserId().equals(decision.getVoterId().getUserId().getId())) {
+                        if (accQuestion.getId().equals(String.valueOf(decision.getQuestion().getId())) && accQuestion.getUserId().equals(decision.getVoter().getUser().getId())) {
                             tempQuestion = accQuestion;
                             break;
                         }
                     }
                     if (tempQuestion == null) {
                         tempQuestion = new AccQuestion();
-                        tempQuestion.setId(String.valueOf(decision.getQuestionId().getId()));
-                        tempQuestion.setUserId(decision.getVoterId().getUserId().getId());
-                        tempQuestion.setVotingId(decision.getVoterId().getVotingId().getId());
+                        tempQuestion.setId(String.valueOf(decision.getQuestion().getId()));
+                        tempQuestion.setUserId(decision.getVoter().getUser().getId());
+                        tempQuestion.setVotingId(decision.getVoter().getVoting().getId());
                         tempQuestion.setAccAnswerList(new ArrayList<>());
                         accQuestions.add(tempQuestion);
                     }
                     AccAnswer accAnswer = new AccAnswer();
-                    accAnswer.setStrValue(String.valueOf(decision.getAnswerId().getId()));
+                    accAnswer.setStrValue(String.valueOf(decision.getAnswer().getId()));
                     accAnswer.setLongValue(Long.valueOf(decision.getScore()));
                     accAnswer.setDecisionValue(decision);
                     tempQuestion.getAccAnswerList().add(accAnswer);
@@ -1257,9 +1257,9 @@ public class VotingControllerImpl implements IVotingController {
         if (blockchainProperties.getStatus().equals("ACTIVE")) {
             decisionList = decisionRepository.findByStatus("CREATED");
             for (Decision decision : decisionList) {
-                Long voteId = decision.getVoterId().getVotingId().getId();
-                Long userId = decision.getVoterId().getUserId().getId();
-                String ques = String.valueOf(decision.getQuestionId().getId());
+                Long voteId = decision.getVoter().getVoting().getId();
+                Long userId = decision.getVoter().getUser().getId();
+                String ques = String.valueOf(decision.getQuestion().getId());
                 Object o = votingQuery.getAnswerInfo(voteId, userId, ques);
                 if (o instanceof HLMessage) {
                     HLMessage m = (HLMessage) o;
@@ -1269,7 +1269,7 @@ public class VotingControllerImpl implements IVotingController {
                         System.out.println("Проверка решения с ID " + decision.getId() + " Завершилась статусом " + m.getResult().getStatus());
                         decision.setStatus("READY");
                         decisionRepository.save(decision);
-                        updateQuestionDecisions(decision.getQuestionId().getId());
+                        updateQuestionDecisions(decision.getQuestion().getId());
                     }
                 } else {
                     System.out.println("o=" + o.toString());
@@ -1322,13 +1322,13 @@ public class VotingControllerImpl implements IVotingController {
         });
         for (Answer answer : answers) {
             TotalDecision td = new TotalDecision();
-            td.setAnswerText(answer.getAnswer());
+            td.setAnswerText(answer.getText());
             td.setAnswerCount(0L);
             td.setAnswerScore(0L);
             List<Decision> decs = (List<Decision>) decisionRepository.findAll();
             for (Decision decision : decs) {
-                if (decision.getStatus().equals("READY") && decision.getAnswerId() != null && decision.getAnswerId().equals(answer)) {
-                    td.setAnswerCount(td.getAnswerCount() + decision.getVoterId().getShareCount());
+                if (decision.getStatus().equals("READY") && decision.getAnswer() != null && decision.getAnswer().equals(answer)) {
+                    td.setAnswerCount(td.getAnswerCount() + decision.getVoter().getShareCount());
                     td.setAnswerScore(td.getAnswerScore() + decision.getScore());
                 }
             }

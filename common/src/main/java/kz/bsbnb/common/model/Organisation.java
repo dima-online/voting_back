@@ -42,12 +42,12 @@ public class Organisation implements Serializable {
     @Column(name = "status")
     private String status;
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisationId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation", fetch = FetchType.LAZY)
     private Set<Voting> votingSet;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "orgId", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "organisation", fetch = FetchType.EAGER)
     private Set<UserRoles> userRolesSet;
     @JsonIgnore
-    @OneToMany(mappedBy = "organisationId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
     @Basic(optional = false)
     @Column(name = "total_share_count")
