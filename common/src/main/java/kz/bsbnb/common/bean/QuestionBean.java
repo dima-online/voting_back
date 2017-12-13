@@ -1,14 +1,17 @@
 package kz.bsbnb.common.bean;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.model.Answer;
 import kz.bsbnb.common.model.Files;
+import kz.bsbnb.common.model.QuestionMessage;
 
 import java.util.List;
 import java.util.Set;
 
 public class QuestionBean {
     private Long id;
-    private String question;
+    private Set<QuestionMessage> messages;
     private String questionType;
     private Integer num;
     private String decision;
@@ -83,12 +86,12 @@ public class QuestionBean {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
+    public Set<QuestionMessage> getMessages() {
+        return messages;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setMessages(Set<QuestionMessage> messages) {
+        this.messages = messages;
     }
 
     public String getQuestionType() {
@@ -147,11 +150,22 @@ public class QuestionBean {
         this.cancelReason = cancelReason;
     }
 
+    @JsonIgnore
+    public QuestionMessage getMessage(Locale locale) {
+        try {
+            return getMessages().parallelStream()
+                    .filter(message -> message.getLocale().equals(locale)).findFirst().get();
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
+        QuestionMessage message = getMessage(Locale.ru);
         return "QuestionBean{" +
                 "id=" + id +
-                ", question='" + question + '\'' +
+                ", question='" + message == null ? null : message.getText() + '\'' +
                 ", questionType='" + questionType + '\'' +
                 ", num=" + num +
                 ", decision='" + decision + '\'' +

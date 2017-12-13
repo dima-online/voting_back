@@ -1,6 +1,7 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.*;
+import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.controller.IUserController;
@@ -8,6 +9,7 @@ import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.*;
+import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +50,8 @@ public class UserControllerImpl implements IUserController {
     private IFilesRepository filesRepository;
     @Autowired
     private IQuestionRepository questionRepository;
+    @Autowired
+    private MessageProcessor messageProcessor;
 
     //функция для криптовки паролей
     private static String pwd(String password) {
@@ -574,8 +578,8 @@ public class UserControllerImpl implements IUserController {
             Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
             if (voter != null) {
 
-                    voter = voterRepository.save(voter);
-                    return new SimpleResponse(voter).SUCCESS();
+                voter = voterRepository.save(voter);
+                return new SimpleResponse(voter).SUCCESS();
 
             } else {
                 return new SimpleResponse("Не верные данные голосующего").ERROR_CUSTOM();
@@ -596,8 +600,10 @@ public class UserControllerImpl implements IUserController {
 
         List<SimpleDecisionBean> result = new ArrayList<>();
         for (Answer a : totalScores.keySet()) {
-            if (a != null)
-                result.add(new SimpleDecisionBean(a.getText(), totalScores.get(a), a.getId()));
+            if (a != null) {
+                AnswerMessage message = a.getMessage(Locale.ru);
+                result.add(new SimpleDecisionBean(message == null ? null : message.getText(), totalScores.get(a), a.getId()));
+            }
         }
         Collections.sort(result, new Comparator<SimpleDecisionBean>() {
             @Override
@@ -739,7 +745,7 @@ public class UserControllerImpl implements IUserController {
         }
         result.setPrivCanVote(q.getPrivCanVote());
         result.setNum(q.getNum());
-        result.setQuestion(q.getText());
+        result.setMessages(q.getMessages());
         result.setQuestionType(q.getQuestionType());
         result.setVotingId(q.getVoting().getId());
         if (q.getAnswerSet() != null) {
@@ -811,7 +817,9 @@ public class UserControllerImpl implements IUserController {
         result.setLastChanged(voting.getLastChanged());
         result.setQuestionCount(voting.getQuestionSet().size());
         result.setStatus(voting.getStatus());
-        result.setSubject(voting.getSubject());
+        VotingMessage message = voting.getMessage(messageProcessor.getCurrentLocale());
+        result.setSubject(message == null ? null : message.getSubject());
+        result.setDescription(message == null ? null : message.getDescription());
         result.setVotingType(voting.getVotingType().toString());
         result.setOrganisationId(voting.getOrganisation().getId());
         result.setOrganisationName(voting.getOrganisation().getOrganisationName());

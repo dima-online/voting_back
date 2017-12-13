@@ -6,8 +6,11 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.consts.VotingType;
 import kz.bsbnb.common.util.Constants;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,10 +18,10 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
  * @author ruslan
  */
 @Entity
@@ -37,11 +40,13 @@ public class Voting implements Serializable {
     @Column(name = "voting_type")
     @Enumerated(EnumType.STRING)
     private VotingType votingType;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 200)
-    @Column(name = "subject")
-    private String subject;
+
+    @BatchSize(size = 5)
+    @OneToMany(mappedBy = "voting", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "votingMessages")
+    @OrderBy("locale ASC")
+    private Set<VotingMessage> messages = new HashSet<>();
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "date_create")
@@ -95,14 +100,13 @@ public class Voting implements Serializable {
         this.id = id;
     }
 
-    public Voting(Long id, VotingType votingType, String subject, Date dateCreate, String status) {
+    public Voting(Long id, VotingType votingType, Set<VotingMessage> messages, Date dateCreate, String status) {
         this.id = id;
         this.votingType = votingType;
-        this.subject = subject;
+        this.messages = messages;
         this.dateCreate = dateCreate;
         this.status = status;
     }
-
 
 
     public Long getId() {
@@ -137,12 +141,12 @@ public class Voting implements Serializable {
         this.votingType = votingType;
     }
 
-    public String getSubject() {
-        return subject;
+    public Set<VotingMessage> getMessages() {
+        return messages;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setMessages(Set<VotingMessage> messages) {
+        this.messages = messages;
     }
 
     public Date getDateCreate() {
@@ -267,5 +271,14 @@ public class Voting implements Serializable {
     public String toString() {
         return "kz.bsbnb.common.model.Voting[ id=" + id + " ]";
     }
-    
+
+    @JsonIgnore
+    public VotingMessage getMessage(Locale locale) {
+        try {
+            return getMessages().parallelStream()
+                    .filter(votingMessage -> votingMessage.getLocale().equals(locale)).findFirst().get();
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }

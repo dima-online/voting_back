@@ -1,6 +1,9 @@
 package kz.bsbnb.common.bean;
 
+import kz.bsbnb.common.model.QuestionMessage;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ruslan on 10.12.16.
@@ -8,12 +11,12 @@ import java.util.List;
 public class RegQuestionBean {
 
     private Long id;
-    private String question;
     private String questionType;
     private Integer num;
     private List<Long> filesId;
     private Integer maxCount;
     private Boolean privCanVote;
+    private Set<QuestionMessage> messages;
 
     public RegQuestionBean() {
     }
@@ -42,12 +45,12 @@ public class RegQuestionBean {
         this.id = id;
     }
 
-    public String getQuestion() {
-        return question;
+    public Set<QuestionMessage> getMessages() {
+        return messages;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setMessages(Set<QuestionMessage> messages) {
+        this.messages = messages;
     }
 
     public String getQuestionType() {

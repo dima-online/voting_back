@@ -1,6 +1,6 @@
 /**
  * IERCBVotingServicesserviceLocator.java
- *
+ * <p>
  * This file was auto-generated from WSDL
  * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
  */
@@ -45,11 +45,10 @@ public class IERCBVotingServicesserviceLocator extends org.apache.axis.client.Se
     }
 
     public kz.bsbnb.util.ERCBService.IERCBVotingServices getIERCBVotingServicesPort() throws javax.xml.rpc.ServiceException {
-       java.net.URL endpoint;
+        java.net.URL endpoint;
         try {
             endpoint = new java.net.URL(IERCBVotingServicesPort_address);
-        }
-        catch (java.net.MalformedURLException e) {
+        } catch (java.net.MalformedURLException e) {
             throw new javax.xml.rpc.ServiceException(e);
         }
         return getIERCBVotingServicesPort(endpoint);
@@ -60,8 +59,7 @@ public class IERCBVotingServicesserviceLocator extends org.apache.axis.client.Se
             kz.bsbnb.util.ERCBService.IERCBVotingServicesbindingStub _stub = new kz.bsbnb.util.ERCBService.IERCBVotingServicesbindingStub(portAddress, this);
             _stub.setPortName(getIERCBVotingServicesPortWSDDServiceName());
             return _stub;
-        }
-        catch (org.apache.axis.AxisFault e) {
+        } catch (org.apache.axis.AxisFault e) {
             return null;
         }
     }
@@ -82,8 +80,7 @@ public class IERCBVotingServicesserviceLocator extends org.apache.axis.client.Se
                 _stub.setPortName(getIERCBVotingServicesPortWSDDServiceName());
                 return _stub;
             }
-        }
-        catch (java.lang.Throwable t) {
+        } catch (java.lang.Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
         }
         throw new javax.xml.rpc.ServiceException("There is no stub implementation for the interface:  " + (serviceEndpointInterface == null ? "null" : serviceEndpointInterface.getName()));
@@ -101,8 +98,7 @@ public class IERCBVotingServicesserviceLocator extends org.apache.axis.client.Se
         java.lang.String inputPortName = portName.getLocalPart();
         if ("IERCBVotingServicesPort".equals(inputPortName)) {
             return getIERCBVotingServicesPort();
-        }
-        else  {
+        } else {
             java.rmi.Remote _stub = getPort(serviceEndpointInterface);
             ((org.apache.axis.client.Stub) _stub).setPortName(portName);
             return _stub;
@@ -124,22 +120,20 @@ public class IERCBVotingServicesserviceLocator extends org.apache.axis.client.Se
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
+     * Set the endpoint address for the specified port name.
+     */
     public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-        
-if ("IERCBVotingServicesPort".equals(portName)) {
+
+        if ("IERCBVotingServicesPort".equals(portName)) {
             setIERCBVotingServicesPortEndpointAddress(address);
-        }
-        else 
-{ // Unknown Port Name
+        } else { // Unknown Port Name
             throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
         }
     }
 
     /**
-    * Set the endpoint address for the specified port name.
-    */
+     * Set the endpoint address for the specified port name.
+     */
     public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
         setEndpointAddress(portName.getLocalPart(), address);
     }

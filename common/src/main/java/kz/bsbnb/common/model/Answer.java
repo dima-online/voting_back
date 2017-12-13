@@ -6,17 +6,18 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.util.Constants;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
  * @author ruslan
  */
 @Entity
@@ -30,11 +31,6 @@ public class Answer implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2000)
-    @Column(name = "answer")
-    private String text;
     @JsonIgnore
     @JoinColumn(name = "question_id", referencedColumnName = "id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -43,16 +39,17 @@ public class Answer implements Serializable {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "answer", fetch = FetchType.LAZY)
     private Set<Decision> decisionSet;
 
+    @BatchSize(size = 5)
+    @OneToMany(mappedBy = "answer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "answerMessages")
+    @OrderBy("locale ASC")
+    private Set<AnswerMessage> messages = new HashSet<>();
+
     public Answer() {
     }
 
     public Answer(Long id) {
         this.id = id;
-    }
-
-    public Answer(Long id, String text) {
-        this.id = id;
-        this.text = text;
     }
 
     public Long getId() {
@@ -61,14 +58,6 @@ public class Answer implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public Question getQuestion() {
@@ -80,14 +69,25 @@ public class Answer implements Serializable {
     }
 
     @XmlTransient
-    public Set<Decision> getDecisionSet() { return decisionSet;}
+    public Set<Decision> getDecisionSet() {
+        return decisionSet;
+    }
 
-    public void setDecisionSet(Set<Decision> decisionSet) { this.decisionSet = decisionSet;}
+    public void setDecisionSet(Set<Decision> decisionSet) {
+        this.decisionSet = decisionSet;
+    }
+
+    public Set<AnswerMessage> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Set<AnswerMessage> messages) {
+        this.messages = messages;
+    }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
-        result = 31 * result + text.hashCode();
         result = 31 * result + question.hashCode();
         return result;
     }
@@ -109,5 +109,15 @@ public class Answer implements Serializable {
     public String toString() {
         return "kz.bsbnb.common.model.Answer[ id=" + id + " ]";
     }
-    
+
+    @JsonIgnore
+    public AnswerMessage getMessage(Locale locale) {
+        try {
+            return getMessages().parallelStream()
+                    .filter(answerMessage -> answerMessage.getLocale().equals(locale)).findFirst().get();
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
 }
