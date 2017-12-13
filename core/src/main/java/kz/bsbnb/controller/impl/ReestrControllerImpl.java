@@ -192,7 +192,7 @@ public class ReestrControllerImpl implements IReestrController {
                                     user = new User();
                                     user.setIin(reestr.getVoterIin());
                                     user.setUsername(reestr.getIin());
-                                    user.setStatus("AUTO");
+                                    user.setStatus(Status.NEW);
                                     try {
                                         user = userRepository.save(user);
                                     }catch (Exception e) {
@@ -244,7 +244,7 @@ public class ReestrControllerImpl implements IReestrController {
                                     user = new User();
                                     user.setIin(reestr.getVoterIin());
                                     user.setUsername(reestr.getIin());
-                                    user.setStatus("AUTO");
+                                    user.setStatus(Status.NEW);
                                     user = userRepository.save(user);
                                 }
                                 boolean isFound = false;

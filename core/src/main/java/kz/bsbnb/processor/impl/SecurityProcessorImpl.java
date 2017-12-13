@@ -2,6 +2,7 @@ package kz.bsbnb.processor.impl;
 
 import kz.bsbnb.common.bean.UserMapper;
 import kz.bsbnb.common.consts.Role;
+import kz.bsbnb.common.model.Status;
 import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.model.UserSession;
 import kz.bsbnb.common.util.BruteUtil;
@@ -225,7 +226,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
     @Transactional
     private User firstLogin(User userBean) {
-        userBean.setStatus("ACTIVE");
+        userBean.setStatus(Status.ACTIVE);
         userBean.getUserInfoId().setEmailNotification(Boolean.FALSE);
         userBean.getUserInfoId().setSmsNotification(Boolean.FALSE);
         userRepository.save(userBean);

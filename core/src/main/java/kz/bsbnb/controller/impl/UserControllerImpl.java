@@ -191,10 +191,9 @@ public class UserControllerImpl implements IUserController {
                         System.out.println(userBean.getExecutiveOfficer());
                         System.out.println(userBean.getExecutiveOfficerName());
                         user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
-                        user.setStatus("NEW");
+                        user.setStatus(Status.NEW);
                         user = userRepository.save(user);
                         UserInfo userInfo = new UserInfo();
-                        userInfo.setStatus("NEW");
                         userInfo.setEmail(userBean.getEmail());
                         userInfo.setPhone(userBean.getPhone());
                         userInfo.setFirstName(userBean.getFirstName());
@@ -232,10 +231,9 @@ public class UserControllerImpl implements IUserController {
                 if (passwordValidator.validate(userBean.getPassword())) {
                     user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
                     user.setPassword(pwd(userBean.getPassword()));
-                    user.setStatus("NEW");
+                    user.setStatus(Status.ACTIVE);
                     user = userRepository.save(user);
                     UserInfo userInfo = new UserInfo();
-                    userInfo.setStatus("NEW");
                     userInfo.setEmail(userBean.getEmail());
                     userInfo.setPhone(userBean.getPhone());
                     userInfo.setFirstName(userBean.getFirstName());
@@ -373,7 +371,6 @@ public class UserControllerImpl implements IUserController {
                 }
             } else {
                 userInfo = new UserInfo();
-                userInfo.setStatus("NEW");
                 userInfo.setEmail(userBean.getEmail());
                 userInfo.setPhone(userBean.getPhone());
                 userInfo.setEmailNotification(userBean.getEmailNotification());

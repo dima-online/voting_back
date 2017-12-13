@@ -368,7 +368,6 @@ public class OrganisationControllerImpl implements IOrganisationController {
                 userInfo.setMiddleName(userBean.getMiddleName());
                 userInfo.setFirstName(userBean.getFirstName());
                 userInfo.setLastName(userBean.getLastName());
-                userInfo.setStatus("NEW");
                 userInfo = userInfoRepository.save(userInfo);
                 user.setUserInfoId(userInfo);
                 user = userRepository.save(user);

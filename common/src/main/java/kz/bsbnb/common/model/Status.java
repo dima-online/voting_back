@@ -4,6 +4,7 @@ package kz.bsbnb.common.model;
  * Created by Olzhas.Pazyldayev on 15.09.2016.
  */
 public enum Status {
+    NEW, // новый
     ACTIVE, //активная
     BLOCKED, //заблокированная
     ARCHIVED, //архивны

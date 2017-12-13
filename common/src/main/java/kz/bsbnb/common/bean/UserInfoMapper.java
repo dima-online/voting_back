@@ -1,7 +1,10 @@
 package kz.bsbnb.common.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import kz.bsbnb.common.consts.DocType;
 import kz.bsbnb.common.model.IPersistable;
+
+import java.util.Date;
 
 /**
  * Created by Olzhas.Pazyldayev on 02.08.2017.
@@ -19,6 +22,13 @@ public class UserInfoMapper implements IPersistable {
     private Boolean isOrg;
     private Boolean smsNotification;
     private Boolean emailNotification;
+    private Date dateOfBirth;
+    private String documentNumber;
+    private String documentGivenAgency;
+    private Date documentGivenDate;
+    private Date documentExpireDate;
+    private String documentType;
+
 
 
     public UserInfoMapper() {
@@ -119,5 +129,51 @@ public class UserInfoMapper implements IPersistable {
         isOrg = org;
     }
 
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
 
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentGivenAgency() {
+        return documentGivenAgency;
+    }
+
+    public void setDocumentGivenAgency(String documentGivenAgency) {
+        this.documentGivenAgency = documentGivenAgency;
+    }
+
+    public Date getDocumentGivenDate() {
+        return documentGivenDate;
+    }
+
+    public void setDocumentGivenDate(Date documentGivenDate) {
+        this.documentGivenDate = documentGivenDate;
+    }
+
+    public Date getDocumentExpireDate() {
+        return documentExpireDate;
+    }
+
+    public void setDocumentExpireDate(Date documentExpireDate) {
+        this.documentExpireDate = documentExpireDate;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
+    }
 }

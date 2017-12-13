@@ -47,7 +47,8 @@ public class User implements Serializable, UserDetails {
     private String password;
     @Size(max = 255)
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "userId", fetch = FetchType.LAZY)
     private Set<UserRoles> userRolesSet;
@@ -100,9 +101,11 @@ public class User implements Serializable, UserDetails {
         this.password = password;
     }
 
-    public String getStatus() {return status;}
+    public Status getStatus() {
+        return status;
+    }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

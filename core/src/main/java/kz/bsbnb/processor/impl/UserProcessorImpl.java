@@ -33,7 +33,7 @@ public class UserProcessorImpl implements UserProcessor {
     public UserMapper userMapper(User user) {
         UserMapper userMapper = new UserMapper();
         userMapper.setId(user.getId());
-        userMapper.setStatus(user.getStatus());
+        userMapper.setStatus(user.getStatus().toString());
         userMapper.setUserInfo(ObjectMapperUtil.userInfoMapper(user.getUserInfoId()));
         userMapper.setUsername(user.getUsername());
         userMapper.setUserRolesSet(new HashSet<>(userRoleRepository.findByUserId(user)));

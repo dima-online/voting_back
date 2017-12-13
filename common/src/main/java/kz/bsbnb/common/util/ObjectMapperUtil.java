@@ -17,9 +17,13 @@ public class ObjectMapperUtil {
         mapper.setIdn(userInfo.getIdn());
         mapper.setPhone(userInfo.getPhone());
         mapper.setEmail(userInfo.getEmail());
-        mapper.setStatus(userInfo.getStatus());
         mapper.setEmailNotification(userInfo.getEmailNotification());
         mapper.setSmsNotification(userInfo.getSmsNotification());
+        mapper.setDocumentExpireDate(userInfo.getDocumentExpireDate());
+        mapper.setDateOfBirth(userInfo.getDateOfBirth());
+        mapper.setDocumentGivenDate(userInfo.getDocumentGivenDate());
+        mapper.setDocumentGivenAgency(userInfo.getDocumentGivenAgency());
+        mapper.setDocumentType(userInfo.getDocumentType().toString());
         return mapper;
     }
 }

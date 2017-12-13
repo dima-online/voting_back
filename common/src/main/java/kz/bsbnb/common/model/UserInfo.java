@@ -6,6 +6,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kz.bsbnb.common.consts.DocType;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -50,9 +51,6 @@ public class UserInfo implements Serializable {
     @Size(max = 255)
     @Column(name = "email")
     private String email;
-    @Size(max = 255)
-    @Column(name = "status")
-    private String status;
     @JsonIgnore
     @OneToMany(mappedBy = "userInfoId", fetch = FetchType.LAZY)
     private Set<User> userSet;
@@ -75,6 +73,9 @@ public class UserInfo implements Serializable {
     @Column(name = "document_expire_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date documentExpireDate;
+    @Column(name = "document_type")
+    @Enumerated(EnumType.STRING)
+    private DocType documentType;
 
     //!!!Delete later!!!
     @Size(max = 12)
@@ -153,13 +154,6 @@ public class UserInfo implements Serializable {
         this.email = email;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public Boolean getSmsNotification() {
         return smsNotification;
@@ -222,12 +216,22 @@ public class UserInfo implements Serializable {
         this.documentGivenDate = documentGivenDate;
     }
 
+
+
     public Date getDocumentExpireDate() {
         return documentExpireDate;
     }
 
     public void setDocumentExpireDate(Date documentExpireDate) {
         this.documentExpireDate = documentExpireDate;
+    }
+
+    public DocType getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(DocType documentType) {
+        this.documentType = documentType;
     }
 
     @Override
