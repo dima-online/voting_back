@@ -1,9 +1,12 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.*;
+import kz.bsbnb.common.consts.DocType;
 import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
+import kz.bsbnb.common.util.*;
+import kz.bsbnb.common.util.Constants;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.repository.*;
@@ -20,6 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -53,10 +58,6 @@ public class UserControllerImpl implements IUserController {
     @Autowired
     private MessageProcessor messageProcessor;
 
-    //функция для криптовки паролей
-    private static String pwd(String password) {
-        return StringUtil.md5(password);
-    }
 
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
@@ -96,78 +97,9 @@ public class UserControllerImpl implements IUserController {
         if (user == null) {
             return new SimpleResponse("no user with such id").ERROR_NOT_FOUND();
         }
-        UserProfileBean userData = new UserProfileBean();
-        userData.setUserId(user.getId());
-        if (user.getUserInfo() != null) {
-            userData.setPhone(user.getUserInfo().getPhone());
-            userData.setEmail(user.getUserInfo().getEmail());
-            userData.setEmailNotification(user.getUserInfo().getEmailNotification());
-            userData.setSmsNotification((user.getUserInfo().getSmsNotification()));
-            String fName = user.getUserInfo().getLastName() == null ? " " : user.getUserInfo().getLastName();
-            fName = fName + " " + (user.getUserInfo().getFirstName() == null ? " " : user.getUserInfo().getFirstName());
-            fName = fName + " " + (user.getUserInfo().getMiddleName() == null ? " " : user.getUserInfo().getMiddleName());
-            userData.setFullName(fName.trim());
-            userData.setOrg(user.getUserInfo().getOrg() == null ? false : user.getUserInfo().getOrg());
-            if (!userData.getOrg()) {
-                userData.setLastName(user.getUserInfo().getLastName());
-                userData.setFirstName(user.getUserInfo().getFirstName());
-                userData.setMiddleName(user.getUserInfo().getMiddleName());
-            }
-            userData.setVoterIin(user.getUserInfo().getVoterIin());
-        }
-        try {
-            if (user.getUserInfo().getOrg()) {
-
-                User executive = userRepository.findByIin(user.getExecutiveOfficeIin());
-                String executiveOfficer = executive.getUserInfo().getFirstName() + " " + executive.getUserInfo().getMiddleName() + " " + executive.getUserInfo().getLastName();
-                System.out.println(executiveOfficer);
-                userData.setExecutiveOfficer(user.getExecutiveOfficeIin());
-                userData.setExecutiveOfficerName(executiveOfficer);
-            }
-        } catch (Exception e) {
-            userData.setExecutiveOfficer("");
-        }
-        userData.setIin(user.getIin());
-        List<UserOrgBean> userBeanList = new ArrayList<>();
-        List<UserRoles> userRolesList = userRoleRepository.findByUser(user);
-        for (UserRoles userRoles : userRolesList) {
-            UserOrgBean userBean = null;
-            boolean isFound = false;
-            if (userBeanList.isEmpty()) {
-                userBean = new UserOrgBean();
-                userBean.setShareCount(0);
-                userBean.setSharePercent(0.0);
-            } else {
-                for (UserOrgBean orgBean : userBeanList) {
-                    if (orgBean.getOrganisationId().equals(userRoles.getOrganisation().getId())) {
-                        userBean = orgBean;
-                        isFound = true;
-                    } else {
-                        userBean = new UserOrgBean();
-                        userBean.setShareCount(0);
-                        userBean.setSharePercent(0.0);
-                    }
-                }
-            }
-            userBean.addRole(userRoles.getRole().name());
-            userBean.setRole(userRoles.getRole().name());
-            if (userRoles.getRole().equals(Role.ROLE_USER)) {
-                if (userRoles.getShareCount() == null || userRoles.getShareCount() == 0) {
-                    userRoles.setShareCount(1);
-                }
-                userBean.setShareCount(userRoles.getShareCount() == null ? 0 : userRoles.getShareCount());
-                userBean.setSharePercent(userRoles.getSharePercent() == null ? userRoles.getShareCount() : userRoles.getSharePercent());
-                userBean.setShareDate(userRoles.getSharePercent() == null ? null : userRoles.getShareDate());
-            }
-            if (!isFound) {
-                userBean.setUserId(userRoles.getUser().getId());
-                userBean.setOrganisationId(userRoles.getOrganisation().getId());
-                userBean.setOrganisationName(userRoles.getOrganisation().getOrganisationName());
-                userBeanList.add(userBean);
-            }
-        }
-        userData.setBeanList(userBeanList);
-        return new SimpleResponse(userData).SUCCESS();
+        RegUserBean userBean;
+        userBean = castUser(user, user.getUserInfo());
+        return new SimpleResponse(userBean).SUCCESS();
     }
 
     @Override
@@ -178,124 +110,8 @@ public class UserControllerImpl implements IUserController {
         return fName.trim();
     }
 
-    @Override
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public SimpleResponse regUser(@RequestBody @Valid RegUserBean userBean) {
-        System.out.println(userBean.getVoterIin());
-        User user = userRepository.findByIin(userBean.getIin());
-        if (user == null) {
-            try {
-                if (CheckUtil.INN(userBean.getIin())) {
-                    PasswordUtil passwordValidator = new PasswordUtil();
-                    if (passwordValidator.validate(userBean.getPassword())) {
-                        user = new User();
-                        user.setIin(userBean.getIin());
-                        user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
-                        user.setPassword(pwd(userBean.getPassword()));
-                        System.out.println(userBean.getExecutiveOfficer());
-                        System.out.println(userBean.getExecutiveOfficerName());
-                        user.setExecutiveOfficeIin(userBean.getExecutiveOfficer());
-                        user.setStatus(Status.NEW);
-                        user = userRepository.save(user);
-                        UserInfo userInfo = new UserInfo();
-                        userInfo.setEmail(userBean.getEmail());
-                        userInfo.setPhone(userBean.getPhone());
-                        userInfo.setFirstName(userBean.getFirstName());
-                        userInfo.setLastName(userBean.getLastName());
-                        if (userBean.getOrg() != null && userBean.getOrg()) {
-                            userInfo.setLastName(userBean.getFullName());
-                        }
-                        userInfo.setMiddleName(userBean.getMiddleName());
-                        userInfo.setIdn(userBean.getIin());
-                        userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
-                        if (userBean.getExecutiveOfficer() != null) {
-                            userInfo.setVoterIin(userBean.getExecutiveOfficer());
-                        }
-                        userInfo = userInfoRepository.save(userInfo);
-                        user.setUserInfo(userInfo);
-                        user = userRepository.save(user);
-                        userBean = castUser(user, userInfo);
-                        return new SimpleResponse(userBean).SUCCESS();
-                    } else {
-                        return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
-                    }
-                } else {
-                    return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
-                }
-            } catch (CheckUtil.INNLenException e) {
-                return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
-            } catch (CheckUtil.INNNotValidChar innNotValidChar) {
-                return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
-            } catch (CheckUtil.INNControlSum10 innControlSum10) {
-                return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
-            }
-        } else {
-            if (user.getStatus().equals("AUTO")) {
-                PasswordUtil passwordValidator = new PasswordUtil();
-                if (passwordValidator.validate(userBean.getPassword())) {
-                    user.setUsername(userBean.getLogin() == null ? userBean.getIin() : userBean.getLogin());
-                    user.setPassword(pwd(userBean.getPassword()));
-                    user.setStatus(Status.ACTIVE);
-                    user = userRepository.save(user);
-                    UserInfo userInfo = new UserInfo();
-                    userInfo.setEmail(userBean.getEmail());
-                    userInfo.setPhone(userBean.getPhone());
-                    userInfo.setFirstName(userBean.getFirstName());
-                    userInfo.setLastName(userBean.getLastName());
-                    if (userBean.getOrg() != null && userBean.getOrg()) {
-                        userInfo.setLastName(userBean.getFullName());
-                    }
-                    userInfo.setMiddleName(userBean.getMiddleName());
-                    userInfo.setIdn(userBean.getIin());
-                    userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
-                    try {
-                        userInfo = userInfoRepository.save(userInfo);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return new SimpleResponse("Попробуйте еще раз");
-                    }
-                    user.setUserInfo(userInfo);
-                    user = userRepository.save(user);
-                    userBean = castUser(user, userInfo);
-                    return new SimpleResponse(userBean).SUCCESS();
-                } else {
-                    return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
-                }
 
-            } else {
-                return new SimpleResponse("Пользователь с таким ИИН уже существует").ERROR_CUSTOM();
-            }
-        }
-    }
 
-    @Override
-    @RequestMapping(value = "/remind", method = RequestMethod.POST)
-    public SimpleResponse remind(@RequestBody @Valid RegUserBean userBean) {
-        User user = userRepository.findByIin(userBean.getIin());
-        if (user != null) {
-            if (user.getUserInfo().getEmail() != null) {
-                if (userBean.getEmail() != null) {
-                    if (user.getUserInfo().getEmail().toUpperCase().equals(userBean.getEmail().toUpperCase())) {
-                        List<String> rec = new ArrayList<>();
-                        rec.add(userBean.getEmail());
-                        String pswd = StringUtil.RND(8, 8);
-                        user.setPassword(pwd(pswd));
-                        userRepository.save(user);
-                        EmailUtil.send(rec, "ЕРЦБ Голосование", "Ваш новый временный пароль " + pswd);
-                        return new SimpleResponse("На указанный вами адрес направлено письмо").SUCCESS();
-                    } else {
-                        return new SimpleResponse("Адрес введенный вами не совпадает с email пользователя").ERROR_CUSTOM();
-                    }
-                } else {
-                    return new SimpleResponse("Введите email адрес").ERROR_CUSTOM();
-                }
-            } else {
-                return new SimpleResponse("Пользователь вносил свои данные по email").ERROR_CUSTOM();
-            }
-        } else {
-            return new SimpleResponse("Пользователь с таким ИИН не существует").ERROR_CUSTOM();
-        }
-    }
 
     @Autowired
     SecurityProcessor securityProcessor;
@@ -306,33 +122,14 @@ public class UserControllerImpl implements IUserController {
         return securityProcessor.login(user, false);
     }
 
-    @Override
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public SimpleResponse updateUser(@RequestBody @Valid RegUserBean user) {
-        User localUser = userRepository.findOne(user.getId());
-        if (localUser == null) {
-            return new SimpleResponse("Пользователь с этим ID не существует").ERROR_NOT_FOUND();
-        } else {
-            if (pwd(user.getOldPassword()).equals(localUser.getPassword())) {
-                PasswordUtil passwordValidator = new PasswordUtil();
-                if (passwordValidator.validate(user.getPassword())) {
-                    localUser.setPassword(pwd(user.getPassword()));
-                    localUser = userRepository.save(localUser);
-                    return new SimpleResponse(localUser).SUCCESS();
-                } else {
-                    return new SimpleResponse("Пароль должен быть от 8 символов, содержать как минимум одну цифру, одну заглавную букву и одну прописную букву").ERROR_CUSTOM();
-                }
-            } else {
-                return new SimpleResponse("Старый пароль не совпадает").ERROR_CUSTOM();
-            }
-        }
-    }
+
 
     @Override
     @RequestMapping(value = "/updateProfile", method = RequestMethod.POST)
     public SimpleResponse updateProfileUser(@RequestBody @Valid RegUserBean userBean) {
         User user = userRepository.findByIin(userBean.getIin());
         System.out.println(userBean.getFullName());
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT);
         if (user != null) {
             UserInfo userInfo;
             if (user.getUserInfo() != null) {
@@ -373,6 +170,29 @@ public class UserControllerImpl implements IUserController {
                 if (userBean.getOrg() != null) {
                     userInfo.setOrg(userBean.getOrg());
                 }
+                if (userBean.getDocumentNumber() != null) {
+                    userInfo.setDocumentNumber(userBean.getDocumentNumber());
+                }
+                try {
+                    if (userBean.getDocumentExpireDate() != null) {
+                        userInfo.setDocumentExpireDate(format.parse(userBean.getDocumentExpireDate()));
+                    }
+                    if (userBean.getDocumentGivenDate() != null) {
+                        userInfo.setDocumentGivenDate(format.parse(userBean.getDocumentGivenDate()));
+                    }
+                    if (userBean.getDateOfBirth() != null) {
+                        userInfo.setDateOfBirth(format.parse(userBean.getDateOfBirth()));
+                    }
+                }catch(ParseException pe) {
+                    return new SimpleResponse( messageProcessor.getMessage("error.date.illegal.format")).ERROR();
+                }
+                if(userBean.getDocumentGivenAgency() != null) {
+                    userInfo.setDocumentGivenAgency(userBean.getDocumentGivenAgency());
+                }
+                if(userBean.getDocumentType() != null) {
+                    userInfo.setDocumentType(DocType.valueOf(userBean.getDocumentType()));
+                }
+
             } else {
                 userInfo = new UserInfo();
                 userInfo.setEmail(userBean.getEmail());
@@ -384,6 +204,18 @@ public class UserControllerImpl implements IUserController {
                 userInfo.setMiddleName(userBean.getMiddleName());
                 userInfo.setIdn(userBean.getIin());
                 userInfo.setOrg(userBean.getOrg() == null ? false : userBean.getOrg());
+
+                userInfo.setDocumentNumber(userBean.getDocumentNumber());
+                try {
+                    userInfo.setDocumentExpireDate(format.parse(userBean.getDocumentExpireDate()));
+                    userInfo.setDocumentGivenDate(format.parse(userBean.getDocumentGivenDate()));
+                    userInfo.setDateOfBirth(format.parse(userBean.getDateOfBirth()));
+                    userInfo.setDocumentGivenAgency(userBean.getDocumentGivenAgency());
+                    userInfo.setDocumentType(DocType.valueOf(userBean.getDocumentType()));
+                } catch (ParseException e) {
+                    return new SimpleResponse( messageProcessor.getMessage("error.date.illegal.format")).ERROR();
+                }
+
             }
             userInfo = userInfoRepository.save(userInfo);
             user.setUserInfo(userInfo);
@@ -700,6 +532,7 @@ public class UserControllerImpl implements IUserController {
         RegUserBean userBean = new RegUserBean();
         userBean.setId(user.getId());
         userBean.setLogin(user.getUsername());
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT);
         userBean.setIin(user.getIin());
         if (userInfo != null) {
             userBean.setEmail(userInfo.getEmail());
@@ -712,7 +545,16 @@ public class UserControllerImpl implements IUserController {
             userBean.setFirstName(userInfo.getFirstName());
             userBean.setMiddleName(userInfo.getMiddleName());
             userBean.setOrg(userInfo.getOrg());
+            userBean.setEmailNotification(userInfo.getEmailNotification());
+            userBean.setSmsNotification(userInfo.getSmsNotification());
             userBean.setVoterIin(userInfo.getVoterIin());
+            userBean.setDocumentGivenAgency(userInfo.getDocumentGivenAgency());
+            userBean.setDocumentNumber(userInfo.getDocumentNumber());
+            userBean.setDateOfBirth(format.format(userInfo.getDateOfBirth()));
+            userBean.setDocumentGivenDate(format.format(userInfo.getDocumentGivenDate()));
+            userBean.setDocumentExpireDate(format.format(userInfo.getDocumentExpireDate()));
+            userBean.setDocumentType(userInfo.getDocumentType().toString());
+
         }
         if (user.getUserRolesSet() != null && !user.getUserRolesSet().isEmpty()) {
             Role role = Role.ROLE_USER;

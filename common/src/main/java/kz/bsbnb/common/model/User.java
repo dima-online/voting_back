@@ -6,6 +6,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kz.bsbnb.common.util.Constants;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -55,7 +56,7 @@ public class User implements Serializable, UserDetails {
     private Set<UserRoles> userRolesSet;
 //    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id")
-    @OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private UserInfo userInfo;
     @Size(max = 255)
     @Column(name="executiveIin")

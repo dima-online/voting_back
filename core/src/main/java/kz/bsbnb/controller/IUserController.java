@@ -19,12 +19,7 @@ public interface IUserController {
 
     SimpleResponse getUserByIdSimple(Long id);
 
-    SimpleResponse regUser(RegUserBean userBean);
-
     SimpleResponse checkUser(User user);
-
-    //Смена пароля
-    SimpleResponse updateUser(RegUserBean user);
 
     SimpleResponse updateProfileUser(RegUserBean userBean);
 
@@ -67,7 +62,7 @@ public interface IUserController {
 
     SimpleResponse verifyIIN(String iin);
 
-    SimpleResponse remind(RegUserBean userBean);
+
 
     Role getRole(User user, Organisation organisation);
 

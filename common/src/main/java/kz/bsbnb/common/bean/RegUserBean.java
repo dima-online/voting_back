@@ -26,6 +26,12 @@ public class RegUserBean {
     private String executiveOfficerName;
     private Boolean smsNotification;
     private Boolean emailNotification;
+    private String dateOfBirth;             //"yyyy-MM-dd"
+    private String documentNumber;
+    private String documentGivenAgency;
+    private String documentGivenDate;       //"yyyy-MM-dd"
+    private String documentExpireDate;      //"yyyy-MM-dd"
+    private String documentType;
 
     public RegUserBean() {
     }
@@ -180,5 +186,53 @@ public class RegUserBean {
 
     public void setExecutiveOfficerName(String executiveOfficerName) {
         this.executiveOfficerName = executiveOfficerName;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public String getDocumentNumber() {
+        return documentNumber;
+    }
+
+    public void setDocumentNumber(String documentNumber) {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentGivenAgency() {
+        return documentGivenAgency;
+    }
+
+    public void setDocumentGivenAgency(String documentGivenAgency) {
+        this.documentGivenAgency = documentGivenAgency;
+    }
+
+    public String getDocumentGivenDate() {
+        return documentGivenDate;
+    }
+
+    public void setDocumentGivenDate(String documentGivenDate) {
+        this.documentGivenDate = documentGivenDate;
+    }
+
+    public String getDocumentExpireDate() {
+        return documentExpireDate;
+    }
+
+    public void setDocumentExpireDate(String documentExpireDate) {
+        this.documentExpireDate = documentExpireDate;
+    }
+
+    public String getDocumentType() {
+        return documentType;
+    }
+
+    public void setDocumentType(String documentType) {
+        this.documentType = documentType;
     }
 }
