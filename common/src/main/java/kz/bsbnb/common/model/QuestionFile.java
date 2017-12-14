@@ -23,11 +23,11 @@ public class QuestionFile implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @JoinColumn(name = "files_id", referencedColumnName = "id")
+    @JoinColumn(name = "files_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "question_file_files_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Files files;
     @JsonIgnore
-    @JoinColumn(name = "question_id", referencedColumnName = "id")
+    @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "question_file_question_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Question question;
 

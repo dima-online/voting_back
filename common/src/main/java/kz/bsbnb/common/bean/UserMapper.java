@@ -18,6 +18,7 @@ import java.util.*;
 public class UserMapper implements IPersistable, UserDetails {
     private Long id;
     private String username;
+    private String iin;
     private Set<UserRoles> userRolesSet = new HashSet<>();
     private UserInfoMapper userInfo;
     private String status;
@@ -74,6 +75,14 @@ public class UserMapper implements IPersistable, UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getIin() {
+        return iin;
+    }
+
+    public void setIin(String iin) {
+        this.iin = iin;
     }
 
     public void setUsername(String username) {

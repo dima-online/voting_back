@@ -35,11 +35,11 @@ public class UserRoles implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
     @JsonIgnore
-    @JoinColumn(name = "org_id", referencedColumnName = "id")
+    @JoinColumn(name = "org_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "user_roles_organisation_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Organisation organisation;
     @JsonIgnore
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "user_roles_user_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private User user;
     @Column(name = "share_count")

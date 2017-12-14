@@ -55,7 +55,7 @@ public class User implements Serializable, UserDetails {
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserRoles> userRolesSet;
 //    @JsonIgnore
-    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_info_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "user_user_info_fk"))
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private UserInfo userInfo;
     @Size(max = 255)

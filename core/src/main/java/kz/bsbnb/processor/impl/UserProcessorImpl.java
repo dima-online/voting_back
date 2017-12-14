@@ -35,6 +35,7 @@ public class UserProcessorImpl implements UserProcessor {
         userMapper.setId(user.getId());
         userMapper.setStatus(user.getStatus().toString());
         userMapper.setUserInfo(ObjectMapperUtil.userInfoMapper(user.getUserInfo()));
+        userMapper.getUserInfo().setIin(user.getIin());
         userMapper.setUsername(user.getIin());
         userMapper.setUserRolesSet(new HashSet<>(userRoleRepository.findByUser(user)));
         userMapper.setExecutiveOfficeIin(user.getExecutiveOfficeIin());

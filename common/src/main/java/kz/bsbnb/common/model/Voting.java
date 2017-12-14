@@ -73,11 +73,11 @@ public class Voting implements Serializable {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "voting", fetch = FetchType.EAGER)
     private Set<Question> questionSet;
     @JsonIgnore
-    @JoinColumn(name = "organisation_id", referencedColumnName = "id")
+    @JoinColumn(name = "organisation_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voting_organisation_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Organisation organisation;
     @JsonIgnore
-    @JoinColumn(name = "who_changed", referencedColumnName = "id")
+    @JoinColumn(name = "who_changed", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voting_user_who_changed_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User whoChanged;
     @JsonIgnore

@@ -49,13 +49,13 @@ public class Message implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @JoinColumn(name = "parent_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "message_parent_message_fk"))
     @ManyToOne(fetch = FetchType.EAGER)
     private Message parentId;
-    @JoinColumn(name = "organisation_id", referencedColumnName = "id")
+    @JoinColumn(name = "organisation_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "message_organisation_fk"))
     @ManyToOne(fetch = FetchType.EAGER)
     private Organisation organisation;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "message_user_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
     @Column(name = "from_user")

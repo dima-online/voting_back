@@ -15,7 +15,7 @@ public class UserInfoMapper implements IPersistable {
     private String lastName; //"Иванов",
     private String firstName; //"Петр",
     private String middleName; //"Петрович",
-    private String idn; //"123456789012",
+    private String iin; //"123456789012",
     private String phone; //"887-54-8545",
     private String email; //"ritchie@mail.ru",
     private String status;
@@ -34,8 +34,8 @@ public class UserInfoMapper implements IPersistable {
     public UserInfoMapper() {
     }
 
-    public UserInfoMapper(String idn) {
-        this.idn = idn;
+    public UserInfoMapper(String iin) {
+        this.iin = iin;
     }
 
     @Override
@@ -73,12 +73,12 @@ public class UserInfoMapper implements IPersistable {
         this.middleName = middleName;
     }
 
-    public String getIdn() {
-        return idn;
+    public String getIin() {
+        return iin;
     }
 
-    public void setIdn(String idn) {
-        this.idn = idn;
+    public void setIin(String iin) {
+        this.iin = iin;
     }
 
     public String getPhone() {

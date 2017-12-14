@@ -17,16 +17,16 @@ public class ProxyQuestion implements Serializable{
     @Column(name = "id")
     private Long id;
     @ManyToOne
-    @JoinColumn(name="question_id")
+    @JoinColumn(name="question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_question_fk"))
     private Question question;
     @ManyToOne
-    @JoinColumn(name="parent_user_id")
-    private User parentUser;
+    @JoinColumn(name="parent_user_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_parent_voter_fk"))
+    private Voter parentVoter;
     @ManyToOne
-    @JoinColumn(name="executive_voter_id")
+    @JoinColumn(name="executive_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_executive_voter_fk"))
     private Voter executiveVoter;
     @ManyToOne
-    @JoinColumn(name="proxy_card_id")
+    @JoinColumn(name="proxy_card_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_proxy_card_fk"))
     private ProxyCard proxyCard;
 
 
@@ -46,12 +46,12 @@ public class ProxyQuestion implements Serializable{
         this.question = question;
     }
 
-    public User getParentUser() {
-        return parentUser;
+    public Voter getParentVoter() {
+        return parentVoter;
     }
 
-    public void setParentUser(User parentUser) {
-        this.parentUser = parentUser;
+    public void setParentVoter(Voter parentVoter) {
+        this.parentVoter = parentVoter;
     }
 
     public Voter getExecutiveVoter() {

@@ -56,7 +56,7 @@ public class Question implements Serializable {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "question", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
     @JsonIgnore
-    @JoinColumn(name = "voting_id", referencedColumnName = "id")
+    @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "question_voting_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voting voting;
     @JsonIgnore

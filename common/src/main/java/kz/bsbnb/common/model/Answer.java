@@ -32,7 +32,7 @@ public class Answer implements Serializable {
     @Column(name = "id")
     private Long id;
     @JsonIgnore
-    @JoinColumn(name = "question_id", referencedColumnName = "id")
+    @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "answer_question_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Question question;
     @JsonIgnore

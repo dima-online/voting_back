@@ -14,7 +14,6 @@ public class ObjectMapperUtil {
         mapper.setLastName(userInfo.getLastName());
         mapper.setMiddleName(userInfo.getMiddleName());
         mapper.setDocumentNumber(userInfo.getDocumentNumber());
-        mapper.setIdn(userInfo.getIdn());
         mapper.setPhone(userInfo.getPhone());
         mapper.setEmail(userInfo.getEmail());
         mapper.setEmailNotification(userInfo.getEmailNotification());

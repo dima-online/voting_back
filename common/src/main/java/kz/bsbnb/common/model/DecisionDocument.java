@@ -20,13 +20,13 @@ public class DecisionDocument implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.decision_document_id_seq")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "voting_id")
+    @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_voting_fk"))
     private Voting voting;
     @ManyToOne
-    @JoinColumn(name = "voter_id")
+    @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_voter_fk"))
     private Voter voter;
     @ManyToOne
-    @JoinColumn(name = "parent_voter")
+    @JoinColumn(name = "parent_voter_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_parent_voter_fk"))
     private Voter parentVoter;
     @Column(name = "json_document")
     @Size(max = 5_000_000)

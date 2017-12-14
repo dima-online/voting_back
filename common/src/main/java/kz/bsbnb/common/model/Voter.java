@@ -44,10 +44,10 @@ public class Voter implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voter", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
     @JsonIgnore
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_user_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
-    @JoinColumn(name = "voting_id", referencedColumnName = "id")
+    @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_voting_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting voting;
     @Column(name = "is_shared")

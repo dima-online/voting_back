@@ -1,0 +1,577 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-1">
+        <createSequence sequenceName="answer_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-2">
+        <createSequence sequenceName="attribute_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-3">
+        <createSequence sequenceName="decision_document_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-4">
+        <createSequence sequenceName="decision_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-5">
+        <createSequence sequenceName="files_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-6">
+        <createSequence sequenceName="login_order_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-7">
+        <createSequence sequenceName="message_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-8">
+        <createSequence sequenceName="organisation_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-9">
+        <createSequence sequenceName="proxy_card_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-10">
+        <createSequence sequenceName="proxy_question_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-11">
+        <createSequence sequenceName="question_file_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-12">
+        <createSequence sequenceName="question_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-13">
+        <createSequence sequenceName="share_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-14">
+        <createSequence sequenceName="user_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-15">
+        <createSequence sequenceName="user_info_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-16">
+        <createSequence sequenceName="user_notification_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-17">
+        <createSequence sequenceName="user_roles_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-18">
+        <createSequence sequenceName="voter_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-19">
+        <createSequence sequenceName="voting_id_seq"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-20">
+        <createTable remarks="Ответы" tableName="answer">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkanswer"/>
+            </column>
+            <column name="answer" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="final_score" remarks="Финалные результат по этому ответу" type="VARCHAR(2000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-21">
+        <createTable tableName="answer_message">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locale" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-22">
+        <createTable remarks="Атрибуты" tableName="attribute">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkattribute"/>
+            </column>
+            <column name="object" remarks="Код объекта" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="object_id" remarks="ID объекта" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_value" remarks="Тип значения" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" remarks="Значение" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-23">
+        <createTable remarks="Решение по вопросу" tableName="decision">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkdecision"/>
+            </column>
+            <column name="date_create" remarks="Дата создания решения" type="TIMESTAMP(6) WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="voter_id" remarks="ID голосующего" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" remarks="ID вопроса" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_id" remarks="ID вопроса" type="BIGINT"/>
+            <column name="score" remarks="Количество баллов" type="INT"/>
+            <column name="comments" remarks="Другой ответ" type="VARCHAR(2000)"/>
+            <column defaultValue="NEW" name="status" type="VARCHAR(20)"/>
+            <column name="cancel_reason" type="VARCHAR(255)"/>
+            <column name="proxy_question_id" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-24">
+        <createTable tableName="decision_document">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="json_document" type="VARCHAR(5000000)"/>
+            <column name="public_key" type="VARCHAR(255)"/>
+            <column name="signature" type="VARCHAR(20000)"/>
+            <column name="block_transaction_id" type="VARCHAR(1024)"/>
+            <column name="parent_voter_id" type="BIGINT"/>
+            <column name="voter_id" type="BIGINT"/>
+            <column name="voting_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-25">
+        <createTable tableName="faq_items">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(5000)"/>
+            <column name="description" type="VARCHAR(10000)"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="create_time" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="status" type="VARCHAR(64)"/>
+            <column name="faq_post_id" type="BIGINT"/>
+            <column name="locale" type="VARCHAR(64)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-26">
+        <createTable tableName="faq_posts">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="create_time" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="status" type="VARCHAR(64)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-27">
+        <createTable remarks="Материалы" tableName="files">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkfiles"/>
+            </column>
+            <column name="file_name" remarks="Наименование файла" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_path" remarks="Наименование файла на сервере" type="VARCHAR(500)"/>
+            <column name="voting_id" remarks="ID голосования" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-28">
+        <createTable tableName="login_order">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_time" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="json_document" type="VARCHAR(255)"/>
+            <column name="user_public_key" type="VARCHAR(255)"/>
+            <column name="signature" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-29">
+        <createTable remarks="Сообщения" tableName="message">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkmessage"/>
+            </column>
+            <column name="organisation_id" type="BIGINT"/>
+            <column name="subject" remarks="Тема сообщения" type="VARCHAR(2000)"/>
+            <column name="body" remarks="Тело сообщения" type="VARCHAR(20000)"/>
+            <column name="parent_id" remarks="ID предыдущего сообщения" type="BIGINT"/>
+            <column name="date_create" remarks="Дата сообщения" type="TIMESTAMP(6) WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_read" remarks="Дата прочтения" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="from_user" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-30">
+        <createTable remarks="Акционерное общество" tableName="organisation">
+            <column autoIncrement="true" name="id" remarks="ID" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkorganisation"/>
+            </column>
+            <column name="organisation_name" remarks="Наименование организации" type="VARCHAR(200)"/>
+            <column name="organisation_num" remarks="Регистрационный номер организации" type="VARCHAR(50)"/>
+            <column name="external_id" remarks="ID организации во внешней системе" type="VARCHAR(50)"/>
+            <column defaultValue="NEW" name="status" remarks="Статусы организации NEW APPrOVED CAN_VOTE CANNOT_VOTE" type="VARCHAR(20)"/>
+            <column name="total_share_count" remarks="Общее количество акции" type="INT"/>
+            <column name="executive_name" type="VARCHAR(200)"/>
+            <column name="logo" type="VARCHAR(5000000)"/>
+            <column name="result_link" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-31">
+        <createTable tableName="proxy_card">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="file_content" type="BYTEA"/>
+            <column name="start_date" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="user_id" type="BYTEA"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-32">
+        <createTable tableName="proxy_question">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="executive_voter_id" type="BIGINT"/>
+            <column name="parent_user_id" type="BIGINT"/>
+            <column name="proxy_card_id" type="BIGINT"/>
+            <column name="question_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-33">
+        <createTable remarks="Вопросы" tableName="question">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkquestion"/>
+            </column>
+            <column name="question" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="num" remarks="Номер вопроса" type="INT"/>
+            <column name="decision" remarks="Итоговое решение по вопросу" type="VARCHAR(2000)"/>
+            <column name="voting_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_type" remarks="Тип вопроса ORDINARY CUMULATIVE" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_count" remarks="Максимальное количество избираемых" type="INT"/>
+            <column name="priv_can_vote" remarks="Могут голосовать привелигированные акции" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-34">
+        <createTable remarks="Материалы вопроса" tableName="question_file">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkquestion_file"/>
+            </column>
+            <column name="files_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-35">
+        <createTable tableName="question_message">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locale" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="question_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-36">
+        <createTable tableName="share">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="BIGINT"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="voter_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-37">
+        <createTable tableName="user">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="user_pkey"/>
+            </column>
+            <column name="iin" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="user_info_id" type="BIGINT"/>
+            <column name="account_number" type="VARCHAR(255)"/>
+            <column name="executive_iin" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-38">
+        <createTable tableName="user_info">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="user_info_pkey"/>
+            </column>
+            <column name="last_name" type="VARCHAR(200)"/>
+            <column name="first_name" type="VARCHAR(200)"/>
+            <column name="middle_name" type="VARCHAR(200)"/>
+            <column name="idn" type="VARCHAR(12)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="is_org" remarks="Признак фр. лица" type="BOOLEAN"/>
+            <column name="voter_iin" remarks="ИИН физ.лица, который может проголосовать за юр.лицо" type="VARCHAR(12)"/>
+            <column name="date_of_birth" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="document_expire_date" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="document_given_agency" type="VARCHAR(255)"/>
+            <column name="document_given_date" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="document_number" type="VARCHAR(255)"/>
+            <column name="document_type" type="VARCHAR(255)"/>
+            <column name="email_notification" type="BOOLEAN"/>
+            <column name="sms_notification" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-39">
+        <createTable tableName="user_notification">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-40">
+        <createTable tableName="user_roles">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkuser_roles"/>
+            </column>
+            <column name="role_code" remarks="Роль ADMIN OPERATOR USER" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="org_id" remarks="ID организации" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="share_count" remarks="Последние количество акции" type="INT"/>
+            <column name="cannot_vote" remarks="Признак возможности голосовать 0 - Может голосовать 1- неможет голосовать 2 - условный голос 3 - запрет на голосование" type="INT"/>
+            <column name="share_percent" remarks="% голосующих акции" type="FLOAT8"/>
+            <column name="share_date" remarks="Дата последней загрузки реестра" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-41">
+        <createTable remarks="Участник голосования" tableName="voter">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkvoter"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="voting_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_adding" remarks="Дата добавления в список голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column defaultValueNumeric="0" name="share_count" remarks="Количество акции" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="signature" remarks="Код проверки подлинности" type="VARCHAR(200)"/>
+            <column name="public_key" remarks="Публичный ключ проверки" type="VARCHAR(2000)"/>
+            <column name="date_voting" remarks="Дата фиксации голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="has_gold_share" type="BOOLEAN"/>
+            <column name="priv_share_count" remarks="Количество привилигированных кции" type="BIGINT"/>
+            <column name="account_number" type="VARCHAR(255)"/>
+            <column name="is_shared" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-42">
+        <createTable remarks="Голосование" tableName="voting">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="pkvoting"/>
+            </column>
+            <column name="voting_type" remarks="Тип голосования SIMPLE MIXED" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject" remarks="Тема голосования" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_create" remarks="Дата создания голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_begin" remarks="Дата начала голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="date_end" remarks="Дата окончания голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="date_close" remarks="Дата закрытия голосования" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column defaultValue="CREATED" name="status" remarks="Статус голосования CREATED STARTED ENDED CLOSED CANCELED" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_changed" remarks="Дата последнего изменения" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
+            <column name="who_changed" remarks="Пользователь сделавший последнее изменение" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_reestr_id" remarks="ID последнего загруженного реестра" type="BIGINT"/>
+            <column name="kvoroom" remarks="Признак наличия кворума" type="BOOLEAN"/>
+            <column name="description" type="VARCHAR(2000)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-43">
+        <createTable tableName="voting_message">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="locale" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subject" type="VARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="voting_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-44">
+        <addPrimaryKey columnNames="id" constraintName="answer_message_pkey" tableName="answer_message"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-45">
+        <addPrimaryKey columnNames="id" constraintName="decision_document_pkey" tableName="decision_document"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-46">
+        <addPrimaryKey columnNames="id" constraintName="faq_item_pkey" tableName="faq_items"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-47">
+        <addPrimaryKey columnNames="id" constraintName="faq_posts_pkey" tableName="faq_posts"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-48">
+        <addPrimaryKey columnNames="id" constraintName="login_order_pkey" tableName="login_order"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-49">
+        <addPrimaryKey columnNames="id" constraintName="proxy_card_pkey" tableName="proxy_card"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-50">
+        <addPrimaryKey columnNames="id" constraintName="proxy_question_pkey" tableName="proxy_question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-51">
+        <addPrimaryKey columnNames="id" constraintName="question_message_pkey" tableName="question_message"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-52">
+        <addPrimaryKey columnNames="id" constraintName="share_pkey" tableName="share"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-53">
+        <addPrimaryKey columnNames="id" constraintName="user_notification_pkey" tableName="user_notification"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-54">
+        <addPrimaryKey columnNames="id" constraintName="voting_message_pkey" tableName="voting_message"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-55">
+        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableName="answer_message" constraintName="answer_message_answer_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="answer"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-56">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="answer" constraintName="answer_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-57">
+        <addForeignKeyConstraint baseColumnNames="parent_voter_id" baseTableName="decision_document" constraintName="decision_document_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-58">
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="decision_document" constraintName="decision_document_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-59">
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="decision_document" constraintName="decision_document_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-60">
+        <addForeignKeyConstraint baseColumnNames="faq_post_id" baseTableName="faq_items" constraintName="faq_items_faq_post_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="faq_posts"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-61">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="faq_items" constraintName="faq_items_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-62">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="faq_posts" constraintName="faq_posts_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-63">
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="files" constraintName="files_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-64">
+        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableName="decision" constraintName="fk_decision_answer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="answer"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-65">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="decision" constraintName="fk_decision_question" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-66">
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="decision" constraintName="fk_decision_voter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-67">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="message" constraintName="fk_message_message" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="message"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-68">
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="message" constraintName="fk_message_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-69">
+        <addForeignKeyConstraint baseColumnNames="files_id" baseTableName="question_file" constraintName="fk_question_file_files" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="files"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-70">
+        <addForeignKeyConstraint baseColumnNames="org_id" baseTableName="user_roles" constraintName="fk_user_roles_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-71">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_roles" constraintName="fk_user_roles_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-72">
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="voter" constraintName="fk_voter_voting" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-73">
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="voting" constraintName="fk_voting_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-74">
+        <addForeignKeyConstraint baseColumnNames="who_changed" baseTableName="voting" constraintName="fk_voting_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-75">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="message" constraintName="message_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-76">
+        <addForeignKeyConstraint baseColumnNames="executive_voter_id" baseTableName="proxy_question" constraintName="proxy_question_executive_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-77">
+        <addForeignKeyConstraint baseColumnNames="parent_user_id" baseTableName="proxy_question" constraintName="proxy_question_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-78">
+        <addForeignKeyConstraint baseColumnNames="proxy_card_id" baseTableName="proxy_question" constraintName="proxy_question_proxy_card_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="proxy_card"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-79">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="proxy_question" constraintName="proxy_question_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-80">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="question_file" constraintName="question_file_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-81">
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="question_message" constraintName="question_message_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-82">
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="question" constraintName="question_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-83">
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="share" constraintName="share_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-84">
+        <addForeignKeyConstraint baseColumnNames="user_info_id" baseTableName="user" constraintName="user_user_info_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_info"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-85">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="voter" constraintName="voter_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+    <changeSet author="serik.mukashev (generated)" id="1513251881020-86">
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="voting_message" constraintName="voting_message_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+    </changeSet>
+</databaseChangeLog>

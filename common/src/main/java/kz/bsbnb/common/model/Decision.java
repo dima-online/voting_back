@@ -30,10 +30,10 @@ public class Decision implements Serializable {
     private Date dateCreate;
     @Column(name = "score")
     private Long score;
-    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true)
+    @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true, foreignKey = @ForeignKey(name = "decision_answer_fk"))
     @ManyToOne(fetch = FetchType.EAGER)
     private Answer answer;
-    @JoinColumn(name = "voter_id", referencedColumnName = "id")
+    @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_voter_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Voter voter;
     @Column(name = "comments")
@@ -142,7 +142,7 @@ public class Decision implements Serializable {
         result = 31 * result + answer.getQuestion().getId().hashCode();
         result = 31 * result + voter.getUser().getIin().hashCode();
         if (proxyQuestion != null)
-            result = 31 * result + proxyQuestion.getParentUser().getIin().hashCode();
+            result = 31 * result + proxyQuestion.getParentVoter().getUser().getIin().hashCode();
         return result;
     }
 

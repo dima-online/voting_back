@@ -24,7 +24,7 @@ public class Share implements Serializable{
     @Column(name = "amount")
     private Long amount;
     @ManyToOne
-    @JoinColumn(name = "voter_id")
+    @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "share_voter_fk"))
     private Voter voter;
 
     public Long getId() {
