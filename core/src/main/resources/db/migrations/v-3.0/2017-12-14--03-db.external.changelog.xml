@@ -1,13 +1,13 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <changeSet author="serik.mukashev (generated)" id="1513251897310-1">
-        <createSequence sequenceName="reestr_head_id_seq"/>
+        <createSequence schemaName="external" sequenceName="reestr_head_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251897310-2">
-        <createSequence sequenceName="reestr_id_seq"/>
+        <createSequence schemaName="external" sequenceName="reestr_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251897310-3">
-        <createTable remarks="Реестр" tableName="reestr">
+        <createTable remarks="Реестр" schemaName="external" tableName="reestr">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkreestr"/>
             </column>
@@ -37,7 +37,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251897310-4">
-        <createTable remarks="Заголовок реестра" tableName="reestr_head">
+        <createTable remarks="Заголовок реестра" schemaName="external" tableName="reestr_head">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkreestr_head"/>
             </column>
@@ -54,6 +54,6 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251897310-5">
-        <addForeignKeyConstraint baseColumnNames="reestr_head_id" baseTableName="reestr" constraintName="fk1n5qxohwscuxkrctut147bcbf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="reestr_head"/>
+        <addForeignKeyConstraint baseColumnNames="reestr_head_id" baseTableName="reestr" baseTableSchemaName="external" constraintName="fk1n5qxohwscuxkrctut147bcbf" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="reestr_head" referencedTableSchemaName="external"/>
     </changeSet>
 </databaseChangeLog>

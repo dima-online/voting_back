@@ -1,64 +1,64 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
     <changeSet author="serik.mukashev (generated)" id="1513251881020-1">
-        <createSequence sequenceName="answer_id_seq"/>
+        <createSequence schemaName="core" sequenceName="answer_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-2">
-        <createSequence sequenceName="attribute_id_seq"/>
+        <createSequence schemaName="core" sequenceName="attribute_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-3">
-        <createSequence sequenceName="decision_document_id_seq"/>
+        <createSequence schemaName="core" sequenceName="decision_document_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-4">
-        <createSequence sequenceName="decision_id_seq"/>
+        <createSequence schemaName="core" sequenceName="decision_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-5">
-        <createSequence sequenceName="files_id_seq"/>
+        <createSequence schemaName="core" sequenceName="files_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-6">
-        <createSequence sequenceName="login_order_id_seq"/>
+        <createSequence schemaName="core" sequenceName="login_order_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-7">
-        <createSequence sequenceName="message_id_seq"/>
+        <createSequence schemaName="core" sequenceName="message_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-8">
-        <createSequence sequenceName="organisation_id_seq"/>
+        <createSequence schemaName="core" sequenceName="organisation_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-9">
-        <createSequence sequenceName="proxy_card_id_seq"/>
+        <createSequence schemaName="core" sequenceName="proxy_card_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-10">
-        <createSequence sequenceName="proxy_question_id_seq"/>
+        <createSequence schemaName="core" sequenceName="proxy_question_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-11">
-        <createSequence sequenceName="question_file_id_seq"/>
+        <createSequence schemaName="core" sequenceName="question_file_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-12">
-        <createSequence sequenceName="question_id_seq"/>
+        <createSequence schemaName="core" sequenceName="question_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-13">
-        <createSequence sequenceName="share_id_seq"/>
+        <createSequence schemaName="core" sequenceName="share_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-14">
-        <createSequence sequenceName="user_id_seq"/>
+        <createSequence schemaName="core" sequenceName="user_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-15">
-        <createSequence sequenceName="user_info_id_seq"/>
+        <createSequence schemaName="core" sequenceName="user_info_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-16">
-        <createSequence sequenceName="user_notification_id_seq"/>
+        <createSequence schemaName="core" sequenceName="user_notification_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-17">
-        <createSequence sequenceName="user_roles_id_seq"/>
+        <createSequence schemaName="core" sequenceName="user_roles_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-18">
-        <createSequence sequenceName="voter_id_seq"/>
+        <createSequence schemaName="core" sequenceName="voter_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-19">
-        <createSequence sequenceName="voting_id_seq"/>
+        <createSequence schemaName="core" sequenceName="voting_id_seq"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-20">
-        <createTable remarks="Ответы" tableName="answer">
+        <createTable remarks="Ответы" schemaName="core" tableName="answer">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkanswer"/>
             </column>
@@ -72,7 +72,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-21">
-        <createTable tableName="answer_message">
+        <createTable schemaName="core" tableName="answer_message">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -86,7 +86,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-22">
-        <createTable remarks="Атрибуты" tableName="attribute">
+        <createTable remarks="Атрибуты" schemaName="core" tableName="attribute">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkattribute"/>
             </column>
@@ -105,7 +105,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-23">
-        <createTable remarks="Решение по вопросу" tableName="decision">
+        <createTable remarks="Решение по вопросу" schemaName="core" tableName="decision">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkdecision"/>
             </column>
@@ -127,7 +127,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-24">
-        <createTable tableName="decision_document">
+        <createTable schemaName="core" tableName="decision_document">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -141,7 +141,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-25">
-        <createTable tableName="faq_items">
+        <createTable schemaName="core" tableName="faq_items">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -155,7 +155,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-26">
-        <createTable tableName="faq_posts">
+        <createTable schemaName="core" tableName="faq_posts">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -165,7 +165,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-27">
-        <createTable remarks="Материалы" tableName="files">
+        <createTable remarks="Материалы" schemaName="core" tableName="files">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkfiles"/>
             </column>
@@ -181,7 +181,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-28">
-        <createTable tableName="login_order">
+        <createTable schemaName="core" tableName="login_order">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -192,7 +192,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-29">
-        <createTable remarks="Сообщения" tableName="message">
+        <createTable remarks="Сообщения" schemaName="core" tableName="message">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkmessage"/>
             </column>
@@ -211,7 +211,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-30">
-        <createTable remarks="Акционерное общество" tableName="organisation">
+        <createTable remarks="Акционерное общество" schemaName="core" tableName="organisation">
             <column autoIncrement="true" name="id" remarks="ID" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkorganisation"/>
             </column>
@@ -226,7 +226,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-31">
-        <createTable tableName="proxy_card">
+        <createTable schemaName="core" tableName="proxy_card">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -237,7 +237,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-32">
-        <createTable tableName="proxy_question">
+        <createTable schemaName="core" tableName="proxy_question">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -248,7 +248,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-33">
-        <createTable remarks="Вопросы" tableName="question">
+        <createTable remarks="Вопросы" schemaName="core" tableName="question">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkquestion"/>
             </column>
@@ -268,7 +268,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-34">
-        <createTable remarks="Материалы вопроса" tableName="question_file">
+        <createTable remarks="Материалы вопроса" schemaName="core" tableName="question_file">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkquestion_file"/>
             </column>
@@ -281,7 +281,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-35">
-        <createTable tableName="question_message">
+        <createTable schemaName="core" tableName="question_message">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -298,7 +298,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-36">
-        <createTable tableName="share">
+        <createTable schemaName="core" tableName="share">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -308,7 +308,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-37">
-        <createTable tableName="user">
+        <createTable schemaName="core" tableName="user">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="user_pkey"/>
             </column>
@@ -322,7 +322,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-38">
-        <createTable tableName="user_info">
+        <createTable schemaName="core" tableName="user_info">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="user_info_pkey"/>
             </column>
@@ -346,14 +346,14 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-39">
-        <createTable tableName="user_notification">
+        <createTable schemaName="core" tableName="user_notification">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-40">
-        <createTable tableName="user_roles">
+        <createTable schemaName="core" tableName="user_roles">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkuser_roles"/>
             </column>
@@ -373,7 +373,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-41">
-        <createTable remarks="Участник голосования" tableName="voter">
+        <createTable remarks="Участник голосования" schemaName="core" tableName="voter">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkvoter"/>
             </column>
@@ -397,7 +397,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-42">
-        <createTable remarks="Голосование" tableName="voting">
+        <createTable remarks="Голосование" schemaName="core" tableName="voting">
             <column autoIncrement="true" name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkvoting"/>
             </column>
@@ -429,7 +429,7 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-43">
-        <createTable tableName="voting_message">
+        <createTable schemaName="core" tableName="voting_message">
             <column name="id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
@@ -446,132 +446,132 @@
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-44">
-        <addPrimaryKey columnNames="id" constraintName="answer_message_pkey" tableName="answer_message"/>
+        <addPrimaryKey columnNames="id" constraintName="answer_message_pkey" schemaName="core" tableName="answer_message"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-45">
-        <addPrimaryKey columnNames="id" constraintName="decision_document_pkey" tableName="decision_document"/>
+        <addPrimaryKey columnNames="id" constraintName="decision_document_pkey" schemaName="core" tableName="decision_document"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-46">
-        <addPrimaryKey columnNames="id" constraintName="faq_item_pkey" tableName="faq_items"/>
+        <addPrimaryKey columnNames="id" constraintName="faq_item_pkey" schemaName="core" tableName="faq_items"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-47">
-        <addPrimaryKey columnNames="id" constraintName="faq_posts_pkey" tableName="faq_posts"/>
+        <addPrimaryKey columnNames="id" constraintName="faq_posts_pkey" schemaName="core" tableName="faq_posts"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-48">
-        <addPrimaryKey columnNames="id" constraintName="login_order_pkey" tableName="login_order"/>
+        <addPrimaryKey columnNames="id" constraintName="login_order_pkey" schemaName="core" tableName="login_order"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-49">
-        <addPrimaryKey columnNames="id" constraintName="proxy_card_pkey" tableName="proxy_card"/>
+        <addPrimaryKey columnNames="id" constraintName="proxy_card_pkey" schemaName="core" tableName="proxy_card"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-50">
-        <addPrimaryKey columnNames="id" constraintName="proxy_question_pkey" tableName="proxy_question"/>
+        <addPrimaryKey columnNames="id" constraintName="proxy_question_pkey" schemaName="core" tableName="proxy_question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-51">
-        <addPrimaryKey columnNames="id" constraintName="question_message_pkey" tableName="question_message"/>
+        <addPrimaryKey columnNames="id" constraintName="question_message_pkey" schemaName="core" tableName="question_message"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-52">
-        <addPrimaryKey columnNames="id" constraintName="share_pkey" tableName="share"/>
+        <addPrimaryKey columnNames="id" constraintName="share_pkey" schemaName="core" tableName="share"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-53">
-        <addPrimaryKey columnNames="id" constraintName="user_notification_pkey" tableName="user_notification"/>
+        <addPrimaryKey columnNames="id" constraintName="user_notification_pkey" schemaName="core" tableName="user_notification"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-54">
-        <addPrimaryKey columnNames="id" constraintName="voting_message_pkey" tableName="voting_message"/>
+        <addPrimaryKey columnNames="id" constraintName="voting_message_pkey" schemaName="core" tableName="voting_message"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-55">
-        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableName="answer_message" constraintName="answer_message_answer_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="answer"/>
+        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableSchemaName="core" baseTableName="answer_message" constraintName="answer_message_answer_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="answer"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-56">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="answer" constraintName="answer_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableSchemaName="core" baseTableName="answer" constraintName="answer_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-57">
-        <addForeignKeyConstraint baseColumnNames="parent_voter_id" baseTableName="decision_document" constraintName="decision_document_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="parent_voter_id" baseTableSchemaName="core" baseTableName="decision_document" constraintName="decision_document_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-58">
-        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="decision_document" constraintName="decision_document_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableSchemaName="core" baseTableName="decision_document" constraintName="decision_document_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-59">
-        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="decision_document" constraintName="decision_document_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableSchemaName="core" baseTableName="decision_document" constraintName="decision_document_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voting"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-60">
-        <addForeignKeyConstraint baseColumnNames="faq_post_id" baseTableName="faq_items" constraintName="faq_items_faq_post_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="faq_posts"/>
+        <addForeignKeyConstraint baseColumnNames="faq_post_id" baseTableSchemaName="core" baseTableName="faq_items" constraintName="faq_items_faq_post_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="faq_posts"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-61">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="faq_items" constraintName="faq_items_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableSchemaName="core" baseTableName="faq_items" constraintName="faq_items_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-62">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="faq_posts" constraintName="faq_posts_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableSchemaName="core" baseTableName="faq_posts" constraintName="faq_posts_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-63">
-        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="files" constraintName="files_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableSchemaName="core" baseTableName="files" constraintName="files_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voting"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-64">
-        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableName="decision" constraintName="fk_decision_answer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="answer"/>
+        <addForeignKeyConstraint baseColumnNames="answer_id" baseTableSchemaName="core" baseTableName="decision" constraintName="fk_decision_answer" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="answer"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-65">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="decision" constraintName="fk_decision_question" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableSchemaName="core" baseTableName="decision" constraintName="fk_decision_question" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-66">
-        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="decision" constraintName="fk_decision_voter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableSchemaName="core" baseTableName="decision" constraintName="fk_decision_voter" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-67">
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="message" constraintName="fk_message_message" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="message"/>
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableSchemaName="core" baseTableName="message" constraintName="fk_message_message" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="message"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-68">
-        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="message" constraintName="fk_message_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableSchemaName="core" baseTableName="message" constraintName="fk_message_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="organisation"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-69">
-        <addForeignKeyConstraint baseColumnNames="files_id" baseTableName="question_file" constraintName="fk_question_file_files" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="files"/>
+        <addForeignKeyConstraint baseColumnNames="files_id" baseTableSchemaName="core" baseTableName="question_file" constraintName="fk_question_file_files" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="files"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-70">
-        <addForeignKeyConstraint baseColumnNames="org_id" baseTableName="user_roles" constraintName="fk_user_roles_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="org_id" baseTableSchemaName="core" baseTableName="user_roles" constraintName="fk_user_roles_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="organisation"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-71">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_roles" constraintName="fk_user_roles_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableSchemaName="core" baseTableName="user_roles" constraintName="fk_user_roles_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-72">
-        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="voter" constraintName="fk_voter_voting" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableSchemaName="core" baseTableName="voter" constraintName="fk_voter_voting" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voting"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-73">
-        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="voting" constraintName="fk_voting_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableSchemaName="core" baseTableName="voting" constraintName="fk_voting_organisation" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="organisation"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-74">
-        <addForeignKeyConstraint baseColumnNames="who_changed" baseTableName="voting" constraintName="fk_voting_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="who_changed" baseTableSchemaName="core" baseTableName="voting" constraintName="fk_voting_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-75">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="message" constraintName="message_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableSchemaName="core" baseTableName="message" constraintName="message_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-76">
-        <addForeignKeyConstraint baseColumnNames="executive_voter_id" baseTableName="proxy_question" constraintName="proxy_question_executive_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="executive_voter_id" baseTableSchemaName="core" baseTableName="proxy_question" constraintName="proxy_question_executive_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-77">
-        <addForeignKeyConstraint baseColumnNames="parent_user_id" baseTableName="proxy_question" constraintName="proxy_question_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="parent_user_id" baseTableSchemaName="core" baseTableName="proxy_question" constraintName="proxy_question_parent_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-78">
-        <addForeignKeyConstraint baseColumnNames="proxy_card_id" baseTableName="proxy_question" constraintName="proxy_question_proxy_card_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="proxy_card"/>
+        <addForeignKeyConstraint baseColumnNames="proxy_card_id" baseTableSchemaName="core" baseTableName="proxy_question" constraintName="proxy_question_proxy_card_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="proxy_card"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-79">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="proxy_question" constraintName="proxy_question_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableSchemaName="core" baseTableName="proxy_question" constraintName="proxy_question_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-80">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="question_file" constraintName="question_file_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableSchemaName="core" baseTableName="question_file" constraintName="question_file_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-81">
-        <addForeignKeyConstraint baseColumnNames="question_id" baseTableName="question_message" constraintName="question_message_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="question"/>
+        <addForeignKeyConstraint baseColumnNames="question_id" baseTableSchemaName="core" baseTableName="question_message" constraintName="question_message_question_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="question"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-82">
-        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="question" constraintName="question_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableSchemaName="core" baseTableName="question" constraintName="question_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voting"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-83">
-        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableName="share" constraintName="share_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voter"/>
+        <addForeignKeyConstraint baseColumnNames="voter_id" baseTableSchemaName="core" baseTableName="share" constraintName="share_voter_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voter"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-84">
-        <addForeignKeyConstraint baseColumnNames="user_info_id" baseTableName="user" constraintName="user_user_info_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user_info"/>
+        <addForeignKeyConstraint baseColumnNames="user_info_id" baseTableSchemaName="core" baseTableName="user" constraintName="user_user_info_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user_info"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-85">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="voter" constraintName="voter_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableSchemaName="core" baseTableName="voter" constraintName="voter_user_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="user"/>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-86">
-        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableName="voting_message" constraintName="voting_message_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="voting"/>
+        <addForeignKeyConstraint baseColumnNames="voting_id" baseTableSchemaName="core" baseTableName="voting_message" constraintName="voting_message_voting_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableSchemaName="core" referencedTableName="voting"/>
     </changeSet>
 </databaseChangeLog>
