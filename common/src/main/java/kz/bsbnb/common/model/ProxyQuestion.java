@@ -12,8 +12,7 @@ import java.io.Serializable;
 @Table(name = "proxy_question",  schema = Constants.DB_SCHEMA_CORE)
 public class ProxyQuestion implements Serializable{
     @Id
-    @SequenceGenerator(name = "core.proxy_question_id_seq", sequenceName = "core.proxy_question_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.proxy_question_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     @ManyToOne

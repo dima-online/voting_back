@@ -1,6 +1,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kz.bsbnb.common.consts.FileType;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -20,10 +21,10 @@ import java.util.Set;
 @XmlRootElement
 public class Files implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7763162928376063245L;
+
     @Id
-    @SequenceGenerator(name = "core.files_id_seq", sequenceName = "core.files_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.files_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
@@ -45,7 +46,8 @@ public class Files implements Serializable {
     @Column(name = "description")
     private String description;
     @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private FileType type;
 
     public Files() {
     }
@@ -99,11 +101,11 @@ public class Files implements Serializable {
         this.description = description;
     }
 
-    public String getType() {
+    public FileType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(FileType type) {
         this.type = type;
     }
 

@@ -1,8 +1,8 @@
 package kz.bsbnb.processor.impl;
 
+import kz.bsbnb.common.bean.QuestionBean;
 import kz.bsbnb.common.bean.VotingBean;
-import kz.bsbnb.common.model.Voting;
-import kz.bsbnb.common.model.VotingMessage;
+import kz.bsbnb.common.model.*;
 import kz.bsbnb.processor.PublicProcessor;
 import kz.bsbnb.repository.IVotingRepository;
 import kz.bsbnb.util.processor.MessageProcessor;
@@ -18,9 +18,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by serik.mukashev on 09.12.2017.
@@ -86,10 +84,14 @@ public class PublicProcessorImpl implements PublicProcessor {
         return result;
     }
 
+    public VotingBean getVotingDetails(Long id) {
+        return castToVotingBean(votingRepo.findOne(id));
+    }
 
     private VotingBean castToVotingBean(Voting voting) {
         VotingBean votingBean = new VotingBean();
         votingBean.setDateBegin(voting.getDateBegin());
+        votingBean.setVotingType(voting.getVotingType());
         votingBean.setDateClose(voting.getDateClose());
         votingBean.setDateCreate(voting.getDateCreate());
         votingBean.setDateEnd(voting.getDateEnd());

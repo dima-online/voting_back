@@ -1,65 +1,8 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-1">
-        <createSequence schemaName="core" sequenceName="answer_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-2">
-        <createSequence schemaName="core" sequenceName="attribute_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-3">
-        <createSequence schemaName="core" sequenceName="decision_document_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-4">
-        <createSequence schemaName="core" sequenceName="decision_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-5">
-        <createSequence schemaName="core" sequenceName="files_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-6">
-        <createSequence schemaName="core" sequenceName="login_order_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-7">
-        <createSequence schemaName="core" sequenceName="message_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-8">
-        <createSequence schemaName="core" sequenceName="organisation_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-9">
-        <createSequence schemaName="core" sequenceName="proxy_card_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-10">
-        <createSequence schemaName="core" sequenceName="proxy_question_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-11">
-        <createSequence schemaName="core" sequenceName="question_file_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-12">
-        <createSequence schemaName="core" sequenceName="question_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-13">
-        <createSequence schemaName="core" sequenceName="share_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-14">
-        <createSequence schemaName="core" sequenceName="user_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-15">
-        <createSequence schemaName="core" sequenceName="user_info_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-16">
-        <createSequence schemaName="core" sequenceName="user_notification_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-17">
-        <createSequence schemaName="core" sequenceName="user_roles_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-18">
-        <createSequence schemaName="core" sequenceName="voter_id_seq"/>
-    </changeSet>
-    <changeSet author="serik.mukashev (generated)" id="1513251881020-19">
-        <createSequence schemaName="core" sequenceName="voting_id_seq"/>
-    </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-20">
         <createTable remarks="Ответы" schemaName="core" tableName="answer">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkanswer"/>
             </column>
             <column name="answer" type="VARCHAR(2000)">
@@ -73,7 +16,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-21">
         <createTable schemaName="core" tableName="answer_message">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="locale" type="VARCHAR(255)">
@@ -87,7 +30,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-22">
         <createTable remarks="Атрибуты" schemaName="core" tableName="attribute">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkattribute"/>
             </column>
             <column name="object" remarks="Код объекта" type="VARCHAR(20)">
@@ -106,7 +49,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-23">
         <createTable remarks="Решение по вопросу" schemaName="core" tableName="decision">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkdecision"/>
             </column>
             <column name="date_create" remarks="Дата создания решения" type="TIMESTAMP(6) WITHOUT TIME ZONE">
@@ -128,7 +71,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-24">
         <createTable schemaName="core" tableName="decision_document">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="json_document" type="VARCHAR(5000000)"/>
@@ -142,7 +85,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-25">
         <createTable schemaName="core" tableName="faq_items">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="title" type="VARCHAR(5000)"/>
@@ -156,7 +99,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-26">
         <createTable schemaName="core" tableName="faq_posts">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="BIGINT"/>
@@ -166,7 +109,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-27">
         <createTable remarks="Материалы" schemaName="core" tableName="files">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkfiles"/>
             </column>
             <column name="file_name" remarks="Наименование файла" type="VARCHAR(200)">
@@ -182,7 +125,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-28">
         <createTable schemaName="core" tableName="login_order">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="create_time" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
@@ -193,7 +136,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-29">
         <createTable remarks="Сообщения" schemaName="core" tableName="message">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkmessage"/>
             </column>
             <column name="organisation_id" type="BIGINT"/>
@@ -212,7 +155,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-30">
         <createTable remarks="Акционерное общество" schemaName="core" tableName="organisation">
-            <column autoIncrement="true" name="id" remarks="ID" type="BIGSERIAL">
+            <column name="id" remarks="ID" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkorganisation"/>
             </column>
             <column name="organisation_name" remarks="Наименование организации" type="VARCHAR(200)"/>
@@ -227,7 +170,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-31">
         <createTable schemaName="core" tableName="proxy_card">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="end_date" type="TIMESTAMP(6) WITHOUT TIME ZONE"/>
@@ -238,7 +181,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-32">
         <createTable schemaName="core" tableName="proxy_question">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="executive_voter_id" type="BIGINT"/>
@@ -249,7 +192,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-33">
         <createTable remarks="Вопросы" schemaName="core" tableName="question">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkquestion"/>
             </column>
             <column name="question" type="VARCHAR(2000)">
@@ -269,7 +212,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-34">
         <createTable remarks="Материалы вопроса" schemaName="core" tableName="question_file">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkquestion_file"/>
             </column>
             <column name="files_id" type="BIGINT">
@@ -282,7 +225,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-35">
         <createTable schemaName="core" tableName="question_message">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="locale" type="VARCHAR(255)">
@@ -299,7 +242,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-36">
         <createTable schemaName="core" tableName="share">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="amount" type="BIGINT"/>
@@ -309,7 +252,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-37">
         <createTable schemaName="core" tableName="user">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="user_pkey"/>
             </column>
             <column name="iin" type="VARCHAR(255)"/>
@@ -323,7 +266,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-38">
         <createTable schemaName="core" tableName="user_info">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="user_info_pkey"/>
             </column>
             <column name="last_name" type="VARCHAR(200)"/>
@@ -347,14 +290,14 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-39">
         <createTable schemaName="core" tableName="user_notification">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-40">
         <createTable schemaName="core" tableName="user_roles">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkuser_roles"/>
             </column>
             <column name="role_code" remarks="Роль ADMIN OPERATOR USER" type="VARCHAR(20)">
@@ -374,7 +317,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-41">
         <createTable remarks="Участник голосования" schemaName="core" tableName="voter">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkvoter"/>
             </column>
             <column name="user_id" type="BIGINT">
@@ -398,7 +341,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-42">
         <createTable remarks="Голосование" schemaName="core" tableName="voting">
-            <column autoIncrement="true" name="id" type="BIGSERIAL">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" primaryKeyName="pkvoting"/>
             </column>
             <column name="voting_type" remarks="Тип голосования SIMPLE MIXED" type="VARCHAR(20)">
@@ -430,7 +373,7 @@
     </changeSet>
     <changeSet author="serik.mukashev (generated)" id="1513251881020-43">
         <createTable schemaName="core" tableName="voting_message">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(2000)">

@@ -18,8 +18,7 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginOrder {
     @Id
-    @SequenceGenerator(name = "core.login_order_id_seq", sequenceName = "core.login_order_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.login_order_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "signature")

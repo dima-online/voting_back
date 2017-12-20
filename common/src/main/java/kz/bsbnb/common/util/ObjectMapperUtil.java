@@ -8,6 +8,7 @@ import kz.bsbnb.common.model.UserInfo;
  */
 public class ObjectMapperUtil {
     public static UserInfoMapper userInfoMapper(UserInfo userInfo) {
+        if(userInfo == null) return null;
         UserInfoMapper mapper = new UserInfoMapper();
         mapper.setId(userInfo.getId());
         mapper.setFirstName(userInfo.getFirstName());

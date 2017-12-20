@@ -297,7 +297,7 @@ public class VotingControllerImpl implements IVotingController {
         if (voting == null) {
             return new ArrayList<>();
         } else {
-            List<Question> question = questionRepository.findByVotingId(voting);
+            List<Question> question = questionRepository.findByVoting(voting);
             List<QuestionBean> result = new ArrayList<>();
             for (Question q : question) {
                 QuestionBean bean = userController.castFromQuestion(q, new User(), false);
@@ -324,7 +324,7 @@ public class VotingControllerImpl implements IVotingController {
     @RequestMapping(value = "/q/{votingId}/{qid}", method = RequestMethod.GET)
     public QuestionBean getVotingQuestion(@PathVariable Long votingId, @PathVariable Long qid) {
         Voting voting = votingRepository.findOne(votingId);
-        List<Question> question = questionRepository.findByVotingId(voting);
+        List<Question> question = questionRepository.findByVoting(voting);
         QuestionBean result = new QuestionBean();
         for (Question q : question) {
             if (q.getId().equals(qid)) {
@@ -342,7 +342,7 @@ public class VotingControllerImpl implements IVotingController {
         User user = userRepository.findOne(userId);
         List<QuestionBean> result = new ArrayList<>();
         if (voting != null && user != null) {
-            List<Question> question = questionRepository.findByVotingId(voting);
+            List<Question> question = questionRepository.findByVoting(voting);
             boolean notUser = !userController.getRole(user, voting.getOrganisation()).equals(Role.ROLE_USER);
             for (Question q : question) {
                 QuestionBean bean = userController.castFromQuestion(q, user, notUser);
@@ -476,7 +476,7 @@ public class VotingControllerImpl implements IVotingController {
             result.setVoting(voting);
             result.setPrivCanVote(question.getPrivCanVote());
             //result.setNum(questionRepository.getMaxNumForQuestion(votingId) + 1);
-            List<Question> list = questionRepository.findByVotingId(voting);
+            List<Question> list = questionRepository.findByVoting(voting);
             int max = 0;
             try {
                 for (Question qq : list) {

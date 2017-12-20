@@ -1,7 +1,5 @@
 package kz.bsbnb.common.bean;
 
-import kz.bsbnb.common.model.VotingMessage;
-
 import java.util.Date;
 import java.util.Set;
 

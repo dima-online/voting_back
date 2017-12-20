@@ -455,7 +455,7 @@ public class UserControllerImpl implements IUserController {
         List<QuestionBean> result = new ArrayList<>();
 
         if (voting != null && user != null) {
-            List<Question> question = questionRepository.findByVotingId(voting);
+            List<Question> question = questionRepository.findByVoting(voting);
             Collections.sort(question, new Comparator<Question>() {
                 @Override
                 public int compare(Question o1, Question o2) {
@@ -587,7 +587,6 @@ public class UserControllerImpl implements IUserController {
         }
         result.setPrivCanVote(q.getPrivCanVote());
         result.setNum(q.getNum());
-        result.setMessages(q.getMessages());
         result.setQuestionType(q.getQuestionType());
         result.setVotingId(q.getVoting().getId());
         if (q.getAnswerSet() != null) {

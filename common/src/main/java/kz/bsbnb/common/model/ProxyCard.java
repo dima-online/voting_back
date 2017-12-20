@@ -18,8 +18,7 @@ public class ProxyCard implements Serializable {
 
 
     @Id
-    @SequenceGenerator(name = "core.proxy_card_id_seq", sequenceName = "core.proxy_card_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.proxy_card_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     @Column(name = "start_date")

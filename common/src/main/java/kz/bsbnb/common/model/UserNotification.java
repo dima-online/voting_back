@@ -12,8 +12,7 @@ import java.io.Serializable;
 @Table(name = "user_notification", schema = Constants.DB_SCHEMA_CORE)
 public class UserNotification implements Serializable{
     @Id
-    @SequenceGenerator(name = "core.user_notification_id_seq", sequenceName = "core.user_notification_id_seq", allocationSize = 1, initialValue = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.user_notification_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
 
 }

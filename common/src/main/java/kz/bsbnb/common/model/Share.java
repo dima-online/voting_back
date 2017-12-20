@@ -13,8 +13,7 @@ import java.io.Serializable;
 @Table(name = "share", schema = Constants.DB_SCHEMA_CORE)
 public class Share implements Serializable{
     @Id
-    @SequenceGenerator(name = "core.share_id_seq", sequenceName = "core.share_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.share_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;

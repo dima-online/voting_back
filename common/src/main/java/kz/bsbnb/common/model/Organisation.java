@@ -24,8 +24,7 @@ public class Organisation implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @SequenceGenerator(name = "core.organisation_id_seq", sequenceName = "core.organisation_id_seq", allocationSize = 1,initialValue = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.organisation_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;

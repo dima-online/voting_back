@@ -4,11 +4,15 @@ import kz.bsbnb.common.bean.UserMapper;
 import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.util.ObjectMapperUtil;
 import kz.bsbnb.processor.UserProcessor;
+import kz.bsbnb.repository.IUserRepository;
 import kz.bsbnb.repository.IUserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Olzhas.Pazyldayev on 20.09.2016.
@@ -18,6 +22,8 @@ public class UserProcessorImpl implements UserProcessor {
 
     @Autowired
     private IUserRoleRepository userRoleRepository;
+    @Autowired
+    private IUserRepository userRepository;
 
     public void mergeUser(User user) {
 //        Set<UserRoles> roles = new HashSet<>();
@@ -41,4 +47,15 @@ public class UserProcessorImpl implements UserProcessor {
         userMapper.setExecutiveOfficeIin(user.getExecutiveOfficeIin());
         return userMapper;
     }
+
+    public List<UserMapper> getUsers(int page, int count) {
+        List<User> users = userRepository.findAll(new PageRequest(page,count)).getContent();
+        List<UserMapper> result = new ArrayList<>();
+        for(User u : users) {
+            result.add(userMapper(u));
+        }
+
+        return result;
+    }
 }
+

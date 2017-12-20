@@ -29,4 +29,12 @@ public interface IPublicViewController {
                                                String text,
                                                String orgId
     ) throws ParseException;
+
+    SimpleResponse getOrganisations(int page, int count);
+
+    SimpleResponse getUsers(int page, int count);
+
+    SimpleResponse getVoting(Long id);
+
+    SimpleResponse getQuestionsByVotingId(Long id, int page, int count);
 }

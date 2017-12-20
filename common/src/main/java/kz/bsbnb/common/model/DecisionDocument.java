@@ -16,8 +16,7 @@ import java.security.NoSuchAlgorithmException;
 @Table(name = "decision_document", schema = Constants.DB_SCHEMA_CORE)
 public class DecisionDocument implements Serializable {
     @Id
-    @SequenceGenerator(name = "core.decision_document_id_seq", sequenceName = "core.decision_document_id_seq", allocationSize = 1, initialValue = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.decision_document_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_voting_fk"))

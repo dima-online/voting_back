@@ -11,7 +11,8 @@ import java.util.Set;
 
 public class QuestionBean {
     private Long id;
-    private Set<QuestionMessage> messages;
+    private String title;
+    private String text;
     private String questionType;
     private Integer num;
     private String decision;
@@ -86,14 +87,6 @@ public class QuestionBean {
         this.id = id;
     }
 
-    public Set<QuestionMessage> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Set<QuestionMessage> messages) {
-        this.messages = messages;
-    }
-
     public String getQuestionType() {
         return questionType;
     }
@@ -150,22 +143,28 @@ public class QuestionBean {
         this.cancelReason = cancelReason;
     }
 
-    @JsonIgnore
-    public QuestionMessage getMessage(Locale locale) {
-        try {
-            return getMessages().parallelStream()
-                    .filter(message -> message.getLocale().equals(locale)).findFirst().get();
-        } catch (Exception e) {
-        }
-        return null;
+    public String getTitle() {
+        return title;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
 
     @Override
     public String toString() {
-        QuestionMessage message = getMessage(Locale.ru);
+
         return "QuestionBean{" +
                 "id=" + id +
-                ", question='" + message == null ? null : message.getText() + '\'' +
                 ", questionType='" + questionType + '\'' +
                 ", num=" + num +
                 ", decision='" + decision + '\'' +

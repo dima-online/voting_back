@@ -76,8 +76,8 @@ public class AdminControllerImpl implements IAdminController {
                         } else {
                             return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
                         }
-                    } catch (CheckUtil.INNLenException e) {
-                        return new SimpleResponse(e.getMessage()).ERROR_CUSTOM();
+                    } catch (CheckUtil.INNLenException innLenException) {
+                        return new SimpleResponse(innLenException.getMessage()).ERROR_CUSTOM();
                     } catch (CheckUtil.INNNotValidChar innNotValidChar) {
                         return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
                     } catch (CheckUtil.INNControlSum10 innControlSum10) {

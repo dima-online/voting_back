@@ -24,10 +24,9 @@ import java.util.Set;
 @Table(name = "answer", schema = Constants.DB_SCHEMA_CORE)
 public class Answer implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7118104210281029053L;
     @Id
-    @SequenceGenerator(name = "core.answer_id_seq", sequenceName = "core.answer_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core.answer_id_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;

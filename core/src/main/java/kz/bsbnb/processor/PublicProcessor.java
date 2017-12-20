@@ -1,6 +1,7 @@
 package kz.bsbnb.processor;
 
 import kz.bsbnb.common.bean.VotingBean;
+import kz.bsbnb.common.model.Question;
 import kz.bsbnb.common.model.Voting;
 
 import java.util.Date;
@@ -13,4 +14,7 @@ public interface PublicProcessor {
     List<VotingBean> getFilteredVotings(String orgId, Date dateStartFrom, Date dateStartTo,Date dateFinishFrom, Date dateFinishTo, String status, String text, int page, int count);
 
     List<VotingBean> getAllVotings(int page, int count);
+
+    VotingBean getVotingDetails(Long id);
+
 }
