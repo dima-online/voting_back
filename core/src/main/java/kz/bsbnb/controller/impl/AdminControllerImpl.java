@@ -9,6 +9,7 @@ import kz.bsbnb.controller.IOrganisationController;
 import kz.bsbnb.controller.IReestrController;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.processor.FaqProcessor;
+import kz.bsbnb.processor.OrganisationProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.util.CheckUtil;
 import kz.bsbnb.util.SimpleResponse;
@@ -51,46 +52,13 @@ public class AdminControllerImpl implements IAdminController {
     private IReestrController reestrController;
     @Autowired
     private FaqProcessor faqProcessor;
+    @Autowired
+    private OrganisationProcessor organisationProcessor;
 
     @Override
-    @RequestMapping(value = "/newOrg/{userId}", method = RequestMethod.POST)
-    public SimpleResponse newOrg(@PathVariable Long userId, @RequestBody @Valid RegOrgBean orgBean) {
-        Organisation oldOrg = organisationRepository.findByOrganisationNum(orgBean.getOrganisationNum());
-        String executiveName = reestrController.getChiefName(orgBean.getOrganisationNum());
-        orgBean.setExecutiveName(executiveName);
-        if (oldOrg != null) {
-            return new SimpleResponse("Эмитент с таким БИН существует").ERROR_CUSTOM();
-        } else {
-            User user = userRepository.findOne(userId);
-            if (user != null) {
-                boolean isAdmin = false;
-                for (UserRoles userRole : user.getUserRolesSet()) {
-                    if (userRole.getRole().equals(Role.ROLE_ADMIN)) {
-                        isAdmin = true;
-                    }
-                }
-                if (isAdmin) {
-                    try {
-                        if ((CheckUtil.INN(orgBean.getOrganisationNum()))) {
-                            return organisationController.newOrganisation(orgBean);
-                        } else {
-                            return new SimpleResponse("Введен неверный ИИН").ERROR_CUSTOM();
-                        }
-                    } catch (CheckUtil.INNLenException innLenException) {
-                        return new SimpleResponse(innLenException.getMessage()).ERROR_CUSTOM();
-                    } catch (CheckUtil.INNNotValidChar innNotValidChar) {
-                        return new SimpleResponse(innNotValidChar.getMessage()).ERROR_CUSTOM();
-                    } catch (CheckUtil.INNControlSum10 innControlSum10) {
-                        return new SimpleResponse(innControlSum10.getMessage()).ERROR_CUSTOM();
-                    }
-
-                } else {
-                    return new SimpleResponse("У Вас нет прав заводить организацию").ERROR_CUSTOM();
-                }
-            } else {
-                return new SimpleResponse("Пользователь не найден").ERROR_CUSTOM();
-            }
-        }
+    @RequestMapping(value = "/newOrg", method = RequestMethod.POST)
+    public SimpleResponse newOrg(@RequestBody @Valid RegOrgBean orgBean) {
+        return organisationProcessor.saveOrganisation(orgBean);
     }
 
     @Override

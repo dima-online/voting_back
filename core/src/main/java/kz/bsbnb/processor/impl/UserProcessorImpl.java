@@ -26,13 +26,6 @@ public class UserProcessorImpl implements UserProcessor {
     private IUserRepository userRepository;
 
     public void mergeUser(User user) {
-//        Set<UserRoles> roles = new HashSet<>();
-//        user.getAuthorities().forEach(userRole1 -> {
-//            UserRoles userRole = userRoleRepository.findByRole(Role.getRole(userRole1.getAuthority()));
-//            roles.add(userRole);
-//        });
-//        user.setUserRolesSet(roles);
-
     }
 
     @Override
@@ -57,5 +50,6 @@ public class UserProcessorImpl implements UserProcessor {
 
         return result;
     }
+
 }
 

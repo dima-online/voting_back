@@ -165,6 +165,9 @@
             <column name="total_share_count" remarks="Общее количество акции" type="INT"/>
             <column name="executive_name" type="VARCHAR(200)"/>
             <column name="logo" type="VARCHAR(5000000)"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
             <column name="result_link" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>

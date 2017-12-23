@@ -132,9 +132,8 @@ public class UserControllerImpl implements IUserController {
         System.out.println(userBean.getFullName());
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT);
         if (user != null) {
-            UserInfo userInfo;
-            if (user.getUserInfo() != null) {
-                userInfo = user.getUserInfo();
+            UserInfo userInfo = user.getUserInfo();
+            if (userInfo != null) {
                 if (userBean.getEmail() != null) {
                     userInfo.setEmail(userBean.getEmail());
                 }
@@ -224,7 +223,7 @@ public class UserControllerImpl implements IUserController {
             userBean = castUser(user, userInfo);
             return new SimpleResponse(userBean).SUCCESS();
         } else {
-            return new SimpleResponse("Пользователь с таким ИИН не существует").ERROR_CUSTOM();
+            return new SimpleResponse(messageProcessor.getMessage("error.user.not.exist")).ERROR_CUSTOM();
         }
     }
 

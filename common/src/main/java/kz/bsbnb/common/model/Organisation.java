@@ -59,6 +59,12 @@ public class Organisation implements Serializable {
     private String logo;
     @Column(name = "result_link")
     private String resultLink;
+    @Column(name = "address")
+    private String address;
+    @Column(name = "phone")
+    private String phone;
+    @Column(name = "email")
+    private String email;
 
     public Organisation() {
     }
@@ -165,6 +171,30 @@ public class Organisation implements Serializable {
 
     public void setAllShareCount(Long totalShareCount) {
         this.totalShareCount = totalShareCount;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

@@ -19,6 +19,7 @@ public class RegOrgBean {
     private String phone;
     private String executiveName;
     private String executiveId;
+    private String logo;
 
     public RegOrgBean() {
     }
@@ -133,5 +134,13 @@ public class RegOrgBean {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

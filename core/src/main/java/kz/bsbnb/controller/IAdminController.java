@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IAdminController {
-    SimpleResponse newOrg(Long userId, RegOrgBean orgBean);
+    SimpleResponse newOrg(RegOrgBean orgBean);
 
     SimpleResponse editOrg(Long userId, RegOrgBean orgBean);
 
