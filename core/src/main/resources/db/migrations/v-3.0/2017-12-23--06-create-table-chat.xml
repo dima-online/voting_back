@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2017-12-23--06-create-table-chat"
+               objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS core.chat CASCADE;
+        </sql>
+        <createTable tableName="chat" schemaName="core">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="chat_pk"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="theme_id" type="BIGINT"/>
+            <column name="create_time" type="TIMESTAMP"/>
+        </createTable>
+        <sql splitStatements="true">
+            ALTER TABLE core.chat ADD CONSTRAINT "chat_theme_fk"
+            FOREIGN KEY (theme_id)
+            REFERENCES
+            core.theme(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+            ALTER TABLE core.chat ADD CONSTRAINT "chat_user_fk"
+            FOREIGN KEY (user_id)
+            REFERENCES
+            core.user(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

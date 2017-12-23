@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Olzhas.Pazyldayev" id="2017-12-23--07-create-table-chat-message"
+               objectQuotingStrategy="LEGACY">
+        <sql splitStatements="true">
+            DROP TABLE IF EXISTS core.chat_message CASCADE;
+        </sql>
+        <createTable tableName="chat_message" schemaName="core">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="chat_message_pk"/>
+            </column>
+            <column name="chat_id" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="message" type="VARCHAR(2000)"/>
+            <column name="message_type" type="VARCHAR(64)"/>
+            <column name="status" type="VARCHAR(64)"/>
+            <column name="create_time" type="TIMESTAMP"/>
+            <column name="read_time" type="TIMESTAMP"/>
+
+        </createTable>
+        <sql splitStatements="true">
+            ALTER TABLE core.chat_message ADD CONSTRAINT "chat_message_chat_fk"
+            FOREIGN KEY (chat_id)
+            REFERENCES
+            core.chat(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+            ALTER TABLE core.chat_message ADD CONSTRAINT "chat_message_user_fk"
+            FOREIGN KEY (user_id)
+            REFERENCES
+            core.user(id) ON UPDATE NO ACTION ON DELETE NO ACTION;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

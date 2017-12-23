@@ -7,4 +7,9 @@
     <include file="2017-12-14--01-db.public.changelog.xml" relativeToChangelogFile="true"/>
     <include file="2017-12-14--02-db.core.changelog.xml" relativeToChangelogFile="true"/>
     <include file="2017-12-14--03-db.external.changelog.xml" relativeToChangelogFile="true"/>
+
+    <include file="2017-12-23--04-create-table-theme.xml" relativeToChangelogFile="true"/>
+    <include file="2017-12-23--05-create-table-theme-message.xml" relativeToChangelogFile="true"/>
+    <include file="2017-12-23--06-create-table-chat.xml" relativeToChangelogFile="true"/>
+    <include file="2017-12-23--07-create-table-chat-message.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
