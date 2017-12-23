@@ -2,8 +2,9 @@ package kz.bsbnb.processor.impl;
 
 import kz.bsbnb.common.model.Status;
 import kz.bsbnb.common.model.Theme;
+import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.util.Validator;
-import kz.bsbnb.processor.ChatProcessor;
+import kz.bsbnb.processor.SecurityProcessor;
 import kz.bsbnb.processor.ThemeProcessor;
 import kz.bsbnb.repository.IThemeRepository;
 import kz.bsbnb.util.SimpleResponse;
@@ -33,6 +34,8 @@ public class ThemeProcessorImpl implements ThemeProcessor {
     MessageProcessor messageProcessor;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    SecurityProcessor securityProcessor;
 
     @Override
     public SimpleResponse createTheme(Theme theme) {
@@ -72,8 +75,12 @@ public class ThemeProcessorImpl implements ThemeProcessor {
             if (theme.getId() != null) {
                 Theme theme2 = themeRepository.findOne(theme.getId());
                 Validator.checkObjectNotNull(theme2, messageProcessor.getMessage("error.update.theme.not.found"), true);
+            } else {
+                User author = securityProcessor.getLoggedUser();
+                Validator.checkObjectNotNull(author, messageProcessor.getMessage("error.theme.author.not.found"), true);
+                theme.setAuthor(author);
             }
-            Validator.checkObjectNotNull(theme.getAuthor(), messageProcessor.getMessage("error.theme.author.not.found"), true);
+
             Validator.checkObjectNotNull(theme.getVoting(), messageProcessor.getMessage("error.theme.voting.not.found"), true);
 
             Validator.checkCollectionNullOrEmpty(theme.getMessages(), messageProcessor.getMessage("error.theme.messages.not.found"), true);
@@ -144,13 +151,13 @@ public class ThemeProcessorImpl implements ThemeProcessor {
         try {
             String fetchQuery = "select t from Theme t " +
                     "LEFT JOIN FETCH t.messages m " +
-                    "where m.locale = :locale AND (m.title like :text or t.message like :text) " +
+                    "where m.locale = :locale AND (m.title like :text or m.message like :text) " +
                     "and t.status=:status " +
                     "order by t.id desc";
 
             String fetchQueryCount = "select count(t.id) from core.theme t " +
                     "left join core.theme_message m on m.theme_id = t.id " +
-                    "where m.locale =:locale and s.status=:status and (m.title like :text or m.message like :text )";
+                    "where m.locale =:locale and t.status=:status and (m.title like :text or m.message like :text )";
 
 
             Query query = entityManager.createQuery(fetchQuery)
@@ -183,13 +190,13 @@ public class ThemeProcessorImpl implements ThemeProcessor {
         try {
             String fetchQuery = "select t from Theme t " +
                     "LEFT JOIN FETCH t.messages m " +
-                    "where m.locale = :locale AND (m.title like :text or t.message like :text) " +
+                    "where m.locale = :locale AND (m.title like :text or m.message like :text) " +
                     "and t.status=:status " +
                     "order by t.id desc";
 
             String fetchQueryCount = "select count(t.id) from core.theme t " +
                     "left join core.theme_message m on m.theme_id = t.id " +
-                    "where m.locale =:locale and s.status=:status and (m.title like :text or m.message like :text )";
+                    "where m.locale =:locale and t.status=:status and (m.title like :text or m.message like :text )";
 
 
             Query query = entityManager.createQuery(fetchQuery)

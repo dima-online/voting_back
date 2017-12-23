@@ -5,7 +5,7 @@ import kz.bsbnb.controller.IThemeController;
 import kz.bsbnb.processor.ThemeProcessor;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,17 +38,17 @@ public class ThemeControllerImpl implements IThemeController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public SimpleResponse getThemeListPage(@RequestParam(name = "text", required = false, defaultValue = "") String text,
-                                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        return new SimpleResponse(themeProcessor.getThemeListPage(text, page, pageSize)).SUCCESS();
+    public PageImpl<Theme> getThemeListPage(@RequestParam(name = "text", required = false, defaultValue = "") String text,
+                                            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                            @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return themeProcessor.getThemeListPage(text, page, pageSize);
     }
 
     @RequestMapping(value = "/admin/list", method = RequestMethod.GET)
-    public SimpleResponse getThemeListPageAdmin(@RequestParam(name = "text", required = false, defaultValue = "") String text,
-                                           @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        return new SimpleResponse(themeProcessor.getThemeListPageAdmin(text, page, pageSize)).SUCCESS();
+    public PageImpl<Theme> getThemeListPageAdmin(@RequestParam(name = "text", required = false, defaultValue = "") String text,
+                                                 @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                                 @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return themeProcessor.getThemeListPageAdmin(text, page, pageSize);
     }
 
     //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")

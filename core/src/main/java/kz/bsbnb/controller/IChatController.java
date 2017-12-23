@@ -11,13 +11,13 @@ import org.springframework.data.domain.PageImpl;
  */
 public interface IChatController {
 
-    SimpleResponse createFirstChatMessage(Long themeId, String message);
+    SimpleResponse createFirstChatMessage(Long themeId, ChatMessage chatMessage);
 
-    SimpleResponse createFirstChatMessageAdmin(Long themeId, Long userId, String message);
+    SimpleResponse createFirstChatMessageAdmin(Long themeId, ChatMessage chatMessage);
 
-    SimpleResponse createChatMessage(Long chatId, String message);
+    SimpleResponse createChatMessage(Long chatId, ChatMessage chatMessage);
 
-    SimpleResponse createChatMessageAdmin(Long chatId, String message);
+    SimpleResponse createChatMessageAdmin(Long chatId, ChatMessage chatMessage);
 
     void readMessage(Long chatId);
 
@@ -25,9 +25,11 @@ public interface IChatController {
 
     SimpleResponse getChatById(Long id);
 
-    SimpleResponse getChatListPage(int page, int pageSize);
+    PageImpl<Chat> getChatListPage(int page, int pageSize);
 
-    SimpleResponse getChatMessageListPage(Long chatId, int page, int pageSize);
+    PageImpl<ChatMessage> getChatMessageListPage(Long chatId, int page, int pageSize);
 
-    SimpleResponse getChatMessageListPageAdmin(Long chatId, int page, int pageSize);
+    PageImpl<ChatMessage> getChatMessageListPageAdmin(Long chatId, int page, int pageSize);
+
+    PageImpl<ChatMessage> getChatMessageListThemePage(Long themeId, int page, int pageSize);;
 }

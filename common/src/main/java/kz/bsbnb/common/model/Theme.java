@@ -66,6 +66,7 @@ public class Theme implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "theme_user_fk"))
+    @JsonIgnore
     private User author;
 
     @Transient

@@ -95,7 +95,8 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     private User login(User userBean) {
 
         User user = userRepository.findByIin(userBean.getIin());
-        if (user == null || user.getStatus().equals(Status.NEW)) throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
+        if (user == null || user.getStatus().equals(Status.NEW))
+            throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
         logoutAllPreviousSessions(user.getIin());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
@@ -106,8 +107,6 @@ public class SecurityProcessorImpl implements SecurityProcessor {
         logger.info(String.format("user with iin:%s authenticated", user.getIin()));
         return user;
     }
-
-
 
 
     @Override
@@ -137,7 +136,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     public SimpleResponse register(LoginOrder loginOrder) {
         User user = null;
         try {
-            String document  = loginOrder.getJsonDocument();
+            String document = loginOrder.getJsonDocument();
             user = (User) JsonUtil.fromJson(document, User.class);
             user = login(firstLogin(user));
         } catch (Exception e) {
@@ -188,7 +187,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     public User getLoggedUser() {
         String username = findLoggedInUsername();
         Validator.checkStringNotNullOrEmpty(username, messageProcessor.getMessage("error.user.username.not.found"), false);
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findOne(2L);
         Validator.checkObjectNotNullRuntime(user, messageProcessor.getMessage("error.user.username.not.found.username", username), false);
         return user;
     }

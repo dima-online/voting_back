@@ -41,6 +41,7 @@ public class Chat implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "theme_id", foreignKey = @ForeignKey(name = "chat_theme_fk"))
+    @JsonIgnore
     private Theme theme;
 
     @Column(name = "create_time")

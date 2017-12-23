@@ -19,11 +19,9 @@ public interface ChatProcessor {
 
     SimpleResponse preValidateChat(Chat chat);
 
-    SimpleResponse createFirstChatMessage(Long themeId, String message);
+    SimpleResponse createFirstChatMessage(Long themeId, ChatMessage chatMessage);
 
-    SimpleResponse createFirstChatMessageAdmin(Long themeId, Long userId, String message);
-
-    SimpleResponse createChatMessage(Long chatId, String message, MessageType messageType);
+    SimpleResponse createChatMessage(Long chatId, ChatMessage chatMessage);
 
     void readMessage(Long chatId, MessageType messageType);
 
@@ -34,4 +32,6 @@ public interface ChatProcessor {
     PageImpl<ChatMessage> getChatMessageListPage(Long chatId, int page, int pageSize);
 
     PageImpl<ChatMessage> getChatMessageListPageAdmin(Long chatId, int page, int pageSize);
+
+    PageImpl<ChatMessage> getChatMessageListThemePage(Long themeId, int page, int pageSize);
 }

@@ -1,6 +1,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import kz.bsbnb.common.consts.MessageType;
 import kz.bsbnb.common.util.Constants;
@@ -22,6 +23,7 @@ public class ChatMessage implements IPersistable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "chat_id", foreignKey = @ForeignKey(name = "chat_message_chat_fk"))
     private Chat chat;
@@ -55,6 +57,12 @@ public class ChatMessage implements IPersistable {
     private Date readTime;
 
     public ChatMessage() {
+    }
+
+    public ChatMessage(Chat chat, User user, Date createTime) {
+        this.chat = chat;
+        this.user = user;
+        this.createTime = createTime;
     }
 
     public ChatMessage(Chat chat, User user, String message, MessageType messageType, Date createTime) {

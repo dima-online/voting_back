@@ -1,10 +1,13 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.consts.MessageType;
+import kz.bsbnb.common.model.Chat;
+import kz.bsbnb.common.model.ChatMessage;
 import kz.bsbnb.controller.IChatController;
 import kz.bsbnb.processor.ChatProcessor;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -26,9 +29,9 @@ public class ChatControllerImpl implements IChatController {
 
     @Override
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public SimpleResponse getChatListPage(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+    public PageImpl<Chat> getChatListPage(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                           @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        return new SimpleResponse(chatProcessor.getChatListPage(page, pageSize)).SUCCESS();
+        return chatProcessor.getChatListPage(page, pageSize);
     }
 
     //********************* CHAT_MESSAGE ************************//
@@ -36,61 +39,72 @@ public class ChatControllerImpl implements IChatController {
     @Override
     @RequestMapping(value = "/message/first/{themeId}", method = RequestMethod.POST)
     public SimpleResponse createFirstChatMessage(@PathVariable Long themeId,
-                                                 @RequestParam(name = "message") String message) {
-        return chatProcessor.createFirstChatMessage(themeId, message);
+                                                 @RequestBody ChatMessage chatMessage) {
+        chatMessage.setMessageType(MessageType.INCOMING);
+        return chatProcessor.createFirstChatMessage(themeId, chatMessage);
     }
 
     @Override
     //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/message/admin/first/{themeId}", method = RequestMethod.POST)
     public SimpleResponse createFirstChatMessageAdmin(@PathVariable Long themeId,
-                                                      @RequestParam(name = "userId") Long userId,
-                                                      @RequestParam(name = "message") String message) {
-        return chatProcessor.createFirstChatMessageAdmin(themeId, userId, message);
+                                                      @RequestBody ChatMessage chatMessage) {
+        chatMessage.setMessageType(MessageType.OUTGOING);
+        return chatProcessor.createFirstChatMessage(themeId, chatMessage);
     }
 
     @Override
     @RequestMapping(value = "/message/{chatId}", method = RequestMethod.POST)
     public SimpleResponse createChatMessage(@PathVariable Long chatId,
-                                            @RequestParam(name = "message") String message) {
-        return chatProcessor.createChatMessage(chatId, message, MessageType.INCOMING);
+                                            @RequestBody ChatMessage chatMessage) {
+        chatMessage.setMessageType(MessageType.INCOMING);
+        return chatProcessor.createChatMessage(chatId, chatMessage);
     }
 
     @Override
     //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/message/admin/{chatId}", method = RequestMethod.POST)
     public SimpleResponse createChatMessageAdmin(@PathVariable Long chatId,
-                                                 @RequestParam(name = "message") String message) {
-        return chatProcessor.createChatMessage(chatId, message, MessageType.OUTGOING);
+                                                 @RequestBody ChatMessage chatMessage) {
+        chatMessage.setMessageType(MessageType.OUTGOING);
+        return chatProcessor.createChatMessage(chatId, chatMessage);
     }
 
     @Override
     @RequestMapping(value = "/message/read/{chatId}", method = RequestMethod.POST)
-    public void readMessage(Long chatId) {
+    public void readMessage(@PathVariable Long chatId) {
         chatProcessor.readMessage(chatId, MessageType.OUTGOING);
     }
 
     @Override
     //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/message/admin/read/{chatId}", method = RequestMethod.POST)
-    public void readMessageAdmin(Long chatId) {
+    public void readMessageAdmin(@PathVariable Long chatId) {
         chatProcessor.readMessage(chatId, MessageType.INCOMING);
     }
 
     @Override
     @RequestMapping(value = "/message/list", method = RequestMethod.GET)
-    public SimpleResponse getChatMessageListPage(@RequestParam(name = "chatId", required = true) Long chatId,
-                                                 @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                                 @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        return new SimpleResponse(chatProcessor.getChatMessageListPage(chatId, page, pageSize));
+    public PageImpl<ChatMessage> getChatMessageListPage(@RequestParam(name = "chatId", required = true) Long chatId,
+                                                        @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return chatProcessor.getChatMessageListPage(chatId, page, pageSize);
     }
 
     @Override
     //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @RequestMapping(value = "/message/admin/list", method = RequestMethod.GET)
-    public SimpleResponse getChatMessageListPageAdmin(@RequestParam(name = "chatId", required = true) Long chatId,
-                                                      @RequestParam(name = "page", required = false, defaultValue = "1") int page,
-                                                      @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        return new SimpleResponse(chatProcessor.getChatMessageListPageAdmin(chatId, page, pageSize));
+    public PageImpl<ChatMessage> getChatMessageListPageAdmin(@RequestParam(name = "chatId", required = true) Long chatId,
+                                                             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return chatProcessor.getChatMessageListPageAdmin(chatId, page, pageSize);
+    }
+
+    @Override
+    @RequestMapping(value = "/message/list/theme", method = RequestMethod.GET)
+    public PageImpl<ChatMessage> getChatMessageListThemePage(@RequestParam(name = "themeId", required = true) Long themeId,
+                                                             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                                             @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return chatProcessor.getChatMessageListThemePage(themeId, page, pageSize);
     }
 }
