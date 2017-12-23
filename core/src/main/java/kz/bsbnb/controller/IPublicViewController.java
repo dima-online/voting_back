@@ -36,5 +36,5 @@ public interface IPublicViewController {
 
     SimpleResponse getVoting(Long id);
 
-    SimpleResponse getQuestionsByVotingId(Long id, int page, int count);
+    SimpleResponse getQuestionsByVotingId(Long votingId, int page, int count);
 }

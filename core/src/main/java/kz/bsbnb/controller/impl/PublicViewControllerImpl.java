@@ -107,10 +107,10 @@ public class PublicViewControllerImpl implements IPublicViewController {
     }
 
     @RequestMapping(value = "/questions", method = RequestMethod.GET)
-    public SimpleResponse getQuestionsByVotingId(@RequestParam Long id,
+    public SimpleResponse getQuestionsByVotingId(@RequestParam Long votingId,
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "20") int count) {
-        return new SimpleResponse(questionProcessor.getQuestionsByVoting(id, page, count)).SUCCESS();
+        return new SimpleResponse(questionProcessor.getQuestionsByVoting(votingId, page, count)).SUCCESS();
     }
 
 }

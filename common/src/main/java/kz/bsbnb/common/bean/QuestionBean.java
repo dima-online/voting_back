@@ -17,7 +17,7 @@ public class QuestionBean {
     private Integer num;
     private String decision;
     private List<TotalDecision> decisionOS;
-    private List<Answer> answerSet;
+    private List<AnswerBean> answerSet;
     private List<DecisionBean> decisionSet;
     private Long votingId;
     private Set<Files> questionFileSet;
@@ -111,11 +111,11 @@ public class QuestionBean {
         this.decision = decision;
     }
 
-    public List<Answer> getAnswerSet() {
+    public List<AnswerBean> getAnswerSet() {
         return answerSet;
     }
 
-    public void setAnswerSet(List<Answer> answerSet) {
+    public void setAnswerSet(List<AnswerBean> answerSet) {
         this.answerSet = answerSet;
     }
 

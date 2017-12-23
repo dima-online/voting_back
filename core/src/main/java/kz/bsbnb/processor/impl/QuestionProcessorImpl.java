@@ -1,5 +1,6 @@
 package kz.bsbnb.processor.impl;
 
+import kz.bsbnb.common.bean.AnswerBean;
 import kz.bsbnb.common.bean.QuestionBean;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.processor.QuestionProcessor;
@@ -44,13 +45,12 @@ public class QuestionProcessorImpl implements QuestionProcessor {
         result.setVotingId(question.getVoting().getId());
         if (question.getAnswerSet() != null) {
             List<Answer> sortedList = new ArrayList<>(question.getAnswerSet());
-            Collections.sort(sortedList, new Comparator<Answer>() {
-                public int compare(Answer a, Answer b) {
-                    return a.getId().compareTo(b.getId());
-                }
-            });
-
-            result.setAnswerSet(sortedList);
+            Collections.sort(sortedList, (a1,a2) -> (int)(a1.getId() - a2.getId()));
+            List<AnswerBean> answers = new ArrayList<>();
+            for(Answer a : sortedList) {
+                answers.add(castToAnswerBean(a));
+            }
+            result.setAnswerSet(answers);
         }
         Set<Files> files = new HashSet<>();
 
@@ -67,5 +67,12 @@ public class QuestionProcessorImpl implements QuestionProcessor {
         result.setQuestionFileSet(files);
 
         return result;
+    }
+
+    private AnswerBean castToAnswerBean(Answer answer) {
+        AnswerBean bean = new AnswerBean();
+        bean.setId(answer.getId());
+        bean.setText(answer.getMessage(messageProcessor.getCurrentLocale()).getText());
+        return bean;
     }
 }

@@ -148,6 +148,15 @@ public class SimpleResponse implements Serializable {
     }
 
     /*
+     * Return 405 HTTP status
+     */
+    public SimpleResponse ERROR_EDS() {
+        this.state = HttpStatus.METHOD_NOT_ALLOWED.value();
+
+        return ERROR_CUSTOM();
+    }
+
+    /*
      * Return 400 HTTP status
      */
     public SimpleResponse ERROR() {

@@ -13,10 +13,7 @@ import kz.bsbnb.util.CryptUtil;
 import kz.bsbnb.util.JsonUtil;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -42,6 +39,8 @@ public class DecisionControllerImpl implements IDecisionController {
     IUserController userController;
     @Autowired
     IVoterRepository voterRepository;
+    @Autowired
+    private IVotingRepository votingRepository;
 
 
     @Override
@@ -125,6 +124,17 @@ public class DecisionControllerImpl implements IDecisionController {
         System.out.println("Here");
         return result;
     }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public SimpleResponse getDecisionListByVoterAndVoting(
+            @RequestParam Long votingId,
+            @RequestParam Long voterId){
+        Voter voter = voterRepository.findOne(voterId);
+        Voting voting = votingRepository.findOne(votingId);
+        List<Decision> list = decisionRepository.findByVoterId(voter);
+        return new SimpleResponse(list).SUCCESS();
+    }
+
 
     @Override
     @RequestMapping(value = "/newList", method = RequestMethod.POST)

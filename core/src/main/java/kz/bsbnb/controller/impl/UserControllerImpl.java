@@ -2,6 +2,7 @@ package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.bean.*;
 import kz.bsbnb.common.consts.DocType;
+import kz.bsbnb.common.consts.FileConst;
 import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.model.*;
@@ -591,13 +592,7 @@ public class UserControllerImpl implements IUserController {
         result.setVotingId(q.getVoting().getId());
         if (q.getAnswerSet() != null) {
             List<Answer> sortedList = new ArrayList<>(q.getAnswerSet());
-            Collections.sort(sortedList, new Comparator<Answer>() {
-                public int compare(Answer a, Answer b) {
-                    return a.getId().compareTo(b.getId());
-                }
-            });
-
-            result.setAnswerSet(sortedList);
+            Collections.sort(sortedList, (a,b) -> a.getId().compareTo(b.getId()));
         }
         Set<Files> files = new HashSet<>();
         if (showPdf) {
@@ -751,61 +746,7 @@ public class UserControllerImpl implements IUserController {
         return result;
     }
 
-    @Override
-    @RequestMapping(value = "/questionfiles/{votingId}/{questionId}", method = RequestMethod.GET)
-    public List<Files> getVotingQuestionFiles(@PathVariable Long votingId, @PathVariable Long questionId) {
-        Voting voting = votingRepository.findOne(votingId);
-        List<Files> files = filesRepository.findByVotingId(voting);
-        List<Files> result = new ArrayList<>();
-        for (Files file : files) {
-            if (!file.getQuestionFileSet().isEmpty()) {
-                for (QuestionFile questionFile : file.getQuestionFileSet()) {
-                    if (questionFile.getQuestion().getId().equals(questionId)) {
-                        result.add(file);
-                    }
-                }
-            }
-        }
-        return result;
-    }
 
-    @Override
-    @RequestMapping(value = "/questionfile/{filePath}", method = RequestMethod.GET)
-    public void getVotingQuestions(@PathVariable String filePath,
-                                   HttpServletResponse response) {
-        String fileName;
-        String diskPath = "C:\\test\\";
-        //String diskPath = "/opt/voting/files/";
-        if (filePath.contains("-")) {
-            fileName = diskPath + filePath.replace("-", ".");
-        } else {
-            fileName = diskPath + filePath + ".pdf";
-        }
-        System.out.println("fileName=" + fileName);
-        File file = new File(fileName);
-        if (file.exists() && !file.isDirectory()) {
-            try {
-                // get your file as InputStream
-                // do something
-
-                InputStream is = new FileInputStream(fileName);
-                // copy it to response's OutputStream
-                org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-                response.flushBuffer();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                throw new RuntimeException("IOError writing file to output stream");
-            }
-        } else {
-            try {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException("IOError writing file to output stream");
-            }
-
-        }
-    }
 
     @Override
     @RequestMapping(value = "/sign", method = RequestMethod.POST)

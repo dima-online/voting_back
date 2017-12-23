@@ -159,7 +159,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
                 response = digisignRestProcessor.verifyNCASignature(document, loginOrder.getSignature(), DigisignProcessor.OPERATION_TYPE_AUTH);
             }
             if (!response.getValid())
-                return new SimpleResponse(messageProcessor.getMessage(response.getCode().getErrorMessage())).ERROR();
+                return new SimpleResponse(messageProcessor.getMessage(response.getCode().getErrorMessage())).ERROR_EDS();
 
             User user = (User) JsonUtil.fromJson(loginOrder.getJsonDocument(), User.class);
             user.setUsername(user.getIin());

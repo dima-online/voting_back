@@ -45,11 +45,6 @@ public interface IUserController {
 
     DecisionBean getBeanFromDecision(Decision decision);
 
-    void getVotingQuestions(String fileCode,
-                            HttpServletResponse response);
-
-    List<Files> getVotingQuestionFiles(Long votingId, Long questionId);
-
     VotingBean castToBean(Voting voting, User user);
 
     OrgBean castToBean(Organisation org, User user);

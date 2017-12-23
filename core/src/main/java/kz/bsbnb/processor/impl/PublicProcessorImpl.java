@@ -100,6 +100,7 @@ public class PublicProcessorImpl implements PublicProcessor {
         votingBean.setOrganisationId(voting.getOrganisation().getId());
         votingBean.setOrganisationName(voting.getOrganisation().getOrganisationName());
         votingBean.setShareCount(voting.getOrganisation().getAllShareCount());
+        votingBean.setQuestionCount(voting.getQuestionSet().size());
         VotingMessage message = voting.getMessage(messageProcessor.getCurrentLocale());
         votingBean.setSubject(message == null ? null : message.getSubject());
         votingBean.setDescription(message == null ? null : message.getDescription());
