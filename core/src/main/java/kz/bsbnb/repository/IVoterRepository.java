@@ -15,6 +15,8 @@ public interface IVoterRepository extends PagingAndSortingRepository<Voter, Long
 
     Voter findByVotingIdAndUserId(Voting votingId, User userId);
 
+    Voter findByVotingAndUser(Voting voting, User user);
+
     @Modifying
     @Transactional
     @Query("delete from Voter d where d.id = ?1")

@@ -44,9 +44,14 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
         List<DecisionBean> results = new ArrayList<>();
         User user = securityProcessor.getLoggedUser();
         Voting voting = votingRepository.findOne(votingId);
-        Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
+        Voter voter = voterRepository.findByVotingAndUser(voting, user);
         if(voter == null) return null;
-        List<Decision> decisions = decisionRepository.findByVoterId(voter);
+        List<Decision> decisions = null;
+        try {
+             decisions = decisionRepository.findByVoterId(voter);
+        }catch(Exception e) {
+            return null;
+        }
         for(Decision d: decisions) {
             results.add(castToDecisionBean(d));
         }

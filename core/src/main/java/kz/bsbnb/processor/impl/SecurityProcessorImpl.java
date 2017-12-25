@@ -186,7 +186,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     public User getLoggedUser() {
         String username = findLoggedInUsername();
         Validator.checkStringNotNullOrEmpty(username, messageProcessor.getMessage("error.user.username.not.found"), false);
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByIin(username);
         Validator.checkObjectNotNullRuntime(user, messageProcessor.getMessage("error.user.username.not.found.username", username), false);
         return user;
     }
