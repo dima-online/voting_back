@@ -99,7 +99,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
             throw new NullPointerException(messageProcessor.getMessage("error.user.not.found"));
         logoutAllPreviousSessions(user.getIin());
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getIin(), null, user.getAuthorities());
         if (authentication instanceof AnonymousAuthenticationToken) {
             throw new UsernameNotFoundException(messageProcessor.getMessage("error.user.username.not.correct"));
         }

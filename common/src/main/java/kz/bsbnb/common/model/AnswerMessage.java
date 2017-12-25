@@ -34,6 +34,9 @@ public class AnswerMessage implements IPersistable {
     @Column(name = "text")
     private String text;
 
+    @Column(name = "description", length = 100_000)
+    private String description;
+
     public AnswerMessage() {
     }
 
@@ -82,5 +85,12 @@ public class AnswerMessage implements IPersistable {
         this.locale = locale;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
 

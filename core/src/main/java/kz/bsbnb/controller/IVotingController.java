@@ -8,6 +8,7 @@ import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.util.SimpleResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public interface IVotingController {
 
     List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
 
-    Decision getDecisionFromBean(DecisionBean bean);
+    Decision getDecisionFromBean(DecisionBean bean) throws ParseException;
 
     SimpleResponse createVoting(RegVotingBean votingBean);
 

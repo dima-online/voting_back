@@ -51,9 +51,9 @@ public interface IUserController {
 
     SimpleResponse getUserpProfile(Long userId);
 
-    public SimpleResponse signData(DecisionBean bean);
-
-    public SimpleResponse verifyData(DecisionBean bean);
+//    public SimpleResponse signData(DecisionBean bean);
+//
+//    public SimpleResponse verifyData(DecisionBean bean);
 
     SimpleResponse verifyIIN(String iin);
 

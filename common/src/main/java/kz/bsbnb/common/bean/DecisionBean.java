@@ -7,27 +7,18 @@ import java.util.Date;
  */
 public class DecisionBean {
     private Long id;
-    private Date dateCreate;
+    private String dateCreate;   //"dd-MM-yyyy"
     private Long score;
     private Long answerId;
     private Long questionId;
     private String comments;
     private Long userId;
-    private String cancelReason;
-    private ConfirmBean confirm;
+    private Long proxyQuestionId;
 
     public DecisionBean() {
     }
 
-    public ConfirmBean getConfirm() {
-        return confirm;
-    }
-
-    public void setConfirm(ConfirmBean confirm) {
-        this.confirm = confirm;
-    }
-
-    public Long getId() {
+      public Long getId() {
         return id;
     }
 
@@ -35,11 +26,11 @@ public class DecisionBean {
         this.id = id;
     }
 
-    public Date getDateCreate() {
+    public String getDateCreate() {
         return dateCreate;
     }
 
-    public void setDateCreate(Date dateCreate) {
+    public void setDateCreate(String dateCreate) {
         this.dateCreate = dateCreate;
     }
 
@@ -84,11 +75,11 @@ public class DecisionBean {
         this.userId = userId;
     }
 
-    public String getCancelReason() {
-        return cancelReason;
+    public Long getProxyQuestionId() {
+        return proxyQuestionId;
     }
 
-    public void setCancelReason(String cancelReason) {
-        this.cancelReason = cancelReason;
+    public void setProxyQuestionId(Long proxyQuestionId) {
+        this.proxyQuestionId = proxyQuestionId;
     }
 }

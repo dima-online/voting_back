@@ -1,0 +1,13 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Serik.Mukashev" id="2017-12-25--08-alter-table-answer" objectQuotingStrategy="LEGACY">
+        <addColumn tableName="answer" schemaName="core" >
+            <column name="photo" type="varchar(1000000)"/>
+        </addColumn>
+        <addColumn tableName="answer_message" schemaName="core">
+            <column name="description" type="varchar(100000)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

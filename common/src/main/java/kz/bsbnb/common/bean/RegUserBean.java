@@ -26,11 +26,11 @@ public class RegUserBean {
     private String executiveOfficerName;
     private Boolean smsNotification;
     private Boolean emailNotification;
-    private String dateOfBirth;             //"yyyy-MM-dd"
+    private String dateOfBirth;             //"dd-MM-yyyy"
     private String documentNumber;
     private String documentGivenAgency;
-    private String documentGivenDate;       //"yyyy-MM-dd"
-    private String documentExpireDate;      //"yyyy-MM-dd"
+    private String documentGivenDate;       //"dd-MM-yyyy"
+    private String documentExpireDate;      //"dd-MM-yyyy"
     private String documentType;
 
     public RegUserBean() {

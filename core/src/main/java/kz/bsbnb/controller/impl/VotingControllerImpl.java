@@ -14,6 +14,7 @@ import kz.bsbnb.common.consts.Role;
 import kz.bsbnb.common.consts.VotingType;
 import kz.bsbnb.common.external.ReestrHead;
 import kz.bsbnb.common.model.*;
+import kz.bsbnb.common.util.*;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.processor.AttributeProcessor;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -715,7 +717,8 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     @Override
-    public Decision getDecisionFromBean(DecisionBean bean) {
+    public Decision getDecisionFromBean(DecisionBean bean) throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat(kz.bsbnb.common.util.Constants.DATE_FORMAT);
 
         Decision result = new Decision();
         Question question = questionRepository.findOne(bean.getQuestionId());
@@ -725,7 +728,7 @@ public class VotingControllerImpl implements IVotingController {
         }
         User user = userRepository.findOne(bean.getUserId());
         Voter voter = voterRepository.findByVotingIdAndUserId(question.getVoting(), user);
-        Date d = bean.getDateCreate();
+        Date d = format.parse(bean.getDateCreate());
         if (d == null) {
             d = new Date();
         }

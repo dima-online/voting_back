@@ -730,7 +730,6 @@ public class UserControllerImpl implements IUserController {
         result.setScore(decision.getScore());
         result.setAnswerId(decision.getAnswer() == null ? null : decision.getAnswer().getId());
         result.setComments(decision.getComments());
-        result.setDateCreate(decision.getDateCreate());
         result.setQuestionId(decision.getQuestion().getId());
         result.setUserId(decision.getVoter().getUser().getId());
         return result;
@@ -747,54 +746,54 @@ public class UserControllerImpl implements IUserController {
 
 
 
-    @Override
-    @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public SimpleResponse signData(@RequestBody @Valid DecisionBean bean) {
-        String signDat = CryptUtil.signXML(bean.getConfirm().getXmlBody(), bean.getComments(), "123456");
-        return new SimpleResponse(signDat).SUCCESS();
-    }
+//    @Override
+//    @RequestMapping(value = "/sign", method = RequestMethod.POST)
+//    public SimpleResponse signData(@RequestBody @Valid DecisionBean bean) {
+//        String signDat = CryptUtil.signXML(bean.getConfirm().getXmlBody(), bean.getComments(), "123456");
+//        return new SimpleResponse(signDat).SUCCESS();
+//    }
 
-    @Override
-    @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public SimpleResponse verifyData(@RequestBody @Valid DecisionBean bean) {
-        CryptUtil.initCrypt();
-        String strUserId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "userId");
-        String strQuestionId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "questionId");
-        String strAnswerId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "answerId");
-        CryptUtil.VerifyIIN result = CryptUtil.verifyXml(bean.getConfirm().getXmlBody());
-        boolean bUserId = false, bQuestionId = false, bAnswerId = false;
-        if (result.isVerify()) {
-            if (strUserId != null && !strUserId.equals("") && String.valueOf(bean.getUserId()).equals(strUserId)) {
-                System.out.println("userId compared successfully!");
-                bUserId = true;
-            }
-            if (strQuestionId != null && !strQuestionId.equals("") && String.valueOf(bean.getQuestionId()).equals(strQuestionId)) {
-                System.out.println("strQuestionId compared successfully!");
-                bQuestionId = true;
-            }
-            if (bean.getAnswerId() != null) {
-                if (strAnswerId != null && !strAnswerId.equals("") && String.valueOf(bean.getAnswerId()).equals(strAnswerId)) {
-                    System.out.println("strAnswerId compared successfully!");
-                    bAnswerId = true;
-                }
-            } else {
-                System.out.println("strAnswerId not compared!");
-                bAnswerId = true;
-            }
-            User user = userRepository.findOne(bean.getUserId());
-            if (user != null && user.getIin().equals(result.getIin())) {
-                if (bUserId && bQuestionId && bAnswerId) {
-                    return new SimpleResponse("Проверено").SUCCESS();
-                } else {
-                    return new SimpleResponse("Подписанные данные не совпадают").ERROR_CUSTOM();
-                }
-            } else {
-                return new SimpleResponse("ИИН подписанта и сертификата не совпадает").ERROR_CUSTOM();
-            }
-        } else {
-            return new SimpleResponse("Не проверено").ERROR_CUSTOM();
-        }
-    }
+//    @Override
+//    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+//    public SimpleResponse verifyData(@RequestBody @Valid DecisionBean bean) {
+//        CryptUtil.initCrypt();
+//        String strUserId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "userId");
+//        String strQuestionId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "questionId");
+//        String strAnswerId = CryptUtil.getValue(bean.getConfirm().getXmlBody(), "answerId");
+//        CryptUtil.VerifyIIN result = CryptUtil.verifyXml(bean.getConfirm().getXmlBody());
+//        boolean bUserId = false, bQuestionId = false, bAnswerId = false;
+//        if (result.isVerify()) {
+//            if (strUserId != null && !strUserId.equals("") && String.valueOf(bean.getUserId()).equals(strUserId)) {
+//                System.out.println("userId compared successfully!");
+//                bUserId = true;
+//            }
+//            if (strQuestionId != null && !strQuestionId.equals("") && String.valueOf(bean.getQuestionId()).equals(strQuestionId)) {
+//                System.out.println("strQuestionId compared successfully!");
+//                bQuestionId = true;
+//            }
+//            if (bean.getAnswerId() != null) {
+//                if (strAnswerId != null && !strAnswerId.equals("") && String.valueOf(bean.getAnswerId()).equals(strAnswerId)) {
+//                    System.out.println("strAnswerId compared successfully!");
+//                    bAnswerId = true;
+//                }
+//            } else {
+//                System.out.println("strAnswerId not compared!");
+//                bAnswerId = true;
+//            }
+//            User user = userRepository.findOne(bean.getUserId());
+//            if (user != null && user.getIin().equals(result.getIin())) {
+//                if (bUserId && bQuestionId && bAnswerId) {
+//                    return new SimpleResponse("Проверено").SUCCESS();
+//                } else {
+//                    return new SimpleResponse("Подписанные данные не совпадают").ERROR_CUSTOM();
+//                }
+//            } else {
+//                return new SimpleResponse("ИИН подписанта и сертификата не совпадает").ERROR_CUSTOM();
+//            }
+//        } else {
+//            return new SimpleResponse("Не проверено").ERROR_CUSTOM();
+//        }
+//    }
 
     @Override
     @RequestMapping(value = "/verifyIIN/{iin}", method = RequestMethod.GET)

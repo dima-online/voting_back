@@ -43,6 +43,9 @@ public class Answer implements Serializable {
     @JsonManagedReference(value = "answerMessages")
     @OrderBy("locale ASC")
     private Set<AnswerMessage> messages = new HashSet<>();
+    @Column(name = "photo",length = 1_000_000)
+    private String photo;
+
 
     public Answer() {
     }
@@ -57,6 +60,14 @@ public class Answer implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public Question getQuestion() {

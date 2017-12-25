@@ -10,13 +10,5 @@ import java.util.List;
  */
 public interface IDecisionController {
 
-    SimpleResponse regDecision(DecisionBean bean);
-
-    SimpleResponse regDecision(List<DecisionBean> beans);
-
-    SimpleResponse regCheckDecision(DecisionBean bean);
-
-    SimpleResponse regCheckDecision(List<DecisionBean> beans);
-
-    SimpleResponse delDecision(DecisionBean bean);
+    SimpleResponse getDecisionList(Long votingId);
 }
