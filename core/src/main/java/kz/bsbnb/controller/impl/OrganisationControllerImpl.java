@@ -222,7 +222,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
         cnt = 0;
         if (org.getVotingSet()!=null) {
             result.setVotingCount(org.getVotingSet().size());
-            List<Voting> vots = votingRepository.getByOrganisationId(org);
+            List<Voting> vots = votingRepository.getByOrganisation(org);
 
             for (Voting voting : vots) {
                 if (voting.getDateClose() != null) {

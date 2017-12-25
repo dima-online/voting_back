@@ -224,7 +224,10 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
     @Transactional
     private User firstLogin(User userBean) {
+        User user = userRepository.findByIin(userBean.getIin());
+        if(user != null) userBean.setId(user.getId());
         userBean.setStatus(Status.ACTIVE);
+        userBean.setUsername(userBean.getIin());
         userBean.getUserInfo().setEmailNotification(Boolean.FALSE);
         userBean.getUserInfo().setSmsNotification(Boolean.FALSE);
         userRepository.save(userBean);

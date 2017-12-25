@@ -54,8 +54,8 @@ public class UserInfo implements Serializable {
     @Column(name = "email")
     private String email;
     @JsonIgnore
-    @OneToMany(mappedBy = "userInfo", fetch = FetchType.LAZY)
-    private Set<User> userSet;
+    @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    private User user;
     @Column(name = "is_org")
     private Boolean isOrg;
     @Column(name = "sms_notification")
@@ -176,13 +176,12 @@ public class UserInfo implements Serializable {
         this.emailNotification = emailNotification;
     }
 
-    @XmlTransient
-    public Set<User> getUserSet() {
-        return userSet;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserSet(Set<User> userSet) {
-        this.userSet = userSet;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Boolean getOrg() {return isOrg;}

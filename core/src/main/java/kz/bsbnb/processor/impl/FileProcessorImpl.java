@@ -11,6 +11,7 @@ import kz.bsbnb.repository.IFilesRepository;
 import kz.bsbnb.repository.IVoterRepository;
 import kz.bsbnb.repository.IVotingRepository;
 import kz.bsbnb.util.SimpleResponse;
+import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +30,21 @@ public class FileProcessorImpl implements IFileProcessor{
     private SecurityProcessor securityProcessor;
     @Autowired
     private IFilesRepository filesRepository;
+    @Autowired
+    private MessageProcessor messageProcessor;
 
     public SimpleResponse getVotingFiles(Long votingId) {
         Voting voting = votingRepository.findOne(votingId);
         List<Files> files = null;
         if(voting.getVotingType().equals(VotingType.SECRET.toString())){
-            User user = securityProcessor.getLoggedUser();
-            Voter voter = voterRepository.findByVotingIdAndUserId(voting,user);
-            if(voter != null) {
-                files = filesRepository.findByVotingId(voting);
+            try {
+                User user = securityProcessor.getLoggedUser();
+                Voter voter = voterRepository.findByVotingAndUser(voting, user);
+                if (voter != null) {
+                    files = filesRepository.findByVotingId(voting);
+                }
+            }catch(Exception e) {
+                return new SimpleResponse(messageProcessor.getMessage(e.getMessage())).ERROR_CUSTOM();
             }
         }
         else files = filesRepository.findByVotingId(voting);

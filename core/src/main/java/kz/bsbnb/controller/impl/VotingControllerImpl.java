@@ -18,6 +18,7 @@ import kz.bsbnb.common.util.*;
 import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.processor.AttributeProcessor;
+import kz.bsbnb.processor.VoterProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.*;
@@ -100,6 +101,14 @@ public class VotingControllerImpl implements IVotingController {
 
     @Autowired
     MessageProcessor messageProcessor;
+
+    @Autowired
+    private VoterProcessor voterProcessor;
+
+    @RequestMapping(value = "/voter", method = RequestMethod.POST)
+    public SimpleResponse getVoter(@RequestParam Long votingId) {
+        return new SimpleResponse(voterProcessor.getVoterByVotingId(votingId)).SUCCESS();
+    }
 
     @Override
     @RequestMapping(value = "/list/{userId}", method = RequestMethod.GET)
@@ -659,7 +668,7 @@ public class VotingControllerImpl implements IVotingController {
                 voter = new Voter();
                 voter.setUser(user);
                 voter.setVoting(voting);
-                voter.setShareCount(regVoterBean.getShareCount() == null ? 0L : regVoterBean.getShareCount());
+//                voter.setShareCount(regVoterBean.getShareCount() == null ? 0L : regVoterBean.getShareCount());
                 voter = voterRepository.save(voter);
                 regVoterBean.setId(voter.getId());
                 List<UserRoles> userRoles = userRoleRepository.findByUserAndOrganisation(user, voting.getOrganisation());
@@ -870,7 +879,7 @@ public class VotingControllerImpl implements IVotingController {
         List<VotingBean> result = new ArrayList<>();
         if (user != null) {
             for (UserRoles userRoles : user.getUserRolesSet()) {
-                List<Voting> vots = votingRepository.getByOrganisationId(userRoles.getOrganisation());
+                List<Voting> vots = votingRepository.getByOrganisation(userRoles.getOrganisation());
                 for (Voting voting : vots) {
 //                    if (voting.getStatus().equals("NEW") || voting.getStatus().equals("CREATED")) {
                     boolean isFound = false;
@@ -920,15 +929,15 @@ public class VotingControllerImpl implements IVotingController {
             Long voterCount = 0L;
             Long votingShares = 0L;
             for (Voter voter : voting.getVoterSet()) {
-                votingShares += voter.getShareCount();
-                if (!voter.getDecisionSet().isEmpty()) {
-                    for (Decision d : voter.getDecisionSet()) {
-                        if (!d.getStatus().equals("KILLED")) {
-                            realCount = realCount + voter.getShareCount();
-
-                        }
-                    }
-                }
+//                votingShares += voter.getShareCount();
+//                if (!voter.getDecisionSet().isEmpty()) {
+//                    for (Decision d : voter.getDecisionSet()) {
+//                        if (!d.getStatus().equals("KILLED")) {
+//                            realCount = realCount + voter.getShareCount();
+//
+//                        }
+//                    }
+//                }
                 voterCount++;
             }
 
@@ -1048,9 +1057,9 @@ public class VotingControllerImpl implements IVotingController {
                     if (!voting.getVoterSet().isEmpty()) {
                         System.out.println("Голосующих (" + voting.getVoterSet().size() + ")");
                         String userPoints = "";
-                        for (Voter voter : voting.getVoterSet()) {
-                            userPoints = userPoints + voter.getId() + " " + voter.getShareCount() + " ";
-                        }
+//                        for (Voter voter : voting.getVoterSet()) {
+//                            userPoints = userPoints + voter.getId() + " " + voter.getShareCount() + " ";
+//                        }
                         if (!voting.getQuestionSet().isEmpty()) {
                             String ordinaryQuestions = "";
                             List<Question> accQues = new ArrayList<>();
@@ -1179,7 +1188,7 @@ public class VotingControllerImpl implements IVotingController {
                         }
                     }
                     if (approved) {
-                        vote = vote + voter.getShareCount();
+//                        vote = vote + voter.getShareCount();
                     }
                 }
             }
@@ -1346,7 +1355,7 @@ public class VotingControllerImpl implements IVotingController {
             List<Decision> decs = (List<Decision>) decisionRepository.findAll();
             for (Decision decision : decs) {
                 if (decision.getStatus().equals("READY") && decision.getAnswer() != null && decision.getAnswer().equals(answer)) {
-                    td.setAnswerCount(td.getAnswerCount() + decision.getVoter().getShareCount());
+//                    td.setAnswerCount(td.getAnswerCount() + decision.getVoter().getShareCount());
                     td.setAnswerScore(td.getAnswerScore() + decision.getScore());
                 }
             }

@@ -22,6 +22,8 @@ public class Share implements Serializable{
     private ShareType type;
     @Column(name = "amount")
     private Long amount;
+    @Column(name="account_number")
+    private String accountNumber;
     @ManyToOne
     @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "share_voter_fk"))
     private Voter voter;
@@ -56,5 +58,13 @@ public class Share implements Serializable{
 
     public void setVoter(Voter voter) {
         this.voter = voter;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 }

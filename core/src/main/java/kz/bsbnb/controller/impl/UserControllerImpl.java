@@ -275,7 +275,7 @@ public class UserControllerImpl implements IUserController {
         bean.setUserCount(cnt);
         bean.setVotingCount(org.getVotingSet().size());
         cnt = 0;
-        List<Voting> vots = votingRepository.getByOrganisationId(org);
+        List<Voting> vots = votingRepository.getByOrganisation(org);
         for (Voting voting : vots) {
             if (voting.getDateClose() != null) {
                 cnt++;
@@ -622,7 +622,7 @@ public class UserControllerImpl implements IUserController {
     public VoterBean castToBean(Voting voting, Voter voter) {
         VoterBean result = new VoterBean();
         result.setId(voter.getId());
-        result.setShareCount(voter.getShareCount());
+//        result.setShareCount(voter.getShareCount());
         Set<DecisionBean> beanSet = new HashSet();
         for (Decision decision : voter.getDecisionSet()) {
             if (voter.getVoting().equals(voting)) {
@@ -630,12 +630,12 @@ public class UserControllerImpl implements IUserController {
                 beanSet.add(bean);
             }
         }
-        result.setHasGoldShare(voter.getHasGoldShare());
-        result.setPrivShareCount(voter.getPrivShareCount());
+//        result.setHasGoldShare(voter.getHasGoldShare());
+//        result.setPrivShareCount(voter.getPrivShareCount());
         result.setDecisions(beanSet);
 //        result.setVoting(castToBean(voter.getVotingId(),voter.getUser()));
         result.setUserId(castUser(voter.getUser()));
-        result.setSharePercent(100.0 * voter.getShareCount() / getVotingAllScore(voting.getId()));
+//        result.setSharePercent(100.0 * voter.getShareCount() / getVotingAllScore(voting.getId()));
         return result;
     }
 
@@ -663,7 +663,7 @@ public class UserControllerImpl implements IUserController {
         boolean canReadPdf = false;
         Voter vot = voterRepository.findByVotingIdAndUserId(voting, user);
         if (vot != null) {
-            result.setShareCount(vot.getShareCount());
+//            result.setShareCount(vot.getShareCount());
         } else {
             result.setShareCount(0L);
         }
@@ -739,7 +739,7 @@ public class UserControllerImpl implements IUserController {
         Long result = 0L;
         Voting voting = votingRepository.findOne(votingId);
         for (Voter voter : voting.getVoterSet()) {
-            result = result + voter.getShareCount();
+//            result = result + voter.getShareCount();
         }
         return result;
     }

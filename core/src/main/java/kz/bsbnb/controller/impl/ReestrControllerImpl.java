@@ -1,6 +1,7 @@
 package kz.bsbnb.controller.impl;
 
 import kz.bsbnb.common.consts.Role;
+import kz.bsbnb.common.consts.ShareType;
 import kz.bsbnb.common.external.Reestr;
 import kz.bsbnb.common.external.ReestrHead;
 import kz.bsbnb.common.model.*;
@@ -258,18 +259,25 @@ public class ReestrControllerImpl implements IReestrController {
                                 if (!isFound) {
                                     voter = new Voter();
                                     int count = reestr.getShareCount();
+                                    Share share = new Share();
+                                    share.setAmount(Long.valueOf(count));
+                                    share.setVoter(voter);
                                     if (reestr.getShareType() == null || "".equals(reestr.getShareType().trim()) || reestr.getShareType().contains("прост")) {
-                                        voter.setShareCount(voter.getShareCount() + count);
+                                        share.setType(ShareType.ORDINARY);
                                     } else {
-                                        voter.setPrivShareCount(voter.getPrivShareCount() == null ? 0L : voter.getPrivShareCount() + (long) count);
+                                        share.setType(ShareType.PRIVILEGED);
                                     }
+                                    voter.addShare(share);
                                     voter.setUser(user);
                                     voter.setDateAdding(new Date());
                                     voter.setVoting(voting);
                                     voter = voterRepository.save(voter);
                                     newVoter.add(voter);
                                 } else {
-                                    voter.setShareCount(voter.getShareCount() + reestr.getShareCount());
+                                    Share share = new Share();
+                                    share.setType(ShareType.ORDINARY);
+                                    share.setAmount(Long.valueOf(reestr.getShareCount()));
+                                    voter.addShare(share);
                                     voterRepository.save(voter);
                                 }
 

@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Serik.Mukashev" id="2017-12-25--10-alter-table-voter_share" objectQuotingStrategy="LEGACY">
+
+        <dropColumn tableName="voter" schemaName="core" columnName="signature"/>
+        <dropColumn tableName="voter" schemaName="core" columnName="public_key"/>
+        <dropColumn tableName="voter" schemaName="core" columnName="date_voting"/>
+        <dropColumn tableName="voter" schemaName="core" columnName="has_gold_share"/>
+        <dropColumn tableName="voter" schemaName="core" columnName="priv_share_count"/>
+        <dropColumn tableName="voter" schemaName="core" columnName="account_number"/>
+        <addColumn tableName="voter" schemaName="core">
+            <column name="parent_voter_id" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableSchemaName="core" baseTableName="voter" baseColumnNames="parent_voter_id"
+                                 constraintName="voter_parent_voter_fk" referencedTableSchemaName="core" referencedTableName="voter"
+                                 referencedColumnNames="id"/>
+        <addColumn tableName="share" schemaName="core">
+            <column name="account_number" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

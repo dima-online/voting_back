@@ -37,4 +37,6 @@ public interface IPublicViewController {
     SimpleResponse getVoting(Long id);
 
     SimpleResponse getQuestionsByVotingId(Long votingId, int page, int count);
+
+    SimpleResponse getOrganisation(Long organisationId);
 }

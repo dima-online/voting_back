@@ -7,9 +7,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 /**
- * @author Ruslan.
+ * @author serik.mukashev.
  */
 public interface IFilesRepository extends PagingAndSortingRepository<Files, Long> {
 
     List<Files> findByVotingId(Voting voting);
+    Files findByFilePath(String filePath);
+
 }

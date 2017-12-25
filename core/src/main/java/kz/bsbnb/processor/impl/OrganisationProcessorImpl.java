@@ -91,6 +91,14 @@ public class OrganisationProcessorImpl implements OrganisationProcessor {
             }
         }
     }
+
+    @Override
+    public SimpleResponse getOrganisation(Long id) {
+        Organisation organisation = organisationRepository.findOne(id);
+        if(organisation == null) return new SimpleResponse(messageProcessor.getMessage("organisation.not.found")).ERROR_CUSTOM();
+        return new SimpleResponse(castToRegOrgBean(organisation)).SUCCESS();
+    }
+
     private Organisation castToOrganisation(RegOrgBean regOrgBean) {
         Organisation result = new Organisation();
         result.setAllShareCount(regOrgBean.getAllShareCount());

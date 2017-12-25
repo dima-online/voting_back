@@ -113,4 +113,10 @@ public class PublicViewControllerImpl implements IPublicViewController {
         return new SimpleResponse(questionProcessor.getQuestionsByVoting(votingId, page, count)).SUCCESS();
     }
 
+    @Override
+    @RequestMapping(value = "/organisation", method = RequestMethod.GET)
+    public SimpleResponse getOrganisation(@RequestParam Long organisationId) {
+        return organisationProcessor.getOrganisation(organisationId);
+    }
+
 }

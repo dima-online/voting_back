@@ -38,7 +38,7 @@ public class BlockChainProcessorImpl implements BlockChainProcessor {
     public String vote(DecisionDocument decisionDocument) {
         String accountNumber = decisionDocument.getVoter().getUser().getAccountNumber();
         if (decisionDocument.getParentVoter() != null) {
-            accountNumber = decisionDocument.getParentVoter().getAccountNumber();
+            accountNumber = decisionDocument.getParentVoter().getShares().get(0).getAccountNumber();
         }
         HLCommand command = commandProcessor.vote(blockchainProperties.getTableName(),
                 decisionDocument.getMessageDigestFromDocument(),

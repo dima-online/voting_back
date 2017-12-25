@@ -141,7 +141,7 @@ public class AdminControllerImpl implements IAdminController {
         if (user != null) {
             List<Voting> votings = new ArrayList<>();
             if (organisation != null) {
-                List<Voting> vots = StreamSupport.stream(votingRepository.getByOrganisationId(organisation, new PageRequest(page, count)).spliterator(), false)
+                List<Voting> vots = StreamSupport.stream(votingRepository.getByOrganisation(organisation, new PageRequest(page, count)).spliterator(), false)
                         .collect(Collectors.toList());
                 for (Voting voting : vots) {
                     votings.add(voting);

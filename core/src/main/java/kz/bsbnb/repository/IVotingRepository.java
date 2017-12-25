@@ -16,9 +16,9 @@ import java.util.List;
  */
 public interface IVotingRepository extends PagingAndSortingRepository<Voting, Long> {
 
-    List<Voting> getByOrganisationId(Organisation organisation);
+    List<Voting> getByOrganisation(Organisation organisation);
 
-    List<Voting> getByOrganisationId(Organisation organisation, Pageable pageable);
+    List<Voting> getByOrganisation(Organisation organisation, Pageable pageable);
 
     @Query(value = "SELECT v from Voting v where v.id in (select vo.voting from Voter vo where vo.user=?1)")
     Page<Voting> findByUser(User user, Pageable pageable);

@@ -11,6 +11,7 @@ public enum Status {
     APPROVED, //Одобрена
     DELETED, //Удалена
     ERROR, // Ошибка
+    NEW, // Новый
     CLOSED, //закрыта
     CLOSED_CANCELED, //закрыт по отмене
     SUCCESS; //успешна

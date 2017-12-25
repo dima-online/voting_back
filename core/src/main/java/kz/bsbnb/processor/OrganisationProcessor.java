@@ -17,4 +17,6 @@ public interface OrganisationProcessor {
 
     SimpleResponse saveOrganisation(RegOrgBean orgBean);
 
+    SimpleResponse getOrganisation(Long id);
+
 }

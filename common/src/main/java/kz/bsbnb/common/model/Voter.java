@@ -13,7 +13,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,7 +26,8 @@ import java.util.Set;
 @Table(name = "voter", schema = Constants.DB_SCHEMA_CORE)
 public class Voter implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 5847549508691885490L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
@@ -33,12 +36,8 @@ public class Voter implements Serializable {
     @Column(name = "date_adding")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateAdding;
-    @Column(name = "account_number")
-    private String accountNumber;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "share_count")
-    private Long shareCount;
+    @OneToMany(mappedBy = "voter")
+    private List<Share> shares;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voter", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
@@ -51,37 +50,24 @@ public class Voter implements Serializable {
     private Voting voting;
     @Column(name = "is_shared")
     private Boolean isShared;
-    @Column(name = "has_gold_share")
-    private Boolean hasGoldShare;
-    @Column(name = "priv_share_count")
-    private Long privShareCount;
+    @OneToOne
+    @JoinColumn(name = "parent_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_parent_voter_fk"))
+    private Voter parentVoter;
+
 
     public Voter() {
-    }
-
-    public Long getPrivShareCount() {
-        return privShareCount;
-    }
-
-    public void setPrivShareCount(Long privShareCount) {
-        this.privShareCount = privShareCount;
-    }
-
-    public Boolean getHasGoldShare() {
-        return hasGoldShare;
-    }
-
-    public void setHasGoldShare(Boolean hasGoldShare) {
-        this.hasGoldShare = hasGoldShare;
     }
 
     public Voter(Long id) {
         this.id = id;
     }
 
-    public Voter(Long id, Long shareCount) {
-        this.id = id;
-        this.shareCount = shareCount;
+    public List<Share> getShares() {
+        return shares;
+    }
+
+    public void setShares(List<Share> shares) {
+        this.shares = shares;
     }
 
     public Long getId() {
@@ -98,15 +84,6 @@ public class Voter implements Serializable {
 
     public void setDateAdding(Date dateAdding) {
         this.dateAdding = dateAdding;
-    }
-
-    public Long getShareCount() {
-        if (shareCount==null) {shareCount = 0L;}
-        return shareCount;
-    }
-
-    public void setShareCount(Long shareCount) {
-        this.shareCount = shareCount;
     }
 
     @XmlTransient
@@ -138,12 +115,12 @@ public class Voter implements Serializable {
         isShared = shared;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public Voter getParentVoter() {
+        return parentVoter;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setParentVoter(Voter parentVoter) {
+        this.parentVoter = parentVoter;
     }
 
     @Override
@@ -169,6 +146,15 @@ public class Voter implements Serializable {
     @Override
     public String toString() {
         return "kz.bsbnb.common.model.Voter[ id=" + id + " ]";
+    }
+
+    public void addShare(Share share) {
+        List<Share> result = getShares();
+        if(result == null) {
+            result = new ArrayList<>();
+        }
+        result.add(share);
+        setShares(result);
     }
     
 }
