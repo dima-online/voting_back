@@ -260,6 +260,7 @@ public class ChatProcessorImpl implements ChatProcessor {
             String fetchQuery = "select cm from ChatMessage cm " +
                     "JOIN FETCH cm.chat c " +
                     "LEFT JOIN FETCH cm.user u " +
+                    "LEFT JOIN FETCH u.userInfo ui " +
                     "where c.id =:chatId " +
                     "order by cm.status asc, cm.createTime desc ";
             String fetchQueryCount = "select count(t.id) from core.chat_message t " +
@@ -292,6 +293,7 @@ public class ChatProcessorImpl implements ChatProcessor {
             String fetchQuery = "select cm from ChatMessage cm " +
                     "JOIN FETCH cm.chat c " +
                     "LEFT JOIN FETCH cm.user u " +
+                    "LEFT JOIN FETCH u.userInfo ui " +
                     "where c.theme.id=:themeId and c.user=:user " +
                     "and (cm.user=:user or cm.messageType=:messageType) " +
                     "order by cm.status asc, cm.createTime desc ";
