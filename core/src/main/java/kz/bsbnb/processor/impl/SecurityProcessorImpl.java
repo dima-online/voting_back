@@ -40,7 +40,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -187,7 +186,7 @@ public class SecurityProcessorImpl implements SecurityProcessor {
     public User getLoggedUser() {
         String username = findLoggedInUsername();
         Validator.checkStringNotNullOrEmpty(username, messageProcessor.getMessage("error.user.username.not.found"), false);
-        User user = userRepository.findOne(2L);
+        User user = userRepository.findByUsername(username);
         Validator.checkObjectNotNullRuntime(user, messageProcessor.getMessage("error.user.username.not.found.username", username), false);
         return user;
     }
