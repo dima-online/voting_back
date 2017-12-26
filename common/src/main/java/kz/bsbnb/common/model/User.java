@@ -8,6 +8,7 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kz.bsbnb.common.util.Constants;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +57,7 @@ public class User implements Serializable, UserDetails {
 //    @JsonIgnore
     @JoinColumn(name = "user_info_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "user_user_info_fk"))
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "userInfo")
     private UserInfo userInfo;
     @Size(max = 255)
     @Column(name="executiveIin")

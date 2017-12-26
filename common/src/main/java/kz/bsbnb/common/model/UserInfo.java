@@ -5,6 +5,7 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,8 +54,8 @@ public class UserInfo implements Serializable {
     @Size(max = 255)
     @Column(name = "email")
     private String email;
-    @JsonIgnore
     @OneToOne(mappedBy = "userInfo", fetch = FetchType.LAZY)
+    @JsonBackReference(value = "userInfo")
     private User user;
     @Column(name = "is_org")
     private Boolean isOrg;

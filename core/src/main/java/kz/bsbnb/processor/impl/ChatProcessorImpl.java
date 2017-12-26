@@ -292,7 +292,7 @@ public class ChatProcessorImpl implements ChatProcessor {
 
             String fetchQuery = "select cm from ChatMessage cm " +
                     "JOIN FETCH cm.chat c " +
-                    "LEFT JOIN FETCH cm.user u " +
+                    "JOIN FETCH cm.user u " +
                     "LEFT JOIN FETCH u.userInfo ui " +
                     "where c.theme.id=:themeId and c.user=:user " +
                     "and (cm.user=:user or cm.messageType=:messageType) " +
