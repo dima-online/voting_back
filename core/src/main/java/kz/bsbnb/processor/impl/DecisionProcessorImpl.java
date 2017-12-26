@@ -44,11 +44,12 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
         List<DecisionBean> results = new ArrayList<>();
         User user = securityProcessor.getLoggedUser();
         Voting voting = votingRepository.findOne(votingId);
-        Voter voter = voterRepository.findByVotingAndUser(voting, user);
-        if(voter == null) return null;
-        List<Decision> decisions = null;
+        List<Voter> voters = voterRepository.findByVotingAndUser(voting, user);
+        if(voters == null || voters.size() == 0) return null;
+        List<Decision> decisions = new ArrayList<>();
         try {
-             decisions = decisionRepository.findByVoterId(voter);
+            for(Voter v: voters)
+             decisions.addAll(decisionRepository.findByVoterId(v));
         }catch(Exception e) {
             return null;
         }
@@ -58,7 +59,7 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
         return results;
     }
 
-    public SimpleResponse saveDecision(List<DecisionBean> beans) {
+    public SimpleResponse saveDecisions(List<DecisionBean> beans) {
 
         for(DecisionBean bean : beans) {
             try{

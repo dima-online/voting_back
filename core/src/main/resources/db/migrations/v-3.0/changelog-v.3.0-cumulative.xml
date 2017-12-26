@@ -15,4 +15,5 @@
     <include file="2017-12-25--08-alter-table-answer.xml" relativeToChangelogFile="true"/>
     <include file="2017-12-25--09-alter-table-user.xml" relativeToChangelogFile="true"/>
     <include file="2017-12-25--10-alter-table-voter_share.xml" relativeToChangelogFile="true"/>
+    <include file="2017-12-25--11-alter-table-voter_share.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

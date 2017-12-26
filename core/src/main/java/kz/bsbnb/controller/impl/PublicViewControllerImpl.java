@@ -75,9 +75,10 @@ public class PublicViewControllerImpl implements IPublicViewController {
                                                @RequestParam(defaultValue = "01-01-2050") String startDateTo,
                                                @RequestParam(defaultValue = "01-01-1970") String endDateFrom,
                                                @RequestParam(defaultValue = "01-01-2050") String endDateTo,
-                                               @RequestParam(defaultValue = "") String status,
-                                               @RequestParam(defaultValue = "") String text,
-                                               @RequestParam(defaultValue = "") String orgId
+                                               @RequestParam(defaultValue = "", required = false) String status,
+                                               @RequestParam(defaultValue = "", required = false) String text,
+                                               @RequestParam(defaultValue = "", required = false) String orgId,
+                                               @RequestParam(defaultValue = "false", required = false) Boolean myVotings
                                                ) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT);
         return new SimpleResponse(publicProcessor.getFilteredVotings(orgId,
@@ -85,7 +86,7 @@ public class PublicViewControllerImpl implements IPublicViewController {
                 format.parse(startDateTo),
                 format.parse(endDateFrom),
                 format.parse(endDateTo),
-                status,text,page,count)).SUCCESS();
+                status,text,page,count, myVotings)).SUCCESS();
     }
 
     @RequestMapping(value = "/organisations", method = RequestMethod.GET)

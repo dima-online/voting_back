@@ -8,6 +8,8 @@ import java.io.Serializable;
 public class AnswerBean implements Serializable{
     private Long id;
     private String text;
+    private String photo;
+    private String description;
 
     public Long getId() {
         return id;
@@ -23,5 +25,21 @@ public class AnswerBean implements Serializable{
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

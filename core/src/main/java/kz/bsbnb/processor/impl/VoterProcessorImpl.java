@@ -10,6 +10,8 @@ import kz.bsbnb.repository.IVotingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by ruslan on 10/10/2016.
  */
@@ -22,10 +24,15 @@ public class VoterProcessorImpl implements VoterProcessor {
     @Autowired
     private SecurityProcessor securityProcessor;
 
-    public Voter getVoterByVotingId(Long votingId) {
+    public List<Voter> getVoterByVotingId(Long votingId) {
         Voting voting = votingRepository.findOne(votingId);
         User user = securityProcessor.getLoggedUser();
-        Voter voter = voterRepository.findByVotingAndUser(voting, user);
-        return voter;
+        List<Voter> result = voterRepository.findByVotingAndUser(voting, user);
+        return result;
+    }
+
+    @Override
+    public Voter getVoterById(Long voterId) {
+        return voterRepository.findOne(voterId);
     }
 }

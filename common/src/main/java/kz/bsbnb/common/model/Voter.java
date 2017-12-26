@@ -45,11 +45,14 @@ public class Voter implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_user_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private User user;
+    @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_voting_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Voting voting;
     @Column(name = "is_shared")
     private Boolean isShared;
+    @Column(name = "account_number")
+    private String accountNumber;
     @OneToOne
     @JoinColumn(name = "parent_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_parent_voter_fk"))
     private Voter parentVoter;
@@ -113,6 +116,14 @@ public class Voter implements Serializable {
 
     public void setShared(Boolean shared) {
         isShared = shared;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
     public Voter getParentVoter() {

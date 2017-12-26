@@ -72,7 +72,10 @@ public class QuestionProcessorImpl implements QuestionProcessor {
     private AnswerBean castToAnswerBean(Answer answer) {
         AnswerBean bean = new AnswerBean();
         bean.setId(answer.getId());
-        bean.setText(answer.getMessage(messageProcessor.getCurrentLocale()).getText());
+        AnswerMessage answerMessage = answer.getMessage(messageProcessor.getCurrentLocale());
+        bean.setDescription(answerMessage.getDescription());
+        bean.setText(answerMessage.getText());
+        bean.setPhoto(answer.getPhoto());
         return bean;
     }
 }

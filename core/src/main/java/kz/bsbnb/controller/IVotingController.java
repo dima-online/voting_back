@@ -38,8 +38,6 @@ public interface IVotingController {
 
     SimpleResponse deleteVotingAnswer(Long votingId, Answer answer);
 
-    VoterBean getVoter(Long votingId, Long userId);
-
     List<QuestionBean> getVotingQuestions(Long votingId, Long userId);
 
     Decision getDecisionFromBean(DecisionBean bean) throws ParseException;
@@ -81,4 +79,6 @@ public interface IVotingController {
     public List<Voting> getOldVotingsForUser(Long userId, int page, int count);
 
     SimpleResponse editVotingWhenStarted(RegVotingBean votingBean, String reason);
+
+
 }

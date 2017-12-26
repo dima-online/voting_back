@@ -13,6 +13,7 @@ public enum Status {
     APPROVING, // в ожидании авторизации в енпф или цдцб, или другое
     APPROVED, //Одобрена
     DELETED, //Удалена
+    STARTED,
     DENIED,
     ERROR, // Ошибка
     CLOSED, //закрыта

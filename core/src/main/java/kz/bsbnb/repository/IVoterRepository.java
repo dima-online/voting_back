@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * @author Ruslan.
  */
@@ -15,7 +18,9 @@ public interface IVoterRepository extends PagingAndSortingRepository<Voter, Long
 
     Voter findByVotingIdAndUserId(Voting votingId, User userId);
 
-    Voter findByVotingAndUser(Voting voting, User user);
+    Set<Voter> findByUser(User user);
+
+    List<Voter> findByVotingAndUser(Voting voting, User user);
 
     @Modifying
     @Transactional

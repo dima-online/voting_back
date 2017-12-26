@@ -1,12 +1,8 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.VotingBean;
-import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.util.SimpleResponse;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.ParseException;
-import java.util.List;
 
 /**
  * Created by serik.mukashev on 20.11.2017.
@@ -27,7 +23,8 @@ public interface IPublicViewController {
                                                String endDateTo,
                                                String status,
                                                String text,
-                                               String orgId
+                                               String orgId,
+                                               Boolean myVotings
     ) throws ParseException;
 
     SimpleResponse getOrganisations(int page, int count);

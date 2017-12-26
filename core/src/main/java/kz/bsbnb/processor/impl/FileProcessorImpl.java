@@ -39,8 +39,8 @@ public class FileProcessorImpl implements IFileProcessor{
         if(voting.getVotingType().equals(VotingType.SECRET.toString())){
             try {
                 User user = securityProcessor.getLoggedUser();
-                Voter voter = voterRepository.findByVotingAndUser(voting, user);
-                if (voter != null) {
+                List<Voter> voter = voterRepository.findByVotingAndUser(voting, user);
+                if (voter != null || voter.size() == 0) {
                     files = filesRepository.findByVotingId(voting);
                 }
             }catch(Exception e) {

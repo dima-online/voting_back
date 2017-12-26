@@ -11,4 +11,6 @@ import java.util.List;
 public interface IDecisionController {
 
     SimpleResponse getDecisionList(Long votingId);
+
+    SimpleResponse saveDecisionList(List<DecisionBean> decisionList);
 }

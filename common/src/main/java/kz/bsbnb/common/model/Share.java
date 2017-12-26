@@ -1,5 +1,6 @@
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.consts.ShareType;
 import kz.bsbnb.common.util.Constants;
 
@@ -22,9 +23,10 @@ public class Share implements Serializable{
     private ShareType type;
     @Column(name = "amount")
     private Long amount;
-    @Column(name="account_number")
-    private String accountNumber;
+    @Column(name="nin")
+    private String nin;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "share_voter_fk"))
     private Voter voter;
 
@@ -60,11 +62,11 @@ public class Share implements Serializable{
         this.voter = voter;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
+    public String getNin() {
+        return nin;
     }
 
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+    public void setNin(String nin) {
+        this.nin = nin;
     }
 }

@@ -105,10 +105,7 @@ public class VotingControllerImpl implements IVotingController {
     @Autowired
     private VoterProcessor voterProcessor;
 
-    @RequestMapping(value = "/voter", method = RequestMethod.POST)
-    public SimpleResponse getVoter(@RequestParam Long votingId) {
-        return new SimpleResponse(voterProcessor.getVoterByVotingId(votingId)).SUCCESS();
-    }
+
 
     @Override
     @RequestMapping(value = "/list/{userId}", method = RequestMethod.GET)
@@ -629,14 +626,6 @@ public class VotingControllerImpl implements IVotingController {
         }
     }
 
-    @Override
-    @RequestMapping(value = "/voter/{votingId}/{userId}", method = RequestMethod.GET)
-    public VoterBean getVoter(@PathVariable Long votingId, @PathVariable Long userId) {
-        Voting voting = votingRepository.findOne(votingId);
-        User user = userRepository.findOne(userId);
-        Voter voter = voterRepository.findByVotingIdAndUserId(voting, user);
-        return userController.castToBean(voting, voter);
-    }
 
     @Override
     @RequestMapping(value = "/delVoter/{votingId}/{userId}", method = RequestMethod.DELETE)

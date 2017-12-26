@@ -4,6 +4,8 @@ import kz.bsbnb.common.bean.QuestionBean;
 import kz.bsbnb.common.bean.VotingBean;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.processor.PublicProcessor;
+import kz.bsbnb.processor.SecurityProcessor;
+import kz.bsbnb.repository.IVoterRepository;
 import kz.bsbnb.repository.IVotingRepository;
 import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,11 @@ import java.util.*;
 public class PublicProcessorImpl implements PublicProcessor {
     @Autowired
     private IVotingRepository votingRepo;
+    @Autowired
+    private IVoterRepository voterRepository;
+
+    @Autowired
+    private SecurityProcessor securityProcessor;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -35,8 +42,9 @@ public class PublicProcessorImpl implements PublicProcessor {
     @Autowired
     MessageProcessor messageProcessor;
 
-    public List<VotingBean> getFilteredVotings(String orgId, Date dateStartFrom, Date dateStartTo, Date dateFinishFrom, Date dateFinishTo, String status, String text, int page, int count) {
+    public List<VotingBean> getFilteredVotings(String orgId, Date dateStartFrom, Date dateStartTo, Date dateFinishFrom, Date dateFinishTo, String status, String text, int page, int count, boolean myVotings) {
 
+        User user = securityProcessor.getLoggedUser();
         StringBuilder qlString = new StringBuilder("SELECT v FROM Voting v " +
                 "LEFT JOIN FETCH v.messages m " +
                 "WHERE m.locale = :locale AND v.dateBegin BETWEEN :dateStartFrom AND :dateStartTo " +
@@ -44,14 +52,21 @@ public class PublicProcessorImpl implements PublicProcessor {
                 "AND v.status LIKE :status " +
                 "AND (m.subject LIKE :text OR m.description LIKE :text)"
         );
+        if(myVotings) {
+            qlString.append("AND v.id in (SELECT voter.voting.id from Voter voter WHERE voter.user = :user)");
+        }
 
         if (orgId != null && !orgId.equals("") && orgId != "") {
             qlString.append("AND v.organisation.id = :organisation");
         }
 
+
         Query query = entityManager.createQuery(qlString.toString());
         if (orgId != null && !orgId.equals("") && orgId != "") {
             query.setParameter("organisation", Long.parseLong(orgId));
+        }
+        if(myVotings) {
+            query.setParameter("user", user);
         }
         query.setParameter("dateStartFrom", dateStartFrom, TemporalType.TIMESTAMP);
         query.setParameter("dateStartTo", dateStartTo, TemporalType.TIMESTAMP);

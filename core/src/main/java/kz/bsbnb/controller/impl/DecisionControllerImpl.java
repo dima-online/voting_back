@@ -53,6 +53,10 @@ public class DecisionControllerImpl implements IDecisionController {
         return new SimpleResponse(result).SUCCESS();
     }
 
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public SimpleResponse saveDecisionList(@RequestParam(name = "decisions")List<DecisionBean> decisionList) {
+        return decisionProcessor.saveDecisions(decisionList);
+    }
 
 
 }
