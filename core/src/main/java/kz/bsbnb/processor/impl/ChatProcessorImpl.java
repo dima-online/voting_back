@@ -187,6 +187,26 @@ public class ChatProcessorImpl implements ChatProcessor {
     }
 
     @Override
+    public Chat getChatByThemeId(Long themeId) {
+        try {
+            User user = securityProcessor.getLoggedUser();
+
+            String fetchQuery = "select c from Chat c " +
+                    "LEFT JOIN FETCH c.user u " +
+                    "LEFT JOIN FETCH c.theme t " +
+                    "where t.id = :themeId and u.id =:userId ";
+
+            return entityManager.createQuery(fetchQuery, Chat.class)
+                    .setParameter("themeId", themeId)
+                    .setParameter("userId", user.getId())
+                    .getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public PageImpl<Chat> getChatListPage(int page, int pageSize) {
 
         BigInteger maxN = BigInteger.ZERO;

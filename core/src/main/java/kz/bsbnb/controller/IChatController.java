@@ -25,6 +25,8 @@ public interface IChatController {
 
     SimpleResponse getChatById(Long id);
 
+    SimpleResponse getChatByThemeId(Long themeId);
+
     PageImpl<Chat> getChatListPage(int page, int pageSize);
 
     PageImpl<ChatMessage> getChatMessageListPage(Long chatId, int page, int pageSize);

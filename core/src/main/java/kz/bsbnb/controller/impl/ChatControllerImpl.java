@@ -24,7 +24,20 @@ public class ChatControllerImpl implements IChatController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public SimpleResponse getChatById(@PathVariable Long id) {
-        return new SimpleResponse(chatProcessor.getChatById(id)).SUCCESS();
+        Chat chat = chatProcessor.getChatById(id);
+        if (chat != null) {
+            return new SimpleResponse(chat).SUCCESS();
+        }
+        return new SimpleResponse("Chat not found").ERROR();
+    }
+
+    @RequestMapping(value = "/theme/{themeId}", method = RequestMethod.GET)
+    public SimpleResponse getChatByThemeId(@PathVariable Long themeId) {
+        Chat chat = chatProcessor.getChatByThemeId(themeId);
+        if (chat != null) {
+            return new SimpleResponse(chat).SUCCESS();
+        }
+        return new SimpleResponse("Chat not found").ERROR();
     }
 
     @Override
