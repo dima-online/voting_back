@@ -1,5 +1,6 @@
 package kz.bsbnb.processor;
 
+import kz.bsbnb.common.bean.ProxyQuestionBean;
 import kz.bsbnb.common.model.ProxyQuestion;
 
 import java.util.List;
@@ -10,5 +11,5 @@ import java.util.List;
 public interface IProxyQuestionProcessor {
     List<ProxyQuestion> getList(Long votingId, Long voterId);
 
-    List<ProxyQuestion> getListByVoter(Long voterId);
+    List<ProxyQuestionBean> getListByVoter(Long voterId);
 }

@@ -27,10 +27,7 @@ public class ProxyQuestionControllerImpl implements IProxyQuestionController {
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public SimpleResponse getProxyQuestionsByVoter(@RequestParam Long voterId) {
         try {
-            List<ProxyQuestion> list = proxyQuestionProcessor.getListByVoter(voterId);
-            if (list == null || list.isEmpty()) return new SimpleResponse(new ArrayList<ProxyQuestion>()).SUCCESS();
-
-            return new SimpleResponse(list).SUCCESS();
+            return new SimpleResponse(proxyQuestionProcessor.getListByVoter(voterId)).SUCCESS();
         }catch(Exception e) {
 
         }

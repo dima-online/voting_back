@@ -17,6 +17,7 @@ public class ProxyQuestion implements Serializable{
     @Column(name = "id")
     private Long id;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_question_fk"))
     private Question question;
     @ManyToOne
