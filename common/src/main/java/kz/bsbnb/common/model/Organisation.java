@@ -48,9 +48,8 @@ public class Organisation implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "organisation", fetch = FetchType.LAZY)
     private Set<Message> messageSet;
-    @Basic(optional = false)
-    @Column(name = "total_share_count")
-    private Long totalShareCount;
+    @OneToMany(mappedBy = "organisation")
+    private Set<Share> shares;
     @Size(max = 200)
     @Column(name = "executive_name",nullable = true)
     private String executiveName;
@@ -165,14 +164,6 @@ public class Organisation implements Serializable {
         this.messageSet = messageSet;
     }
 
-    public Long getAllShareCount() {
-        return totalShareCount;
-    }
-
-    public void setAllShareCount(Long totalShareCount) {
-        this.totalShareCount = totalShareCount;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -195,6 +186,14 @@ public class Organisation implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Share> getShares() {
+        return shares;
+    }
+
+    public void setShares(Set<Share> shares) {
+        this.shares = shares;
     }
 
     @Override

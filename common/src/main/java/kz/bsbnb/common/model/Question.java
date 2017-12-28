@@ -8,6 +8,7 @@ package kz.bsbnb.common.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kz.bsbnb.common.consts.Locale;
+import kz.bsbnb.common.consts.QuestionShareType;
 import kz.bsbnb.common.util.Constants;
 import org.hibernate.annotations.BatchSize;
 
@@ -26,7 +27,7 @@ import java.util.Set;
 @Table(name = "question", schema = Constants.DB_SCHEMA_CORE)
 public class Question implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3008763130082078568L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
@@ -48,9 +49,6 @@ public class Question implements Serializable {
     private Integer maxCount;
     @Column(name = "num")
     private Integer num;
-    @Size(max = 2000)
-    @Column(name = "decision")
-    private String decision;
     @JsonIgnore
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "question", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
@@ -63,8 +61,19 @@ public class Question implements Serializable {
     private Set<QuestionFile> questionFileSet;
     @Column(name = "priv_can_vote")
     private Boolean privCanVote;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "question_share_type")
+    private QuestionShareType shareType;
 
     public Question() {
+    }
+
+    public QuestionShareType getShareType() {
+        return shareType;
+    }
+
+    public void setShareType(QuestionShareType shareType) {
+        this.shareType = shareType;
     }
 
     public Boolean getPrivCanVote() {
@@ -110,14 +119,6 @@ public class Question implements Serializable {
 
     public void setNum(Integer num) {
         this.num = num;
-    }
-
-    public String getDecision() {
-        return decision;
-    }
-
-    public void setDecision(String decision) {
-        this.decision = decision;
     }
 
     @XmlTransient

@@ -1,5 +1,7 @@
 package kz.bsbnb.common.bean;
 
+import kz.bsbnb.common.model.Share;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -24,6 +26,7 @@ public class VotingBean {
     private Integer questionCount;
     private Long lastReestrId;
     private Long shareCount;
+    private Set<Share> shares;
     private Boolean kvoroom;
 
     public VotingBean() {
@@ -87,6 +90,14 @@ public class VotingBean {
 
     public String getSubject() {
         return subject;
+    }
+
+    public Set<Share> getShares() {
+        return shares;
+    }
+
+    public void setShares(Set<Share> shares) {
+        this.shares = shares;
     }
 
     public void setSubject(String subject) {

@@ -44,7 +44,12 @@ public class PublicProcessorImpl implements PublicProcessor {
 
     public List<VotingBean> getFilteredVotings(String orgId, Date dateStartFrom, Date dateStartTo, Date dateFinishFrom, Date dateFinishTo, String status, String text, int page, int count, boolean myVotings) {
 
-        User user = securityProcessor.getLoggedUser();
+        User user = null;
+        try {
+            user = securityProcessor.getLoggedUser();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         StringBuilder qlString = new StringBuilder("SELECT v FROM Voting v " +
                 "LEFT JOIN FETCH v.messages m " +
                 "WHERE m.locale = :locale AND v.dateBegin BETWEEN :dateStartFrom AND :dateStartTo " +
@@ -114,7 +119,7 @@ public class PublicProcessorImpl implements PublicProcessor {
         votingBean.setLogo(voting.getOrganisation().getLogo());
         votingBean.setOrganisationId(voting.getOrganisation().getId());
         votingBean.setOrganisationName(voting.getOrganisation().getOrganisationName());
-        votingBean.setShareCount(voting.getOrganisation().getAllShareCount());
+        votingBean.setShares(voting.getOrganisation().getShares());
         votingBean.setQuestionCount(voting.getQuestionSet().size());
         VotingMessage message = voting.getMessage(messageProcessor.getCurrentLocale());
         votingBean.setSubject(message == null ? null : message.getSubject());

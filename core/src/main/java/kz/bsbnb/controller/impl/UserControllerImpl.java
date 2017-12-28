@@ -264,7 +264,7 @@ public class UserControllerImpl implements IUserController {
         bean.setExternalId(org.getExternalId());
         bean.setOrganisationName(org.getOrganisationName());
         bean.setOrganisationNum(org.getOrganisationNum());
-        bean.setAllShareCount(org.getAllShareCount());
+        bean.setShares(org.getShares());
         bean.setExecutiveName(org.getExecutiveName());
         Integer cnt = 0;
         for (UserRoles roles : org.getUserRolesSet()) {
@@ -292,7 +292,6 @@ public class UserControllerImpl implements IUserController {
                 }
             }
         }
-        bean.setShareCount(userRole == null || userRole.getShareCount() == null ? 0 : userRole.getShareCount());
         bean.setSharePercent(userRole == null || userRole.getSharePercent() == null ? 0.0 : userRole.getSharePercent());
         return bean;
     }
@@ -577,14 +576,7 @@ public class UserControllerImpl implements IUserController {
         QuestionBean result = new QuestionBean();
         result.setId(q.getId());
         result.setMaxCount(q.getMaxCount() == null ? 1 : q.getMaxCount());
-        result.setDecision(q.getDecision());
-        if (q.getDecision() != null) {
-            try {
-                result.setDecisionOS((List<TotalDecision>) JsonUtil.fromJson(q.getDecision(), List.class));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+
         result.setPrivCanVote(q.getPrivCanVote());
         result.setNum(q.getNum());
         result.setQuestionType(q.getQuestionType());

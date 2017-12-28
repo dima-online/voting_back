@@ -932,7 +932,7 @@ public class VotingControllerImpl implements IVotingController {
 
 
             if (voting.getKvoroom() != null && voting.getKvoroom()) {
-                voterCount = voting.getOrganisation().getAllShareCount();
+                //voterCount = voting.getOrganisation().getAllShareCount();
             }
 
             map.put("total_count", StringUtil.parseToStr(voterCount));
@@ -941,7 +941,7 @@ public class VotingControllerImpl implements IVotingController {
             map.put("total_count_text", ConvertUtil.digits2Text(voterCount.doubleValue()));
 
             map.put("real_count_text", ConvertUtil.digits2Text(votingShares.doubleValue()));
-            map.put("prc_count", (int) (votingShares.doubleValue() / voting.getOrganisation().getAllShareCount().doubleValue() * 100) + "");
+            //map.put("prc_count", (int) (votingShares.doubleValue() / voting.getOrganisation().getAllShareCount().doubleValue() * 100) + "");
 
             String str = "";
             /*
@@ -1165,7 +1165,11 @@ public class VotingControllerImpl implements IVotingController {
     }
 
     private Boolean calcKvoroom(Voting voting) {
-        Long all = voting.getOrganisation().getAllShareCount();
+        Long all = 0L;
+        Set<Share> shares = voting.getOrganisation().getShares();
+        for(Share share: shares) {
+            all += share.getAmount();
+        }
         Long vote = 0L;
         if (voting.getVoterSet() != null) {
             for (Voter voter : voting.getVoterSet()) {
@@ -1350,12 +1354,8 @@ public class VotingControllerImpl implements IVotingController {
             }
             tds.add(td);
         }
-        try {
-            question.setDecision(JsonUtil.toJson(tds));
-        } catch (JsonProcessingException e) {
 
-            e.printStackTrace();
-        }
+
         questionRepository.save(question);
     }
 }

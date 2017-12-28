@@ -101,7 +101,7 @@ public class OrganisationProcessorImpl implements OrganisationProcessor {
 
     private Organisation castToOrganisation(RegOrgBean regOrgBean) {
         Organisation result = new Organisation();
-        result.setAllShareCount(regOrgBean.getAllShareCount());
+        result.setShares(regOrgBean.getShares());
         result.setLogo(regOrgBean.getLogo());
         result.setExternalId(regOrgBean.getExternalId());
         result.setOrganisationName(regOrgBean.getOrganisationName());
@@ -120,7 +120,7 @@ public class OrganisationProcessorImpl implements OrganisationProcessor {
         orgBean.setAddress(organisation.getAddress());
         orgBean.setEmail(organisation.getEmail());
         orgBean.setPhone(organisation.getPhone());
-        orgBean.setAllShareCount(organisation.getAllShareCount());
+        orgBean.setShares(organisation.getShares());
         orgBean.setId(organisation.getId());
         orgBean.setLogo(organisation.getLogo());
         orgBean.setOrganisationName(organisation.getOrganisationName());

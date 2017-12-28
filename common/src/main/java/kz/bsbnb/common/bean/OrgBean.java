@@ -1,6 +1,9 @@
 package kz.bsbnb.common.bean;
 
+import kz.bsbnb.common.model.Share;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ruslan on 28.10.16.
@@ -12,7 +15,7 @@ public class OrgBean {
     private String externalId;
     private String status;
     private List<VotingBean> votingSet;
-    private Integer shareCount;
+    private Set<Share> shares;
     private Double sharePercent;
     private Long allShareCount;
     private Integer userCount;
@@ -58,9 +61,13 @@ public class OrgBean {
         this.closedVotingCount = closedVotingCount;
     }
 
-    public Integer getShareCount() {return shareCount;}
+    public Set<Share> getShares() {
+        return shares;
+    }
 
-    public void setShareCount(Integer shareCount) {this.shareCount = shareCount;}
+    public void setShares(Set<Share> shares) {
+        this.shares = shares;
+    }
 
     public Long getId() {
         return id;
@@ -159,7 +166,7 @@ public class OrgBean {
                 ", externalId='" + externalId + '\'' +
                 ", status='" + status + '\'' +
                 ", votingSet=" + votingSet +
-                ", shareCount=" + shareCount +
+                ", shares=" + shares +
                 ", sharePercent=" + sharePercent +
                 ", allShareCount=" + allShareCount +
                 ", userCount=" + userCount +

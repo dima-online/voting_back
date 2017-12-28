@@ -25,6 +25,7 @@ public class QuestionBean {
     private Integer maxCount;
     private Boolean privCanVote;
     private String cancelReason;
+    private String questionShareType;
     private List<SimpleDecisionBean> results;
 
 
@@ -159,6 +160,13 @@ public class QuestionBean {
         this.text = text;
     }
 
+    public String getQuestionShareType() {
+        return questionShareType;
+    }
+
+    public void setQuestionShareType(String questionShareType) {
+        this.questionShareType = questionShareType;
+    }
 
     @Override
     public String toString() {

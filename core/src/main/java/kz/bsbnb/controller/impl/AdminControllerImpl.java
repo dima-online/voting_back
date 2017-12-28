@@ -320,7 +320,7 @@ public class AdminControllerImpl implements IAdminController {
 
     private Organisation castFromBean(OrgBean orgBean) {
         Organisation result = new Organisation();
-        result.setAllShareCount(orgBean.getAllShareCount());
+        result.setShares(orgBean.getShares());
         result.setExternalId(orgBean.getExternalId());
         result.setOrganisationName(orgBean.getOrganisationName());
         result.setOrganisationNum(orgBean.getOrganisationNum());

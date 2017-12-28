@@ -37,6 +37,8 @@ public class DecisionDocument implements Serializable {
     private String publicKey;
     @Column(name = "block_transaction_id", length = 1024)
     private String transactionId;
+    @Column(name = "decision_document_hash", length = 2048)
+    private String decisionDocumentHash;
 
     public Long getId() {
         return id;
@@ -101,6 +103,14 @@ public class DecisionDocument implements Serializable {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getDecisionDocumentHash() {
+        return decisionDocumentHash;
+    }
+
+    public void setDecisionDocumentHash(String decisionDocumentHash) {
+        this.decisionDocumentHash = decisionDocumentHash;
     }
 
     public String getMessageDigestFromDocument() {

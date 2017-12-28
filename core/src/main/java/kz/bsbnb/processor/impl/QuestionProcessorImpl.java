@@ -43,29 +43,20 @@ public class QuestionProcessorImpl implements QuestionProcessor {
         result.setMaxCount(question.getMaxCount() == null ? 1 : question.getMaxCount());
         result.setQuestionType(question.getQuestionType());
         result.setVotingId(question.getVoting().getId());
+        result.setQuestionShareType(question.getShareType().name());
         if (question.getAnswerSet() != null) {
             List<Answer> sortedList = new ArrayList<>(question.getAnswerSet());
             Collections.sort(sortedList, (a1,a2) -> (int)(a1.getId() - a2.getId()));
             List<AnswerBean> answers = new ArrayList<>();
             for(Answer a : sortedList) {
+                if(a != null)
                 answers.add(castToAnswerBean(a));
             }
             result.setAnswerSet(answers);
         }
-        Set<Files> files = new HashSet<>();
-
-        if (!question.getQuestionFileSet().isEmpty()) {
-            for (QuestionFile qFile : question.getQuestionFileSet()) {
-                files.add(qFile.getFiles());
-            }
-        }
         QuestionMessage questionMessage = question.getMessage(messageProcessor.getCurrentLocale());
         result.setTitle(questionMessage.getTitle());
         result.setText(questionMessage.getText());
-
-
-        result.setQuestionFileSet(files);
-
         return result;
     }
 

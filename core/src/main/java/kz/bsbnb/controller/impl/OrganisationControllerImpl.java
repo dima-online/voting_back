@@ -175,9 +175,9 @@ public class OrganisationControllerImpl implements IOrganisationController {
         if (oldOrg == null) {
             return new SimpleResponse("Эмитент с таким БИН не найден").ERROR_CUSTOM();
         } else {
-            if (regOrgBean.getAllShareCount() != null) {
-                oldOrg.setAllShareCount(regOrgBean.getAllShareCount());
-            }
+//            if (regOrgBean.getAllShareCount() != null) {
+//                oldOrg.setAllShareCount(regOrgBean.getAllShareCount());
+//            }
             if (regOrgBean.getExternalId() != null) {
                 oldOrg.setExternalId(regOrgBean.getExternalId());
             }
@@ -206,7 +206,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
         result.setOrganisationNum(org.getOrganisationNum());
         result.setOrganisationName(org.getOrganisationName());
         result.setExternalId(org.getExternalId());
-        result.setAllShareCount(org.getAllShareCount());
+        result.setShares(org.getShares());
         result.setId(org.getId());
         result.setExecutiveName(org.getExecutiveName());
         Integer cnt = 0;
@@ -267,7 +267,7 @@ public class OrganisationControllerImpl implements IOrganisationController {
 
     private Organisation castFromBean(RegOrgBean regOrgBean) {
         Organisation result = new Organisation();
-        result.setAllShareCount(regOrgBean.getAllShareCount());
+        result.setShares(regOrgBean.getShares());
         result.setExternalId(regOrgBean.getExternalId());
         result.setOrganisationName(regOrgBean.getOrganisationName());
         result.setOrganisationNum(regOrgBean.getOrganisationNum());

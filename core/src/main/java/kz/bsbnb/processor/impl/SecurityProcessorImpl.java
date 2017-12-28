@@ -150,7 +150,6 @@ public class SecurityProcessorImpl implements SecurityProcessor {
 
             String document = loginOrder.getJsonDocument();
             DigisignResponse response;
-            System.out.println(document);
             if (!ncaLayer) {
                 response = digisignRestProcessor.verifySignature(document, loginOrder.getSignature(), loginOrder.getPublicKey(), DigisignProcessor.OPERATION_TYPE_AUTH);
             } else {

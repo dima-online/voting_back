@@ -1,5 +1,9 @@
 package kz.bsbnb.common.bean;
 
+import kz.bsbnb.common.model.Share;
+
+import java.util.Set;
+
 /**
  * Created by ruslan on 23.11.16.
  */
@@ -10,7 +14,7 @@ public class RegOrgBean {
     private String organisationNum; //БИН
     private String externalId;
     private String status;
-    private Long allShareCount;
+    private Set<Share> shares;
     private Integer userCount;
     private Integer votingCount;
     private Integer closedVotingCount;
@@ -104,12 +108,12 @@ public class RegOrgBean {
         this.status = status;
     }
 
-    public Long getAllShareCount() {
-        return allShareCount;
+    public Set<Share> getShares() {
+        return shares;
     }
 
-    public void setAllShareCount(Long allShareCount) {
-        this.allShareCount = allShareCount;
+    public void setShares(Set<Share> shares) {
+        this.shares = shares;
     }
 
     public String getAddress() {

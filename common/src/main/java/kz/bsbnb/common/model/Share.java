@@ -29,6 +29,10 @@ public class Share implements Serializable{
     @JsonIgnore
     @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "share_voter_fk"))
     private Voter voter;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "organisation_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "share_organisation_fk"))
+    private Organisation organisation;
 
     public Long getId() {
         return id;
@@ -68,5 +72,13 @@ public class Share implements Serializable{
 
     public void setNin(String nin) {
         this.nin = nin;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 }
