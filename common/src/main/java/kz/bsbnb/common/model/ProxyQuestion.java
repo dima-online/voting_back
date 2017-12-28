@@ -1,5 +1,6 @@
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -19,12 +20,15 @@ public class ProxyQuestion implements Serializable{
     @JoinColumn(name="question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_question_fk"))
     private Question question;
     @ManyToOne
-    @JoinColumn(name="parent_user_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_parent_voter_fk"))
+    @JsonIgnore
+    @JoinColumn(name="parent_voter_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_parent_voter_fk"))
     private Voter parentVoter;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="executive_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_executive_voter_fk"))
     private Voter executiveVoter;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="proxy_card_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "proxy_question_proxy_card_fk"))
     private ProxyCard proxyCard;
 

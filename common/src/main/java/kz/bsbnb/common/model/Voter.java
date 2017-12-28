@@ -56,6 +56,8 @@ public class Voter implements Serializable {
     @OneToOne
     @JoinColumn(name = "parent_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_parent_voter_fk"))
     private Voter parentVoter;
+    @OneToMany(mappedBy = "executiveVoter")
+    private List<ProxyQuestion> proxyQuestions;
 
 
     public Voter() {
@@ -132,6 +134,14 @@ public class Voter implements Serializable {
 
     public void setParentVoter(Voter parentVoter) {
         this.parentVoter = parentVoter;
+    }
+
+    public List<ProxyQuestion> getProxyQuestions() {
+        return proxyQuestions;
+    }
+
+    public void setProxyQuestions(List<ProxyQuestion> proxyQuestions) {
+        this.proxyQuestions = proxyQuestions;
     }
 
     @Override
