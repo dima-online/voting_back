@@ -47,6 +47,14 @@ public class ChatControllerImpl implements IChatController {
         return chatProcessor.getChatListPage(page, pageSize);
     }
 
+    @Override
+    @RequestMapping(value = "/list/{themeId}", method = RequestMethod.GET)
+    public PageImpl<Chat> getChatListPageAdmin(@PathVariable Long themeId,
+                                               @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+                                               @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        return chatProcessor.getChatListPageAdmin(themeId, page, pageSize);
+    }
+
     //********************* CHAT_MESSAGE ************************//
 
     @Override

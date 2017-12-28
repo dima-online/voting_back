@@ -31,6 +31,8 @@ public interface ChatProcessor {
 
     PageImpl<Chat> getChatListPage(int page, int pageSize);
 
+    PageImpl<Chat> getChatListPageAdmin(Long themeId, int page, int pageSize);
+
     PageImpl<ChatMessage> getChatMessageListPage(Long chatId, int page, int pageSize);
 
     PageImpl<ChatMessage> getChatMessageListPageAdmin(Long chatId, int page, int pageSize);

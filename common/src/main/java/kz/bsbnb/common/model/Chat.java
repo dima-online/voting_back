@@ -49,6 +49,9 @@ public class Chat implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
+    @Transient
+    Integer newMessage;
+
     public Chat() {
     }
 
@@ -100,6 +103,14 @@ public class Chat implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getNewMessage() {
+        return newMessage;
+    }
+
+    public void setNewMessage(Integer newMessage) {
+        this.newMessage = newMessage;
     }
 
     @Override

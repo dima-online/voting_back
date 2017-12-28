@@ -233,6 +233,57 @@ public class ChatProcessorImpl implements ChatProcessor {
     }
 
     @Override
+    public PageImpl<Chat> getChatListPageAdmin(Long themeId, int page, int pageSize) {
+
+        BigInteger maxN = BigInteger.ZERO;
+        List<Chat> list = new ArrayList<>();
+        try {
+            String fetchQuery = "select c from Chat c " +
+                    "LEFT JOIN FETCH c.theme t " +
+                    "LEFT JOIN FETCH c.messages m " +
+                    "LEFT JOIN FETCH c.user u " +
+                    "where t.id=:themeId " +
+                    "order by m.status asc, m.createTime desc, c.id desc";
+            String fetchQueryCount = "select count(t.id) from core.chat t " +
+                    "left join core.theme th on t.theme_id = th.id " +
+                    "where t.theme_id =:theme_id";
+
+            Query query = entityManager.createQuery(fetchQuery)
+                    .setParameter("themeId", themeId);
+            Query queryCount = entityManager.createNativeQuery(fetchQueryCount)
+                    .setParameter("theme_id", themeId);
+
+            maxN = (BigInteger) queryCount.getSingleResult();
+            list = query.setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+            list.forEach(chat -> chat.setNewMessage(getChatNewMessageCountAdmin(chat.getId())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new PageImpl<>(list, new PageRequest(page - 1, pageSize), maxN.longValue());
+    }
+
+    private Integer getChatNewMessageCountAdmin(Long chatId) {
+
+        BigInteger maxN = BigInteger.ZERO;
+        try {
+            String fetchQueryCount = "select count(t.id) from core.chat_message t " +
+                    "left join core.chat c on t.chat_id = c.id " +
+                    "where t.status='NEW' and t.message_type='INCOMING' and c.id =:chat_id ";
+
+            Query queryCount = entityManager.createNativeQuery(fetchQueryCount)
+                    .setParameter("chat_id", chatId);
+
+            maxN = (BigInteger) queryCount.getSingleResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return maxN.intValue();
+    }
+
+    @Override
     public PageImpl<ChatMessage> getChatMessageListPage(Long chatId, int page, int pageSize) {
 
         BigInteger maxN = BigInteger.ZERO;
