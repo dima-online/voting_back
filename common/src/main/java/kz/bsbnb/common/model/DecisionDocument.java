@@ -1,5 +1,6 @@
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -19,12 +20,15 @@ public class DecisionDocument implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_voting_fk"))
     private Voting voting;
     @ManyToOne
     @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_voter_fk"))
+    @JsonIgnore
     private Voter voter;
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "parent_voter_id",  referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_document_parent_voter_fk"))
     private Voter parentVoter;
     @Column(name = "json_document")

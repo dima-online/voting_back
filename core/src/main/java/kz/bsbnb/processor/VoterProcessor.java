@@ -1,5 +1,6 @@
 package kz.bsbnb.processor;
 
+import kz.bsbnb.common.bean.VoterBean;
 import kz.bsbnb.common.model.Voter;
 
 import java.util.List;
@@ -11,4 +12,8 @@ public interface VoterProcessor {
     List<Voter> getVoterByVotingId(Long votingId);
 
     Voter getVoterById(Long voterId);
+
+    Voter saveVoter(Voter voter);
+
+    Voter saveVoter(VoterBean bean);
 }

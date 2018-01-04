@@ -9,6 +9,7 @@ import kz.bsbnb.repository.IProxyQuestionRepository;
 import kz.bsbnb.repository.IQuestionRepository;
 import kz.bsbnb.repository.IVoterRepository;
 import kz.bsbnb.repository.IVotingRepository;
+import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,15 +32,6 @@ public class ProxyQuestionProcessorImpl implements IProxyQuestionProcessor {
     private IQuestionRepository questionRepository;
 
     @Override
-    public List<ProxyQuestion> getList(Long votingId, Long voterId) {
-        Voting voting = votingRepository.findOne(votingId);
-        Voter voter = voterRepository.findOne(voterId);
-        //List<ProxyQuestion> list = proxyQuestionRepository.getListExecutiveVoter(voter);
-
-        return null;
-    }
-
-    @Override
     public List<ProxyQuestionBean> getListByVoter(Long voterId) {
         Voter voter = voterRepository.findOne(voterId);
         List<ProxyQuestion> proxyQuestions = voter.getProxyQuestions();
@@ -48,6 +40,15 @@ public class ProxyQuestionProcessorImpl implements IProxyQuestionProcessor {
             result.add(castToProxyQuestionBean(proxy));
         }
         return result;
+    }
+
+    @Override
+    public SimpleResponse saveProxyQuestions(Long parentVoterId, Long executiveVoterId, List<ProxyQuestionBean> proxyQuestions) {
+        for(ProxyQuestionBean bean: proxyQuestions) {
+            ProxyQuestion proxyQuestion = castToProxyQuestion(bean);
+            proxyQuestionRepository.save(proxyQuestion);
+        }
+        return null;
     }
 
     private ProxyQuestionBean castToProxyQuestionBean(ProxyQuestion proxyQuestion) {

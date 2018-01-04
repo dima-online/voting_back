@@ -46,16 +46,21 @@ public class DecisionControllerImpl implements IDecisionController {
     private IDecisionProcessor decisionProcessor;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public SimpleResponse getDecisionList(@RequestParam Long votingId){
-        List<DecisionBean> result = decisionProcessor.getDecisionList(votingId);
+    public SimpleResponse getDecisionList(@RequestParam Long votingId, @RequestParam Long voterId){
+        List<DecisionBean> result = decisionProcessor.getDecisionList(votingId, voterId);
         if(result == null) result = new ArrayList<>();
 
         return new SimpleResponse(result).SUCCESS();
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public SimpleResponse saveDecisionList(@RequestParam(name = "decisions")List<DecisionBean> decisionList) {
-        return decisionProcessor.saveDecisions(decisionList);
+    public SimpleResponse saveDecisionList(@RequestBody List<DecisionBean> decisions) {
+        return decisionProcessor.saveDecisions(decisions);
+    }
+
+    @RequestMapping(value = "/sign", method = RequestMethod.POST)
+    public SimpleResponse signDecisionDocument(@RequestBody DecisionDocument document, @RequestParam boolean ncaLayer) {
+        return decisionProcessor.signDecisionDocument(document,ncaLayer);
     }
 
 

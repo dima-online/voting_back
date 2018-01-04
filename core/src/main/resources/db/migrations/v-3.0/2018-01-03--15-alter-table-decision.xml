@@ -1,0 +1,15 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="Serik.Mukashev" id="2018-01-03--15-alter-table-decision" objectQuotingStrategy="LEGACY">
+        <dropColumn tableName="decision" schemaName="core" columnName="proxy_question_id"/>
+        <addColumn tableName="decision" schemaName="core">
+            <column name="proxy_question_id" type="BIGINT"/>
+        </addColumn>
+        <addForeignKeyConstraint baseTableSchemaName="core" baseTableName="decision" baseColumnNames="proxy_question_id" constraintName="decision_proxy_question_fk"
+                                 referencedTableName="proxy_question" referencedTableSchemaName="core"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>

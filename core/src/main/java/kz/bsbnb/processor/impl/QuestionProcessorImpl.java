@@ -6,6 +6,7 @@ import kz.bsbnb.common.model.*;
 import kz.bsbnb.processor.QuestionProcessor;
 import kz.bsbnb.repository.IQuestionRepository;
 import kz.bsbnb.repository.IVotingRepository;
+import kz.bsbnb.util.SimpleResponse;
 import kz.bsbnb.util.processor.MessageProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -34,6 +35,16 @@ public class QuestionProcessorImpl implements QuestionProcessor {
             result.add(castToQuestionBean(question));
         }
         return result;
+    }
+
+    public SimpleResponse deleteQuestion(Long questionId) {
+        try {
+            questionRepository.delete(questionId);
+        }catch(Exception e) {
+            return new SimpleResponse(messageProcessor.getMessage("error.while.deleting.question")).ERROR_CUSTOM();
+        }
+
+        return new SimpleResponse(messageProcessor.getMessage("successfully")).SUCCESS();
     }
 
 

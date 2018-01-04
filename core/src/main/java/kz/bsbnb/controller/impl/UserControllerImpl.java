@@ -723,7 +723,7 @@ public class UserControllerImpl implements IUserController {
         result.setAnswerId(decision.getAnswer() == null ? null : decision.getAnswer().getId());
         result.setComments(decision.getComments());
         result.setQuestionId(decision.getQuestion().getId());
-        result.setUserId(decision.getVoter().getUser().getId());
+        result.setVoterId(decision.getVoter().getId());
         return result;
     }
 

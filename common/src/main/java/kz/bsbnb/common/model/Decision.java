@@ -1,5 +1,6 @@
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -31,9 +32,11 @@ public class Decision implements Serializable {
     private Long score;
     @JoinColumn(name = "answer_id", referencedColumnName = "id", nullable = true, foreignKey = @ForeignKey(name = "decision_answer_fk"))
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     private Answer answer;
     @JoinColumn(name = "voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_voter_fk"))
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JsonIgnore
     private Voter voter;
     @Column(name = "comments")
     private String comments;
@@ -41,7 +44,9 @@ public class Decision implements Serializable {
     private String status;
     @Column(name = "cancel_reason")
     private String cancelReason;
-    @Column(name = "proxy_question_id")
+    @ManyToOne
+    @JoinColumn(name = "proxy_question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "decision_proxy_question_fk"))
+    @JsonIgnore
     private ProxyQuestion proxyQuestion;
 
     public Decision() {

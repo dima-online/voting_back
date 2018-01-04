@@ -1,5 +1,6 @@
 package kz.bsbnb.processor.impl;
 
+import kz.bsbnb.common.bean.VoterBean;
 import kz.bsbnb.common.model.User;
 import kz.bsbnb.common.model.Voter;
 import kz.bsbnb.common.model.Voting;
@@ -35,4 +36,23 @@ public class VoterProcessorImpl implements VoterProcessor {
     public Voter getVoterById(Long voterId) {
         return voterRepository.findOne(voterId);
     }
+
+    @Override
+    public Voter saveVoter(Voter voter) {
+        return null;
+    }
+
+    @Override
+    public Voter saveVoter(VoterBean bean) {
+        return null;
+    }
+
+//    public Voter castToVoter(VoterBean bean) {
+//        Voter voter = new Voter();
+//
+//    }
+//
+//    public VoterBean castToVoterBean(Voter voter) {
+//
+//    }
 }

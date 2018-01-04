@@ -38,7 +38,6 @@ public class Voter implements Serializable {
     private Date dateAdding;
     @OneToMany(mappedBy = "voter")
     private List<Share> shares;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voter", fetch = FetchType.EAGER)
     private Set<Decision> decisionSet;
     @JsonIgnore

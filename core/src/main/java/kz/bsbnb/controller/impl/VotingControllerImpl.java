@@ -19,6 +19,7 @@ import kz.bsbnb.controller.IUserController;
 import kz.bsbnb.controller.IVotingController;
 import kz.bsbnb.processor.AttributeProcessor;
 import kz.bsbnb.processor.VoterProcessor;
+import kz.bsbnb.processor.VotingProcessor;
 import kz.bsbnb.repository.*;
 import kz.bsbnb.security.ConfirmationService;
 import kz.bsbnb.util.*;
@@ -105,8 +106,15 @@ public class VotingControllerImpl implements IVotingController {
     @Autowired
     private VoterProcessor voterProcessor;
 
+    @Autowired
+    private VotingProcessor votingProcessor;
 
 
+
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public SimpleResponse save(@RequestBody @Valid Voting voting) {
+        return votingProcessor.saveVoting(voting);
+    }
     @Override
     @RequestMapping(value = "/list/{userId}", method = RequestMethod.GET)
     public List<Voting> getVotings(@PathVariable Long userId,
@@ -724,8 +732,7 @@ public class VotingControllerImpl implements IVotingController {
         if (bean.getAnswerId() != null) {
             answer = answerRepository.findOne(bean.getAnswerId());
         }
-        User user = userRepository.findOne(bean.getUserId());
-        Voter voter = voterRepository.findByVotingIdAndUserId(question.getVoting(), user);
+        Voter voter = voterRepository.findOne(bean.getVoterId());
         Date d = format.parse(bean.getDateCreate());
         if (d == null) {
             d = new Date();

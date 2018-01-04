@@ -1,18 +1,19 @@
 package kz.bsbnb.common.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by ruslan on 31.10.16.
  */
-public class DecisionBean {
+public class DecisionBean implements Serializable {
     private Long id;
     private String dateCreate;   //"dd-MM-yyyy"
     private Long score;
     private Long answerId;
     private Long questionId;
     private String comments;
-    private Long userId;
+    private Long voterId;
     private Long proxyQuestionId;
 
     public DecisionBean() {
@@ -67,12 +68,12 @@ public class DecisionBean {
         this.comments = comments;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getVoterId() {
+        return voterId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setVoterId(Long voterId) {
+        this.voterId = voterId;
     }
 
     public Long getProxyQuestionId() {

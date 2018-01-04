@@ -1,6 +1,7 @@
 package kz.bsbnb.processor;
 
 import kz.bsbnb.common.bean.QuestionBean;
+import kz.bsbnb.util.SimpleResponse;
 
 import java.util.List;
 
@@ -10,4 +11,6 @@ import java.util.List;
 public interface QuestionProcessor {
 
     List<QuestionBean> getQuestionsByVoting(Long votingId, int page, int count);
+
+    SimpleResponse deleteQuestion(Long questionId);
 }
