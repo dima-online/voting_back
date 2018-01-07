@@ -54,14 +54,22 @@ public class DecisionControllerImpl implements IDecisionController {
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public SimpleResponse saveDecisionList(@RequestBody List<DecisionBean> decisions) {
-        return decisionProcessor.saveDecisions(decisions);
+    public SimpleResponse saveDecisionList(@RequestBody List<DecisionBean> decisions, @RequestParam(name = "voterId") Long voterId) {
+        return decisionProcessor.saveDecisions(decisions, voterId);
     }
 
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
-    public SimpleResponse signDecisionDocument(@RequestBody DecisionDocument document, @RequestParam boolean ncaLayer) {
-        return decisionProcessor.signDecisionDocument(document,ncaLayer);
+    public SimpleResponse signDecisionDocument(@RequestBody DecisionDocument message,
+                                               @RequestParam(name = "voterId") Long voterId,
+                                               @RequestParam boolean ncaLayer) {
+        return decisionProcessor.signDecisionDocument(message,voterId, ncaLayer);
     }
+
+    @RequestMapping(value = "/timestamp", method = RequestMethod.GET)
+    public SimpleResponse getServerTimestamp() {
+        return new SimpleResponse(System.currentTimeMillis()).SUCCESS();
+    }
+
 
 
 }

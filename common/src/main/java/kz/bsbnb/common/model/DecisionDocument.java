@@ -33,7 +33,7 @@ public class DecisionDocument implements Serializable {
     private Voter parentVoter;
     @Column(name = "json_document")
     @Size(max = 5_000_000)
-    private String document;
+    private String jsonDocument;
     @Column(name = "signature")
     @Size(max = 20_000)
     private String signature;
@@ -77,12 +77,12 @@ public class DecisionDocument implements Serializable {
         this.parentVoter = parentVoter;
     }
 
-    public String getDocument() {
-        return document;
+    public String getJsonDocument() {
+        return jsonDocument;
     }
 
-    public void setDocument(String document) {
-        this.document = document;
+    public void setJsonDocument(String jsonDocument) {
+        this.jsonDocument = jsonDocument;
     }
 
     public String getSignature() {
@@ -113,15 +113,15 @@ public class DecisionDocument implements Serializable {
         return decisionDocumentHash;
     }
 
-    public void setDecisionDocumentHash(String decisionDocumentHash) {
-        this.decisionDocumentHash = decisionDocumentHash;
+    public void setDecisionDocumentHash() {
+        this.decisionDocumentHash = getMessageDigestFromDocument();
     }
 
     public String getMessageDigestFromDocument() {
         byte[] encodedhash = null;
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            encodedhash = digest.digest(document.getBytes(StandardCharsets.UTF_8));
+            MessageDigest digest = MessageDigest.getInstance("SHA-512");
+            encodedhash = digest.digest(jsonDocument.getBytes(StandardCharsets.UTF_8));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

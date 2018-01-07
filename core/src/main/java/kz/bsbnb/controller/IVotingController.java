@@ -62,19 +62,9 @@ public interface IVotingController {
 
     SimpleResponse getVoting(Long votingId);
 
-    SimpleResponse reportVoting(Long votingId, ConfirmBean confirmBean);
-
     List<VotingBean> getReadyForOperVotings(Long userId);
 
-    SimpleResponse reportVotingQuestion(Long votingId, Long questionId, ConfirmBean confirmBean);
-
     void getVotingQuestions(Long votingId, HttpServletResponse response);
-
-    void checkVotingInBlockChain();
-
-    void checkDecisions();
-
-    void updateQuestionDecisions(Long questionId);
 
     public List<Voting> getOldVotingsForUser(Long userId, int page, int count);
 

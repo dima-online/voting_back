@@ -209,26 +209,7 @@ public class ReestrControllerImpl implements IReestrController {
                                         break;
                                     }
                                 }
-                                if (!isFound) {
-                                    userRoles = new UserRoles();
-                                    userRoles.setUser(user);
-                                    userRoles.setShareCount(reestr.getShareCount());
-                                    userRoles.setRole(Role.ROLE_USER);
-                                    userRoles.setSharePercent(reestr.getSharePercent());
-                                    userRoles.setShareDate(reestrHead.getDateCreate());
-                                    userRoles.setCannotVote(0);
-                                    userRoles.setOrganisation(voting.getOrganisation());
-                                    try {
-                                        userRoles = userRoleRepository.save(userRoles);
-                                    }catch(Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    newRoles.add(userRoles);
-                                } else {
-                                    userRoles.setSharePercent(userRoles.getSharePercent() + reestr.getSharePercent());
-                                    userRoles.setShareCount(userRoles.getShareCount() + reestr.getShareCount());
-                                    userRoleRepository.save(userRoles);
-                                }
+
                             }
                             //Удаляем голосующих
                             for (Voter voter : voting.getVoterSet()) {

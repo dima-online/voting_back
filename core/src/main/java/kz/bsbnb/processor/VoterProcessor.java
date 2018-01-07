@@ -1,7 +1,8 @@
 package kz.bsbnb.processor;
 
-import kz.bsbnb.common.bean.VoterBean;
+
 import kz.bsbnb.common.model.Voter;
+import kz.bsbnb.util.SimpleResponse;
 
 import java.util.List;
 
@@ -9,11 +10,11 @@ import java.util.List;
  * Created by ruslan on 10/10/2016.
  */
 public interface VoterProcessor {
-    List<Voter> getVoterByVotingId(Long votingId);
+    SimpleResponse getVoterByVotingId(Long votingId);
 
-    Voter getVoterById(Long voterId);
+    SimpleResponse getVoterById(Long voterId);
 
-    Voter saveVoter(Voter voter);
+    SimpleResponse saveVoter(Voter voter, String iin);
 
-    Voter saveVoter(VoterBean bean);
+    SimpleResponse canVote(Long voterId);
 }

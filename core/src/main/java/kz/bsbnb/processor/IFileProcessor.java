@@ -1,5 +1,6 @@
 package kz.bsbnb.processor;
 
+import kz.bsbnb.common.model.Files;
 import kz.bsbnb.util.SimpleResponse;
 
 /**
@@ -7,4 +8,10 @@ import kz.bsbnb.util.SimpleResponse;
  */
 public interface IFileProcessor {
     SimpleResponse getVotingFiles(Long votingId);
+
+    SimpleResponse getAllFilesByVoting(Long votingId);
+
+    SimpleResponse deleteFile(Long fileId);
+
+    SimpleResponse saveFile(Files file);
 }

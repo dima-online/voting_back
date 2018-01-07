@@ -13,7 +13,7 @@ public interface IDecisionProcessor {
 
     List<DecisionBean> getDecisionList(Long votingId, Long voterId);
 
-    SimpleResponse saveDecisions(List<DecisionBean> beans);
+    SimpleResponse saveDecisions(List<DecisionBean> beans, Long voterId);
 
-    SimpleResponse signDecisionDocument(DecisionDocument document, boolean ncaLayer);
+    SimpleResponse signDecisionDocument(DecisionDocument document, Long voterId, boolean ncaLayer);
 }

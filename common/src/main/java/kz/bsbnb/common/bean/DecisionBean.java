@@ -15,6 +15,7 @@ public class DecisionBean implements Serializable {
     private String comments;
     private Long voterId;
     private Long proxyQuestionId;
+    private String status;
 
     public DecisionBean() {
     }
@@ -82,5 +83,13 @@ public class DecisionBean implements Serializable {
 
     public void setProxyQuestionId(Long proxyQuestionId) {
         this.proxyQuestionId = proxyQuestionId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

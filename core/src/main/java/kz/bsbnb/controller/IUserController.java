@@ -25,12 +25,6 @@ public interface IUserController {
 
     SimpleResponse deleteUser(User user);
 
-    List<OrgBean> getAllOrgs(Long userId);
-
-    List<OrgBean> getAllOrgsWithWorkVoting(Long userId);
-
-    List<OrgBean> getAllOrgsWithOldVoting(Long userId);
-
     UserBean castUser(User user);
 
     SimpleResponse complateVoting(Long votingId, Long userId, ConfirmBean bean);
@@ -41,33 +35,19 @@ public interface IUserController {
 
     boolean canVote(Voting voting, User user);
 
-    VoterBean castToBean(Voting voting, Voter voter);
-
     DecisionBean getBeanFromDecision(Decision decision);
 
     VotingBean castToBean(Voting voting, User user);
 
-    OrgBean castToBean(Organisation org, User user);
-
     SimpleResponse getUserpProfile(Long userId);
 
-//    public SimpleResponse signData(DecisionBean bean);
-//
-//    public SimpleResponse verifyData(DecisionBean bean);
-
     SimpleResponse verifyIIN(String iin);
-
-
 
     Role getRole(User user, Organisation organisation);
 
     Role getRole(User user);
 
     String getFullName(UserInfo userInfo);
-
-    List<OrgBean> getAllOrgsWithOldVotingForUser(Long userId);
-
-    List<OrgBean> getAllOrgsWithWorkVotingForUser(Long userId);
 
     List<SimpleDecisionBean> getDecisionsForQuestion(Long questionId);
 }

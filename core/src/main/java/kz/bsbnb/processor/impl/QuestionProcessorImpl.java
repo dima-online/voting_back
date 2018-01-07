@@ -2,6 +2,7 @@ package kz.bsbnb.processor.impl;
 
 import kz.bsbnb.common.bean.AnswerBean;
 import kz.bsbnb.common.bean.QuestionBean;
+import kz.bsbnb.common.consts.QuestionType;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.processor.QuestionProcessor;
 import kz.bsbnb.repository.IQuestionRepository;
@@ -35,6 +36,16 @@ public class QuestionProcessorImpl implements QuestionProcessor {
             result.add(castToQuestionBean(question));
         }
         return result;
+    }
+
+    public SimpleResponse saveQuestion(Question question, Long votingId) {
+        if(question.getQuestionType().equals(QuestionType.ORDINARY)) {
+
+        } else {
+
+        }
+
+        return new SimpleResponse(question).SUCCESS();
     }
 
     public SimpleResponse deleteQuestion(Long questionId) {

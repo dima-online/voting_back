@@ -7,6 +7,8 @@ public enum Role {
     ROLE_ADMIN,
     ROLE_OPER,
     ROLE_USER,
+    ROLE_COMMISSION,
+    ROLE_ASSIGNEE,
     ROLE_SPECTATOR;
 
     public static Role getRole(String role) {

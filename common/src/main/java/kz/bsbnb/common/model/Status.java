@@ -19,6 +19,8 @@ public enum Status {
     CLOSED, //закрыта
     CLOSED_CANCELED, //закрыт по отмене
     CLOSED_FINAL,
+    SIGNED,
+    SAVED,
     SUCCESS,//успешна
     ISSUED,
     NOT_FOUND,

@@ -17,7 +17,8 @@ import java.util.Date;
 @XmlRootElement
 public class Decision implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -301401310664406494L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Basic(optional = false)
@@ -40,8 +41,9 @@ public class Decision implements Serializable {
     private Voter voter;
     @Column(name = "comments")
     private String comments;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private Status status;
     @Column(name = "cancel_reason")
     private String cancelReason;
     @ManyToOne
@@ -61,11 +63,11 @@ public class Decision implements Serializable {
         this.dateCreate = dateCreate;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -145,8 +147,6 @@ public class Decision implements Serializable {
         result = 31 * result + answer.getId().hashCode();
         result = 31 * result + answer.getQuestion().getId().hashCode();
         result = 31 * result + voter.getUser().getIin().hashCode();
-        if (proxyQuestion != null)
-            result = 31 * result + proxyQuestion.getParentVoter().getUser().getIin().hashCode();
         return result;
     }
 

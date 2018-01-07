@@ -17,7 +17,6 @@ public class VotingBean {
     private String status;
     private Date lastChanged;
     private Set<QuestionBean> questionSet;
-    private Set<VoterBean> voterSet;
     private boolean canVote;
     private Long organisationId;
     private String organisationName;
@@ -158,14 +157,6 @@ public class VotingBean {
 
     public void setQuestionSet(Set<QuestionBean> questionSet) {
         this.questionSet = questionSet;
-    }
-
-    public Set<VoterBean> getVoterSet() {
-        return voterSet;
-    }
-
-    public void setVoterSet(Set<VoterBean> voterSet) {
-        this.voterSet = voterSet;
     }
 
     public boolean isCanVote() {

@@ -41,24 +41,9 @@ public class UserRoles implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "user_roles_user_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private User user;
-    @Column(name = "share_count")
-    private Integer shareCount;
-    @Column(name = "share_percent")
-    private Double sharePercent;
-    @Column(name = "cannot_vote")
-    private Integer cannotVote;
-    @Column(name = "share_date")
-    private Date shareDate;
+
 
     public UserRoles() {
-    }
-
-    public Date getShareDate() {
-        return shareDate;
-    }
-
-    public void setShareDate(Date shareDate) {
-        this.shareDate = shareDate;
     }
 
     public UserRoles(Long id) {
@@ -70,13 +55,6 @@ public class UserRoles implements Serializable {
         this.role = role;
     }
 
-    public Double getSharePercent() {
-        return sharePercent;
-    }
-
-    public void setSharePercent(Double sharePercent) {
-        this.sharePercent = sharePercent;
-    }
 
     public Long getId() {
         return id;
@@ -109,14 +87,6 @@ public class UserRoles implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-
-    public Integer getShareCount() {return shareCount;}
-
-    public void setShareCount(Integer shareCount) {this.shareCount = shareCount;}
-
-    public Integer getCannotVote() {return cannotVote;}
-
-    public void setCannotVote(Integer cannotVote) {this.cannotVote = cannotVote;}
 
     @Override
     public int hashCode() {

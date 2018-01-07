@@ -20,11 +20,16 @@ public class VoterControllerImpl implements IVoterController {
 
     @RequestMapping(value = "/by_voting", method = RequestMethod.POST)
     public SimpleResponse getVoter(@RequestParam Long votingId) {
-        return new SimpleResponse(voterProcessor.getVoterByVotingId(votingId)).SUCCESS();
+        return voterProcessor.getVoterByVotingId(votingId);
     }
 
     @RequestMapping(value = "/id", method = RequestMethod.GET)
     public SimpleResponse getVoterById(@RequestParam Long voterId) {
-        return new SimpleResponse(voterProcessor.getVoterById(voterId)).SUCCESS();
+        return voterProcessor.getVoterById(voterId);
+    }
+
+    @RequestMapping(value = "/can_vote", method = RequestMethod.GET)
+    public SimpleResponse canVote(@RequestParam(name = "voterId") Long voterId) {
+        return voterProcessor.canVote(voterId);
     }
 }

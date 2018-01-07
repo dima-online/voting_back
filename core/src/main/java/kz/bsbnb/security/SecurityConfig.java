@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private String[] unfilteredUrl = {"/", "/token", "/login", "/register", "/signed-login", "/logout",
             "/user/login", "/user/registration/**", "/user/remind", "/user/verifyIIN/{iin}", "/public/*",
-            "/vote/**", "/user/**" , "/voting/**", "/**", "/admin/**", "files/**"
+            "/vote/**", "/user/**" , "/voting/**", "/**", "/admin/**", "files/**", "/question/**"
     };
 
     @Override

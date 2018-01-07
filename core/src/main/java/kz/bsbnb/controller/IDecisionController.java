@@ -13,7 +13,9 @@ public interface IDecisionController {
 
     SimpleResponse getDecisionList(Long votingId, Long voterId);
 
-    SimpleResponse saveDecisionList(List<DecisionBean> decisionList);
+    SimpleResponse saveDecisionList(List<DecisionBean> decisionList, Long voterId);
 
-    SimpleResponse signDecisionDocument(DecisionDocument document, boolean ncaLayer);
+    SimpleResponse signDecisionDocument(DecisionDocument document, Long voterId, boolean ncaLayer);
+
+    SimpleResponse getServerTimestamp();
 }

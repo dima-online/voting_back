@@ -240,168 +240,9 @@ public class UserControllerImpl implements IUserController {
         }
     }
 
-    @Override
-    @RequestMapping(value = "/orgs/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> getAllOrgs(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-//        List<OrgBean> result = new ArrayList<>();
-//        for (UserRoles userRoles : localUser.getUserRolesSet()) {
-//            result.add(castToBean(userRoles.getOrganisation(), localUser));
-//            System.out.println(userRoles.getOrganisation().getOrganisationName());
-//        }
-        List<OrgBean> result = new ArrayList<>();
-        List<Organisation> orgs = (List<Organisation>) organisationRepository.findAll();
-        for (Organisation org1 : orgs) {
-            result.add(castToBean(org1, localUser));
-        }
-        return result;
-    }
 
     @Override
-    public OrgBean castToBean(Organisation org, User user) {
-        OrgBean bean = new OrgBean();
-        bean.setId(org.getId());
-        bean.setExternalId(org.getExternalId());
-        bean.setOrganisationName(org.getOrganisationName());
-        bean.setOrganisationNum(org.getOrganisationNum());
-        bean.setShares(org.getShares());
-        bean.setExecutiveName(org.getExecutiveName());
-        Integer cnt = 0;
-        for (UserRoles roles : org.getUserRolesSet()) {
-            if (roles.getRole().equals(Role.ROLE_USER)) {
-                cnt++;
-            }
-        }
-        bean.setUserCount(cnt);
-        bean.setVotingCount(org.getVotingSet().size());
-        cnt = 0;
-        List<Voting> vots = votingRepository.getByOrganisation(org);
-        for (Voting voting : vots) {
-            if (voting.getDateClose() != null) {
-                cnt++;
-            }
-        }
-        bean.setClosedVotingCount(cnt);
-        bean.setStatus(org.getStatus());
-        UserRoles userRole = null;
-        if (user != null) {
-            for (UserRoles userRoles : user.getUserRolesSet()) {
-                if (userRoles.getOrganisation().equals(org)) {
-                    userRole = userRoles;
-                    break;
-                }
-            }
-        }
-        bean.setSharePercent(userRole == null || userRole.getSharePercent() == null ? 0.0 : userRole.getSharePercent());
-        return bean;
-    }
-
-    @Override
-    @RequestMapping(value = "/orgs/workvoting/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> getAllOrgsWithWorkVoting(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
-        if (localUser != null) {
-            List<Voting> vots = votingRepository.findWorkVoting();
-            for (Voting voting : vots) {
-                if (!map.containsKey(voting.getOrganisation().getId())) {
-                    OrgBean organisation = castToBean(voting.getOrganisation(), localUser);
-                    organisation.setVotingSet(new ArrayList<>());
-                    map.put(voting.getOrganisation().getId(), organisation);
-                }
-                VotingBean votingBean = castToBean(voting, localUser);
-                map.get(voting.getOrganisation().getId()).getVotingSet().add(votingBean);
-            }
-            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
-            while (itr1.hasNext()) {
-                Map.Entry<Long, OrgBean> entry = itr1.next();
-                result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @RequestMapping(value = "/orgs/workvoting/user/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> getAllOrgsWithWorkVotingForUser(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
-        if (localUser != null) {
-            List<Voting> vots = votingRepository.findWorkingForUser(localUser);
-            for (Voting voting : vots) {
-                if (!map.containsKey(voting.getOrganisation().getId())) {
-                    OrgBean organisation = castToBean(voting.getOrganisation(), localUser);
-                    organisation.setVotingSet(new ArrayList<>());
-                    map.put(voting.getOrganisation().getId(), organisation);
-                }
-                VotingBean votingBean = castToBean(voting, localUser);
-                map.get(voting.getOrganisation().getId()).getVotingSet().add(votingBean);
-            }
-            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
-            while (itr1.hasNext()) {
-                Map.Entry<Long, OrgBean> entry = itr1.next();
-                result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @RequestMapping(value = "/orgs/oldvoting/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> getAllOrgsWithOldVoting(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
-        if (localUser != null) {
-            List<Voting> vots = votingRepository.findOldVoting();
-            for (Voting voting : vots) {
-                if (!map.containsKey(voting.getOrganisation().getId())) {
-                    OrgBean organisation = castToBean(voting.getOrganisation(), localUser);
-                    organisation.setVotingSet(new ArrayList<>());
-                    map.put(voting.getOrganisation().getId(), organisation);
-                }
-                VotingBean votingBean = castToBean(voting, localUser);
-                map.get(voting.getOrganisation().getId()).getVotingSet().add(votingBean);
-            }
-            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
-            while (itr1.hasNext()) {
-                Map.Entry<Long, OrgBean> entry = itr1.next();
-                result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @RequestMapping(value = "/orgs/oldvoting/user/{userId}", method = RequestMethod.GET)
-    public List<OrgBean> getAllOrgsWithOldVotingForUser(@PathVariable Long userId) {
-        User localUser = userRepository.findOne(userId);
-        List<OrgBean> result = new ArrayList<>();
-        LinkedHashMap<Long, OrgBean> map = new LinkedHashMap();
-        if (localUser != null) {
-            List<Voting> vots = votingRepository.findOldForUser(localUser);
-            for (Voting voting : vots) {
-                if (!map.containsKey(voting.getOrganisation().getId())) {
-                    OrgBean organisation = castToBean(voting.getOrganisation(), localUser);
-                    organisation.setVotingSet(new ArrayList<>());
-                    map.put(voting.getOrganisation().getId(), organisation);
-                }
-                VotingBean votingBean = castToBean(voting, localUser);
-                map.get(voting.getOrganisation().getId()).getVotingSet().add(votingBean);
-            }
-            Iterator<Map.Entry<Long, OrgBean>> itr1 = map.entrySet().iterator();
-            while (itr1.hasNext()) {
-                Map.Entry<Long, OrgBean> entry = itr1.next();
-                result.add(entry.getValue());
-            }
-        }
-        return result;
-    }
-
-    @Override
-    @RequestMapping(value = "/complate/{votingId}/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/complete/{votingId}/{userId}", method = RequestMethod.POST)
     public SimpleResponse complateVoting(@PathVariable Long votingId, @PathVariable Long userId, @RequestBody @Valid ConfirmBean bean) {
         if (confirmationService.check(bean)) {
             Voting voting = votingRepository.findOne(votingId);
@@ -611,27 +452,6 @@ public class UserControllerImpl implements IUserController {
     }
 
     @Override
-    public VoterBean castToBean(Voting voting, Voter voter) {
-        VoterBean result = new VoterBean();
-        result.setId(voter.getId());
-//        result.setShareCount(voter.getShareCount());
-        Set<DecisionBean> beanSet = new HashSet();
-        for (Decision decision : voter.getDecisionSet()) {
-            if (voter.getVoting().equals(voting)) {
-                DecisionBean bean = getBeanFromDecision(decision);
-                beanSet.add(bean);
-            }
-        }
-//        result.setHasGoldShare(voter.getHasGoldShare());
-//        result.setPrivShareCount(voter.getPrivShareCount());
-        result.setDecisions(beanSet);
-//        result.setVoting(castToBean(voter.getVotingId(),voter.getUser()));
-        result.setUserId(castUser(voter.getUser()));
-//        result.setSharePercent(100.0 * voter.getShareCount() / getVotingAllScore(voting.getId()));
-        return result;
-    }
-
-    @Override
     public VotingBean castToBean(Voting voting, User user) {
         VotingBean result = new VotingBean();
         result.setCanVote(canVote(voting, user));
@@ -659,16 +479,7 @@ public class UserControllerImpl implements IUserController {
         } else {
             result.setShareCount(0L);
         }
-        if (role.equals(Role.ROLE_ADMIN)) {
-            Set<VoterBean> voterBeanSet = new HashSet<>();
-            for (Voter voter : voting.getVoterSet()) {
-                if (voter.getUser().equals(user)) {
-                    voterBeanSet.add(castToBean(voting, voter));
-                    canReadPdf = true;
-                }
-            }
-            result.setVoterSet(voterBeanSet);
-        }
+
         if (role.equals(Role.ROLE_ADMIN) || role.equals(Role.ROLE_OPER)) {
             Set<QuestionBean> questionBeanSet = new HashSet<>();
             List<Question> sortedList = new ArrayList<>(voting.getQuestionSet());

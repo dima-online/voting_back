@@ -50,4 +50,19 @@ public class FileProcessorImpl implements IFileProcessor{
         else files = filesRepository.findByVotingId(voting);
         return new SimpleResponse(files).SUCCESS();
     }
+
+    public SimpleResponse getAllFilesByVoting(Long votingId) {
+        List<Files> files = filesRepository.findByVotingId(votingRepository.findOne(votingId));
+        return new SimpleResponse(files).SUCCESS();
+    }
+
+    public SimpleResponse deleteFile(Long fileId) {
+        Voting v = filesRepository.findOne(fileId).getVotingId();
+        filesRepository.delete(fileId);
+        return getAllFilesByVoting(v.getId());
+    }
+
+    public SimpleResponse saveFile(Files file) {
+        return new SimpleResponse(filesRepository.save(file));
+    }
 }

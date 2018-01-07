@@ -120,4 +120,14 @@ public class FileControllerImpl implements IFileController {
         }
     }
 
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public SimpleResponse saveFile(Files file) {
+        return fileProcessor.saveFile(file);
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public SimpleResponse deleteFile(@RequestParam(name = "fileId") Long fileId) {
+        return fileProcessor.deleteFile(fileId);
+    }
+
 }

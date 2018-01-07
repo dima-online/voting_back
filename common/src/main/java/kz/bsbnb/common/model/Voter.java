@@ -6,6 +6,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kz.bsbnb.common.util.Constants;
 
 import javax.persistence.*;
@@ -37,8 +38,10 @@ public class Voter implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateAdding;
     @OneToMany(mappedBy = "voter")
+    @JsonManagedReference(value = "shares")
     private List<Share> shares;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "voter", fetch = FetchType.EAGER)
+    @JsonIgnore
     private Set<Decision> decisionSet;
     @JsonIgnore
     @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_user_fk"))
@@ -56,6 +59,7 @@ public class Voter implements Serializable {
     @JoinColumn(name = "parent_voter_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "voter_parent_voter_fk"))
     private Voter parentVoter;
     @OneToMany(mappedBy = "executiveVoter")
+    @JsonIgnore
     private List<ProxyQuestion> proxyQuestions;
 
 

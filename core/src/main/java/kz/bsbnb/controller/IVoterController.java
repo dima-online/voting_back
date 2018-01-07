@@ -1,6 +1,6 @@
 package kz.bsbnb.controller;
 
-import kz.bsbnb.common.bean.VoterBean;
+
 import kz.bsbnb.util.SimpleResponse;
 
 /**
@@ -11,4 +11,6 @@ public interface IVoterController {
     SimpleResponse getVoterById(Long voterId);
 
     SimpleResponse getVoter(Long votingId);
+
+    SimpleResponse canVote(Long voterId);
 }

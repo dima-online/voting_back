@@ -3,6 +3,7 @@ package kz.bsbnb.repository;
 import kz.bsbnb.common.model.Decision;
 import kz.bsbnb.common.model.DecisionDocument;
 import kz.bsbnb.common.model.Voter;
+import kz.bsbnb.common.model.Voting;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -15,4 +16,7 @@ import java.util.List;
  */
 //@Transactional(readOnly = true)
 public interface IDecisionDocumentRepository extends PagingAndSortingRepository<DecisionDocument, Long> {
+    DecisionDocument findByVoter(Voter voter);
+
+    List<DecisionDocument> findByVoting(Voting voting);
 }

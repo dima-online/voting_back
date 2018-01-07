@@ -32,7 +32,7 @@ public class ScheduledTasks {
         if (canCheckVoting) {
             setCanCheckVoting(false);
             try {
-                votingController.checkVotingInBlockChain();
+
             } catch (Exception e) {
                 setCanCheckVoting(true);
             }
@@ -41,7 +41,7 @@ public class ScheduledTasks {
         if (checkDecisions) {
         try {
             setCheckDecisions(false);
-            votingController.checkDecisions();
+
         } catch (Exception e) {
             setCheckDecisions(true);
         }

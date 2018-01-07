@@ -49,8 +49,8 @@ public class Question implements Serializable {
     private Integer maxCount;
     @Column(name = "num")
     private Integer num;
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "question", fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "answerSet")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER)
     private Set<Answer> answerSet;
     @JsonIgnore
     @JoinColumn(name = "voting_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "question_voting_fk"))

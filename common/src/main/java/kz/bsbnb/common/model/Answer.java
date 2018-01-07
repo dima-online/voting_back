@@ -5,6 +5,7 @@
  */
 package kz.bsbnb.common.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import kz.bsbnb.common.consts.Locale;
@@ -30,7 +31,7 @@ public class Answer implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
-    @JsonIgnore
+    @JsonBackReference(value = "answerSet")
     @JoinColumn(name = "question_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "answer_question_fk"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Question question;
