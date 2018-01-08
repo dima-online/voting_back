@@ -61,7 +61,7 @@ public class DecisionControllerImpl implements IDecisionController {
     @RequestMapping(value = "/sign", method = RequestMethod.POST)
     public SimpleResponse signDecisionDocument(@RequestBody DecisionDocument message,
                                                @RequestParam(name = "voterId") Long voterId,
-                                               @RequestParam boolean ncaLayer) {
+                                               @RequestParam(required = false) boolean ncaLayer) {
         return decisionProcessor.signDecisionDocument(message,voterId, ncaLayer);
     }
 
@@ -70,6 +70,10 @@ public class DecisionControllerImpl implements IDecisionController {
         return new SimpleResponse(System.currentTimeMillis()).SUCCESS();
     }
 
+    @RequestMapping(value = "/document_check", method = RequestMethod.GET)
+    public SimpleResponse checkDecisionDocumentByHash(@RequestParam(name = "document_hash") String decisionDocumentHash) {
+        return decisionProcessor.checkDecisionDocument(decisionDocumentHash);
+    }
 
 
 }

@@ -29,13 +29,13 @@ public class QuestionControllerImpl implements IQuestionController {
     }
 
     @Override
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @RequestMapping(value = "/edit", method = RequestMethod.PUT)
     public SimpleResponse editQuestion(@RequestBody @Valid Question question) {
         return new SimpleResponse(questionRepository.save(question));
     }
 
     @Override
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public SimpleResponse deleteQuestion(@RequestParam(name = "id") Long questionId) {
         return questionProcessor.deleteQuestion(questionId);
     }
@@ -46,5 +46,10 @@ public class QuestionControllerImpl implements IQuestionController {
                                                  @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "20") int count) {
         return new SimpleResponse(questionProcessor.getQuestionsByVoting(votingId, page, count)).SUCCESS();
+    }
+
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public SimpleResponse getQuestionById(@RequestParam Long questionId) {
+        return new SimpleResponse(questionRepository.findOne(questionId)).SUCCESS();
     }
 }

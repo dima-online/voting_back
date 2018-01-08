@@ -1,6 +1,7 @@
 package kz.bsbnb.common.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kz.bsbnb.common.consts.Locale;
 import kz.bsbnb.common.util.Constants;
 
@@ -22,6 +23,7 @@ public class VotingMessage implements IPersistable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "voting_id", foreignKey = @ForeignKey(name = "voting_message_voting_fk"))
     @JsonBackReference(value = "votingMessages")
+    @JsonIgnore
     private Voting voting;
 
     @Enumerated(EnumType.STRING)

@@ -3,10 +3,7 @@ package kz.bsbnb.controller.impl;
 import kz.bsbnb.common.model.Voting;
 import kz.bsbnb.common.util.Constants;
 import kz.bsbnb.controller.IPublicViewController;
-import kz.bsbnb.processor.OrganisationProcessor;
-import kz.bsbnb.processor.PublicProcessor;
-import kz.bsbnb.processor.QuestionProcessor;
-import kz.bsbnb.processor.UserProcessor;
+import kz.bsbnb.processor.*;
 import kz.bsbnb.repository.IVotingRepository;
 import kz.bsbnb.util.SimpleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +27,16 @@ public class PublicViewControllerImpl implements IPublicViewController {
 
     @Autowired
     private IVotingRepository votingRepository;
-
     @Autowired
     private PublicProcessor publicProcessor;
-
     @Autowired
     private OrganisationProcessor organisationProcessor;
-
     @Autowired
     private UserProcessor userProcessor;
-
     @Autowired
     private QuestionProcessor questionProcessor;
+    @Autowired
+    private IDecisionProcessor decisionProcessor;
 
 
     @Override
@@ -118,6 +113,11 @@ public class PublicViewControllerImpl implements IPublicViewController {
     @RequestMapping(value = "/organisation", method = RequestMethod.GET)
     public SimpleResponse getOrganisation(@RequestParam Long organisationId) {
         return organisationProcessor.getOrganisation(organisationId);
+    }
+
+    @RequestMapping(value = "/document_check", method = RequestMethod.GET)
+    public SimpleResponse checkDecisionDocumentByHash(@RequestParam(name = "document_hash") String decisionDocumentHash) {
+        return decisionProcessor.checkDecisionDocument(decisionDocumentHash);
     }
 
 }

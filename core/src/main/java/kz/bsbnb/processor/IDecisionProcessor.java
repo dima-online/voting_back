@@ -16,4 +16,10 @@ public interface IDecisionProcessor {
     SimpleResponse saveDecisions(List<DecisionBean> beans, Long voterId);
 
     SimpleResponse signDecisionDocument(DecisionDocument document, Long voterId, boolean ncaLayer);
+
+    SimpleResponse checkDecisionDocument(String decisionDocumentHash);
+
+    SimpleResponse calculateStatistics(Long votingId);
+
+    SimpleResponse cancelDecisionByVoter(Long voterId);
 }

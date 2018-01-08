@@ -1,6 +1,8 @@
 package kz.bsbnb.processor.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import kz.bsbnb.block.model.HLDecision;
+import kz.bsbnb.block.processor.BlockChainProcessor;
 import kz.bsbnb.common.bean.DecisionBean;
 import kz.bsbnb.common.model.*;
 import kz.bsbnb.common.util.Constants;
@@ -50,6 +52,8 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
     private DigisignRestProcessor digisignRestProcessor;
     @Autowired
     private IDecisionDocumentRepository decisionDocumentRepository;
+    @Autowired
+    private BlockChainProcessor blockChainProcessor;
 
 
     private SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT);
@@ -115,13 +119,31 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
             document.setVoter(voter);
             document.setVoting(voter.getVoting());
             document.setDecisionDocumentHash();
+            String transactionId = blockChainProcessor.vote(document);
+            System.out.println(transactionId);
+            if(transactionId == null || transactionId.equals("")) {
+                throw new RuntimeException("error.from.hyperledger");
+            }
+            document.setTransactionId(transactionId);
             decisionDocumentRepository.save(document);
         }catch(Exception e) {
             e.printStackTrace();
-            return new SimpleResponse(messageProcessor.getMessage("error.while.signing.document")).ERROR_CUSTOM();
+            return new SimpleResponse(messageProcessor.getMessage(e.getMessage())).ERROR_CUSTOM();
         }
 
         return new SimpleResponse(getDecisionList(0L,voterId)).SUCCESS();
+    }
+
+    public SimpleResponse checkDecisionDocument(String decisionDocumentHash) {
+        DecisionDocument decisionDocument = decisionDocumentRepository.findByDecisionDocumentHash(decisionDocumentHash);
+        if(decisionDocument == null) return new SimpleResponse(messageProcessor.getMessage("decision.not.found")).ERROR_CUSTOM();
+        if(!decisionDocument.getMessageDigestFromDocument().equals(decisionDocumentHash))
+            return new SimpleResponse(messageProcessor.getMessage("decision.document.was.corrupted")).ERROR_CUSTOM();
+        HLDecision decision = blockChainProcessor.getHLDecision(decisionDocumentHash);
+        if(decision == null)
+            return new SimpleResponse(messageProcessor.getMessage("no.data.in.hyperledger")).ERROR_CUSTOM();
+        return new SimpleResponse(messageProcessor.getMessage("decision.document.is.valid")).SUCCESS();
+
     }
 
     public SimpleResponse calculateStatistics(Long votingId) {
@@ -134,10 +156,26 @@ public class DecisionProcessorImpl  implements IDecisionProcessor {
         return new SimpleResponse(statistics).SUCCESS();
     }
 
+    @Override
+    @Transactional
+    public SimpleResponse cancelDecisionByVoter(Long voterId) {
+        Voter voter = voterRepository.findOne(voterId);
+        Set<Decision> decisions = voter.getDecisionSet();
+        for(Decision decision : decisions) {
+            decision.setStatus(Status.CANCELED);
+            saveDecision(decision);
+        }
+        return new SimpleResponse(getDecisionList(0L,voterId)).SUCCESS();
+    }
+
     private Decision saveDecision(Decision decision) {
         return decisionRepository.save(decision);
     }
 
+    private void updateDecisionSigned(Decision decision) {
+        decision.setStatus(Status.SIGNED);
+        decisionRepository.save(decision);
+    }
     /*
      * methods for casting models to beans
      */

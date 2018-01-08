@@ -18,4 +18,6 @@ public interface IDecisionController {
     SimpleResponse signDecisionDocument(DecisionDocument document, Long voterId, boolean ncaLayer);
 
     SimpleResponse getServerTimestamp();
+
+    SimpleResponse checkDecisionDocumentByHash(String decisionDocumentHash);
 }

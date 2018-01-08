@@ -19,4 +19,7 @@ public interface IDecisionDocumentRepository extends PagingAndSortingRepository<
     DecisionDocument findByVoter(Voter voter);
 
     List<DecisionDocument> findByVoting(Voting voting);
+
+    @Query(value = "FROM DecisionDocument dd where dd.decisionDocumentHash = ?1")
+    DecisionDocument findByDecisionDocumentHash(String decisionDocumentHash);
 }

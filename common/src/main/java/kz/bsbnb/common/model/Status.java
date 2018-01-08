@@ -4,7 +4,6 @@ package kz.bsbnb.common.model;
  * Created by Olzhas.Pazyldayev on 15.09.2016.
  */
 public enum Status {
-    NEW, // новый
     ACTIVE, //активная
     BLOCKED, //заблокированная
     ARCHIVED, //архивны
@@ -19,7 +18,16 @@ public enum Status {
     CLOSED, //закрыта
     CLOSED_CANCELED, //закрыт по отмене
     CLOSED_FINAL,
-    SIGNED,
+    /*
+     * статусы используемые в decision
+     */
+    SIGNED, // подписаный документ бюлетени
+    CANCELED, // отмена decision
+    NEW, // новый decision
+    /*
+     ***********
+     */
+
     SAVED,
     SUCCESS,//успешна
     ISSUED,

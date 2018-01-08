@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface IOrganisationRepository extends PagingAndSortingRepository<Organisation, Long> {
     Organisation findByOrganisationName(String organisationName);
+
     Organisation findByOrganisationNum(String organisationNum);
 
     @Query(value = "SELECT o from Organisation o where o.status = 'CAN_VOTE'")

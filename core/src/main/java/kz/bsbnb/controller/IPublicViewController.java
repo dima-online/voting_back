@@ -36,4 +36,6 @@ public interface IPublicViewController {
     SimpleResponse getQuestionsByVotingId(Long votingId, int page, int count);
 
     SimpleResponse getOrganisation(Long organisationId);
+
+    SimpleResponse checkDecisionDocumentByHash(String decisionDocumentHash);
 }
