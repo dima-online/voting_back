@@ -47,6 +47,7 @@ public class PublicProcessorImpl implements PublicProcessor {
         User user = null;
         try {
             user = securityProcessor.getLoggedUser();
+
         }catch(Exception e) {
             e.printStackTrace();
         }
@@ -57,7 +58,7 @@ public class PublicProcessorImpl implements PublicProcessor {
                 "AND v.status LIKE :status " +
                 "AND (m.subject LIKE :text OR m.description LIKE :text)"
         );
-        if(myVotings) {
+        if(myVotings && user!= null) {
             qlString.append("AND v.id in (SELECT voter.voting.id from Voter voter WHERE voter.user = :user)");
         }
 

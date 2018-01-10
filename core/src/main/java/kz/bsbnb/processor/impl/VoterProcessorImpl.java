@@ -61,6 +61,7 @@ public class VoterProcessorImpl implements VoterProcessor {
         if(user == null) {
             user = new User();
             user.setUsername(iin);
+            user.setIin(iin);
             user.setStatus(Status.NEW);
         }
         voter.setUser(user);
@@ -77,6 +78,26 @@ public class VoterProcessorImpl implements VoterProcessor {
             e.printStackTrace();
         }
         return new SimpleResponse("false").SUCCESS();
+    }
+
+    @Override
+    public SimpleResponse addVoter(Voter voter) {
+        return null;
+    }
+
+    @Override
+    public SimpleResponse deleteVoter(Long voterId) {
+        try {
+            voterRepository.delete(voterId);
+        }catch(Exception e) {
+            return new SimpleResponse(messageProcessor.getMessage("error.while.deleting.voter")).ERROR_CUSTOM();
+        }
+        return new SimpleResponse(messageProcessor.getMessage("voter.deleted.successfully")).SUCCESS();
+    }
+
+    @Override
+    public SimpleResponse updateVoter(Voter voter) {
+        return new SimpleResponse(voterRepository.save(voter)).SUCCESS();
     }
 
     /*

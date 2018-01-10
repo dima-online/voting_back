@@ -7,6 +7,7 @@
 
 package kz.bsbnb.util.ERCBService;
 
+
 public class TRegistry  implements java.io.Serializable {
     private java.util.Date registryDate;
 
@@ -14,26 +15,26 @@ public class TRegistry  implements java.io.Serializable {
 
     private java.lang.String issuerName;
 
-    private kz.bsbnb.util.ERCBService.TShareholder[] shareholders;
+    private TShareholder[] shareholders;
 
     public TRegistry() {
     }
 
     public TRegistry(
-           java.util.Date registryDate,
-           java.lang.String issuerIDN,
-           java.lang.String issuerName,
-           kz.bsbnb.util.ERCBService.TShareholder[] shareholders) {
-           this.registryDate = registryDate;
-           this.issuerIDN = issuerIDN;
-           this.issuerName = issuerName;
-           this.shareholders = shareholders;
+            java.util.Date registryDate,
+            java.lang.String issuerIDN,
+            java.lang.String issuerName,
+            TShareholder[] shareholders) {
+        this.registryDate = registryDate;
+        this.issuerIDN = issuerIDN;
+        this.issuerName = issuerName;
+        this.shareholders = shareholders;
     }
 
 
     /**
      * Gets the registryDate value for this TRegistry.
-     * 
+     *
      * @return registryDate
      */
     public java.util.Date getRegistryDate() {
@@ -43,7 +44,7 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Sets the registryDate value for this TRegistry.
-     * 
+     *
      * @param registryDate
      */
     public void setRegistryDate(java.util.Date registryDate) {
@@ -53,7 +54,7 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Gets the issuerIDN value for this TRegistry.
-     * 
+     *
      * @return issuerIDN
      */
     public java.lang.String getIssuerIDN() {
@@ -63,7 +64,7 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Sets the issuerIDN value for this TRegistry.
-     * 
+     *
      * @param issuerIDN
      */
     public void setIssuerIDN(java.lang.String issuerIDN) {
@@ -73,7 +74,7 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Gets the issuerName value for this TRegistry.
-     * 
+     *
      * @return issuerName
      */
     public java.lang.String getIssuerName() {
@@ -83,7 +84,7 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Sets the issuerName value for this TRegistry.
-     * 
+     *
      * @param issuerName
      */
     public void setIssuerName(java.lang.String issuerName) {
@@ -93,20 +94,20 @@ public class TRegistry  implements java.io.Serializable {
 
     /**
      * Gets the shareholders value for this TRegistry.
-     * 
+     *
      * @return shareholders
      */
-    public kz.bsbnb.util.ERCBService.TShareholder[] getShareholders() {
+    public TShareholder[] getShareholders() {
         return shareholders;
     }
 
 
     /**
      * Sets the shareholders value for this TRegistry.
-     * 
+     *
      * @param shareholders
      */
-    public void setShareholders(kz.bsbnb.util.ERCBService.TShareholder[] shareholders) {
+    public void setShareholders(TShareholder[] shareholders) {
         this.shareholders = shareholders;
     }
 
@@ -121,19 +122,19 @@ public class TRegistry  implements java.io.Serializable {
         }
         __equalsCalc = obj;
         boolean _equals;
-        _equals = true && 
-            ((this.registryDate==null && other.getRegistryDate()==null) || 
-             (this.registryDate!=null &&
-              this.registryDate.equals(other.getRegistryDate()))) &&
-            ((this.issuerIDN==null && other.getIssuerIDN()==null) || 
-             (this.issuerIDN!=null &&
-              this.issuerIDN.equals(other.getIssuerIDN()))) &&
-            ((this.issuerName==null && other.getIssuerName()==null) || 
-             (this.issuerName!=null &&
-              this.issuerName.equals(other.getIssuerName()))) &&
-            ((this.shareholders==null && other.getShareholders()==null) || 
-             (this.shareholders!=null &&
-              java.util.Arrays.equals(this.shareholders, other.getShareholders())));
+        _equals = true &&
+                ((this.registryDate==null && other.getRegistryDate()==null) ||
+                        (this.registryDate!=null &&
+                                this.registryDate.equals(other.getRegistryDate()))) &&
+                ((this.issuerIDN==null && other.getIssuerIDN()==null) ||
+                        (this.issuerIDN!=null &&
+                                this.issuerIDN.equals(other.getIssuerIDN()))) &&
+                ((this.issuerName==null && other.getIssuerName()==null) ||
+                        (this.issuerName!=null &&
+                                this.issuerName.equals(other.getIssuerName()))) &&
+                ((this.shareholders==null && other.getShareholders()==null) ||
+                        (this.shareholders!=null &&
+                                java.util.Arrays.equals(this.shareholders, other.getShareholders())));
         __equalsCalc = null;
         return _equals;
     }
@@ -160,7 +161,7 @@ public class TRegistry  implements java.io.Serializable {
                  i++) {
                 java.lang.Object obj = java.lang.reflect.Array.get(getShareholders(), i);
                 if (obj != null &&
-                    !obj.getClass().isArray()) {
+                        !obj.getClass().isArray()) {
                     _hashCode += obj.hashCode();
                 }
             }
@@ -171,7 +172,7 @@ public class TRegistry  implements java.io.Serializable {
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(TRegistry.class, true);
+            new org.apache.axis.description.TypeDesc(TRegistry.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("urn:ERCBServices.Objects.Voting.Core", "TRegistry"));
@@ -196,7 +197,7 @@ public class TRegistry  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("shareholders");
         elemField.setXmlName(new javax.xml.namespace.QName("", "Shareholders"));
-        elemField.setXmlType(new javax.xml.namespace.QName("urn:ERCBServices.Objects.Voting.Core", "TShareholder[]"));
+        elemField.setXmlType(new javax.xml.namespace.QName("urn:ERCBServices.Objects.Voting.Core", "TShareholder"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
     }
@@ -212,24 +213,24 @@ public class TRegistry  implements java.io.Serializable {
      * Get Custom Serializer
      */
     public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new  org.apache.axis.encoding.ser.BeanSerializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
     /**
      * Get Custom Deserializer
      */
     public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
+            java.lang.String mechType,
+            java.lang.Class _javaType,
+            javax.xml.namespace.QName _xmlType) {
+        return
+                new  org.apache.axis.encoding.ser.BeanDeserializer(
+                        _javaType, _xmlType, typeDesc);
     }
 
 }

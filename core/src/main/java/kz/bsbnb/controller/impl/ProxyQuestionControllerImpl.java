@@ -39,6 +39,6 @@ public class ProxyQuestionControllerImpl implements IProxyQuestionController {
                                                 @RequestParam(name = "executive_voter_id") Long executiveVoterId,
                                                 @RequestBody List<ProxyQuestionBean> proxyQuestions) {
         return null;
-
     }
+
 }

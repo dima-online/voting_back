@@ -1,6 +1,7 @@
 package kz.bsbnb.util.ERCBService;
 
 import javax.xml.rpc.ServiceException;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,14 +15,14 @@ public class ERCBClient {
 //        IERCBVotingServices iercbVotingServicesPort = service.getIERCBVotingServicesPort();
 //
 //        try {
-//            String chief = iercbVotingServicesPort.getChief("990640000421");
+//            String chief = iercbVotingServicesPort.getChief("000940001446");
 //            System.out.println(chief);
 //        } catch (RemoteException e) {
 //            e.printStackTrace();
 //        }
 //
 //        try {
-//            int i = iercbVotingServicesPort.existsRegistry("990640000421", "26.01.2017");
+//            int i = iercbVotingServicesPort.existsRegistry("000940001446", "09.01.2018");
 //            System.out.println("i="+i);
 //        } catch (RemoteException e) {
 //            e.printStackTrace();
@@ -37,15 +38,15 @@ public class ERCBClient {
 //        } catch (RemoteException e) {
 //            e.printStackTrace();
 //        }
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date truncatedDate = null;
-        try {
-            truncatedDate = dateFormat.parse("21/01/2017");
-            System.out.println("date="+truncatedDate.toString());
-        } catch (ParseException e) {
-            System.out.println("error");;
-        }
+//
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+//        Date truncatedDate = null;
+//        try {
+//            truncatedDate = dateFormat.parse("21/01/2017");
+//            System.out.println("date="+truncatedDate.toString());
+//        } catch (ParseException e) {
+//            System.out.println("error");
+//        }
 
     }
 }

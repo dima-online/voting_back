@@ -22,6 +22,8 @@ public class TShareholder  implements java.io.Serializable {
 
     private java.lang.String shareholderKind;
 
+    private java.lang.String accountNumber;
+
     private double amount;
 
     private double voting;
@@ -34,8 +36,6 @@ public class TShareholder  implements java.io.Serializable {
 
     private java.lang.String votingIDN;
 
-    private double block;
-
     public TShareholder() {
     }
 
@@ -47,13 +47,13 @@ public class TShareholder  implements java.io.Serializable {
             java.lang.String shareholderIDN,
             java.lang.String shareholderNIN,
             java.lang.String shareholderKind,
+            java.lang.String accountNumber,
             double amount,
             double voting,
             double percentVoting,
             java.lang.String phone,
             java.lang.String mail,
-            java.lang.String votingIDN,
-            double block) {
+            java.lang.String votingIDN) {
         this.shareholderName = shareholderName;
         this.shareholderNoun = shareholderNoun;
         this.shareholderSurname = shareholderSurname;
@@ -61,13 +61,13 @@ public class TShareholder  implements java.io.Serializable {
         this.shareholderIDN = shareholderIDN;
         this.shareholderNIN = shareholderNIN;
         this.shareholderKind = shareholderKind;
+        this.accountNumber = accountNumber;
         this.amount = amount;
         this.voting = voting;
         this.percentVoting = percentVoting;
         this.phone = phone;
         this.mail = mail;
         this.votingIDN = votingIDN;
-        this.block = block;
     }
 
 
@@ -212,6 +212,26 @@ public class TShareholder  implements java.io.Serializable {
 
 
     /**
+     * Gets the accountNumber value for this TShareholder.
+     *
+     * @return accountNumber
+     */
+    public java.lang.String getAccountNumber() {
+        return accountNumber;
+    }
+
+
+    /**
+     * Sets the accountNumber value for this TShareholder.
+     *
+     * @param accountNumber
+     */
+    public void setAccountNumber(java.lang.String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+
+    /**
      * Gets the amount value for this TShareholder.
      *
      * @return amount
@@ -330,30 +350,10 @@ public class TShareholder  implements java.io.Serializable {
         this.votingIDN = votingIDN;
     }
 
-
-    /**
-     * Gets the block value for this TShareholder.
-     *
-     * @return block
-     */
-    public double getBlock() {
-        return block;
-    }
-
-
-    /**
-     * Sets the block value for this TShareholder.
-     *
-     * @param block
-     */
-    public void setBlock(double block) {
-        this.block = block;
-    }
-
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof kz.bsbnb.util.ERCBService.TShareholder)) return false;
-        kz.bsbnb.util.ERCBService.TShareholder other = (kz.bsbnb.util.ERCBService.TShareholder) obj;
+        if (!(obj instanceof TShareholder)) return false;
+        TShareholder other = (TShareholder) obj;
         if (obj == null) return false;
         if (this == obj) return true;
         if (__equalsCalc != null) {
@@ -383,6 +383,9 @@ public class TShareholder  implements java.io.Serializable {
                 ((this.shareholderKind==null && other.getShareholderKind()==null) ||
                         (this.shareholderKind!=null &&
                                 this.shareholderKind.equals(other.getShareholderKind()))) &&
+                ((this.accountNumber==null && other.getAccountNumber()==null) ||
+                        (this.accountNumber!=null &&
+                                this.accountNumber.equals(other.getAccountNumber()))) &&
                 this.amount == other.getAmount() &&
                 this.voting == other.getVoting() &&
                 this.percentVoting == other.getPercentVoting() &&
@@ -394,8 +397,7 @@ public class TShareholder  implements java.io.Serializable {
                                 this.mail.equals(other.getMail()))) &&
                 ((this.votingIDN==null && other.getVotingIDN()==null) ||
                         (this.votingIDN!=null &&
-                                this.votingIDN.equals(other.getVotingIDN()))) &&
-                this.block == other.getBlock();
+                                this.votingIDN.equals(other.getVotingIDN())));
         __equalsCalc = null;
         return _equals;
     }
@@ -428,6 +430,9 @@ public class TShareholder  implements java.io.Serializable {
         if (getShareholderKind() != null) {
             _hashCode += getShareholderKind().hashCode();
         }
+        if (getAccountNumber() != null) {
+            _hashCode += getAccountNumber().hashCode();
+        }
         _hashCode += new Double(getAmount()).hashCode();
         _hashCode += new Double(getVoting()).hashCode();
         _hashCode += new Double(getPercentVoting()).hashCode();
@@ -440,14 +445,13 @@ public class TShareholder  implements java.io.Serializable {
         if (getVotingIDN() != null) {
             _hashCode += getVotingIDN().hashCode();
         }
-        _hashCode += new Double(getBlock()).hashCode();
         __hashCodeCalc = false;
         return _hashCode;
     }
 
     // Type metadata
     private static org.apache.axis.description.TypeDesc typeDesc =
-            new org.apache.axis.description.TypeDesc(kz.bsbnb.util.ERCBService.TShareholder.class, true);
+            new org.apache.axis.description.TypeDesc(TShareholder.class, true);
 
     static {
         typeDesc.setXmlType(new javax.xml.namespace.QName("urn:ERCBServices.Objects.Voting.Core", "TShareholder"));
@@ -494,6 +498,12 @@ public class TShareholder  implements java.io.Serializable {
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("accountNumber");
+        elemField.setXmlName(new javax.xml.namespace.QName("", "AccountNumber"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("amount");
         elemField.setXmlName(new javax.xml.namespace.QName("", "Amount"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "double"));
@@ -527,12 +537,6 @@ public class TShareholder  implements java.io.Serializable {
         elemField.setFieldName("votingIDN");
         elemField.setXmlName(new javax.xml.namespace.QName("", "VotingIDN"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        elemField.setNillable(false);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("block");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "Block"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "double"));
         elemField.setNillable(false);
         typeDesc.addFieldDesc(elemField);
     }

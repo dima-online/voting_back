@@ -5,8 +5,10 @@ package kz.bsbnb.common.consts;
  */
 public enum ShareType {
     PRIVILEGED,
-    GOLDEN,
-    ORDINARY;
+    ORDINARY,
+    GOLD,
+    PRIVILEGED_BLOCKED,
+    ORDINARY_BLOCKED;
 
     public static ShareType getShareType(String shareType) {
         return valueOf(shareType);

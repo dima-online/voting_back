@@ -17,4 +17,12 @@ public interface VoterProcessor {
     SimpleResponse saveVoter(Voter voter, String iin);
 
     SimpleResponse canVote(Long voterId);
+
+    SimpleResponse addVoter(Voter voter);
+
+    SimpleResponse deleteVoter(Long voterId);
+
+    SimpleResponse updateVoter(Voter voter);
+
+    SimpleResponse entrustVoter(Long parentVoterId,String userIin);
 }

@@ -1,51 +1,51 @@
 <?xml version="1.0"?>
 <definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" name="IERCBVotingServicesservice" targetNamespace="http://tempuri.org/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ns1="urn:ERCBServices.Objects.Voting.Core" xmlns:ns2="urn:ERCBServices">
   <types>
-    <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ERCBServices.Objects.Voting.Core">
-      <complexType name="TResponseRegistry">
-        <sequence>
-          <element name="Registry" type="ns1:TRegistry"/>
-          <element name="ErrorCode" type="xs:int"/>
-          <element name="ErrorText" type="xs:string"/>
+    <xs:schema targetNamespace="urn:ERCBServices.Objects.Voting.Core" xmlns="urn:ERCBServices.Objects.Voting.Core">
+      <xs:complexType name="TResponseRegistry">
+        <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+          <xs:element name="Registry" type="ns1:TRegistry"/>
+          <xs:element name="ErrorCode" type="xs:int"/>
+          <xs:element name="ErrorText" type="xs:string"/>
         </sequence>
-      </complexType>
-      <complexType name="TRegistry">
-        <sequence>
-          <element name="RegistryDate" type="xs:date"/>
-          <element name="IssuerIDN" type="xs:string"/>
-          <element name="IssuerName" type="xs:string"/>
-          <element name="Shareholders" type="ns2:Shareholders"/>
+      </xs:complexType>
+      <xs:complexType name="TRegistry">
+        <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+          <xs:element name="RegistryDate" type="xs:date"/>
+          <xs:element name="IssuerIDN" type="xs:string"/>
+          <xs:element name="IssuerName" type="xs:string"/>
+          <xs:element name="Shareholders" type="ns2:Shareholders"/>
         </sequence>
-      </complexType>
-      <complexType name="TShareholder">
-        <sequence>
-          <element name="ShareholderName" type="xs:string"/>
-          <element name="ShareholderNoun" type="xs:string"/>
-          <element name="ShareholderSurname" type="xs:string"/>
-          <element name="ShareholderPatronymic" type="xs:string"/>
-          <element name="ShareholderIDN" type="xs:string"/>
-          <element name="ShareholderNIN" type="xs:string"/>
-          <element name="ShareholderKind" type="xs:string"/>
-          <element name="Amount" type="xs:double"/>
-          <element name="Voting" type="xs:double"/>
-          <element name="PercentVoting" type="xs:double"/>
-          <element name="Phone" type="xs:string"/>
-          <element name="Mail" type="xs:string"/>
-          <element name="VotingIDN" type="xs:string"/>
-          <element name="Block" type="xs:double"/>
+      </xs:complexType>
+      <xs:complexType name="TShareholder">
+        <sequence xmlns="http://www.w3.org/2001/XMLSchema">
+          <xs:element name="ShareholderName" type="xs:string"/>
+          <xs:element name="ShareholderNoun" type="xs:string"/>
+          <xs:element name="ShareholderSurname" type="xs:string"/>
+          <xs:element name="ShareholderPatronymic" type="xs:string"/>
+          <xs:element name="ShareholderIDN" type="xs:string"/>
+          <xs:element name="ShareholderNIN" type="xs:string"/>
+          <xs:element name="ShareholderKind" type="xs:string"/>
+          <xs:element name="AccountNumber" type="xs:string"/>
+          <xs:element name="Amount" type="xs:double"/>
+          <xs:element name="Voting" type="xs:double"/>
+          <xs:element name="PercentVoting" type="xs:double"/>
+          <xs:element name="Phone" type="xs:string"/>
+          <xs:element name="Mail" type="xs:string"/>
+          <xs:element name="VotingIDN" type="xs:string"/>
         </sequence>
-      </complexType>
-    </schema>
-    <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ERCBServices">
-      <complexType name="Shareholders">
-        <complexContent>
-          <restriction base="soapenc:Array">
-            <sequence/>
-            <attribute ref="soapenc:arrayType" n1:arrayType="ns1:TShareholder[]" xmlns:n1="http://schemas.xmlsoap.org/wsdl/"/>
-          </restriction>
-        </complexContent>
-      </complexType>
-    </schema>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema targetNamespace="urn:ERCBServices" xmlns="urn:ERCBServices">
+      <xs:complexType name="Shareholders">
+        <xs:complexContent>
+          <xs:restriction base="soapenc:Array">
+            <sequence xmlns="http://www.w3.org/2001/XMLSchema"/>
+            <xs:attribute ref="soapenc:arrayType" n1:arrayType="ns1:TShareholder[]" xmlns:n1="http://schemas.xmlsoap.org/wsdl/"/>
+          </xs:restriction>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:schema>
   </types>
   <message name="GetRegistry0Request">
     <part name="AIDN" type="xs:string"/>
@@ -113,7 +113,7 @@
   </binding>
   <service name="IERCBVotingServicesservice">
     <port name="IERCBVotingServicesPort" binding="tns:IERCBVotingServicesbinding">
-      <address xmlns="http://schemas.xmlsoap.org/wsdl/soap/" location="http://cabinet.tisr.kz:8083/soap/IERCBVotingServices"/>
+      <address xmlns="http://schemas.xmlsoap.org/wsdl/soap/" location="http://192.168.100.2:8083/soap/IERCBVotingServices"/>
     </port>
   </service>
 </definitions>
